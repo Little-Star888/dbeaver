@@ -32,4 +32,12 @@ public class DBUncheckedException extends RuntimeException {
     public DBUncheckedException(Throwable cause) {
         super(cause);
     }
+
+    /** Constructs a new exception with the specified detail message.
+     *
+     * @param message the detail message
+     */
+    public DBUncheckedException(String message) {
+        super(message);
+    }
 }
