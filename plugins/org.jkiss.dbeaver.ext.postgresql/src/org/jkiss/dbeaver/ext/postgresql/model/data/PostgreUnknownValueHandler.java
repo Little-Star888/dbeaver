@@ -31,7 +31,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 /**
- * A value handler for unknown types. Retrieves/updates value as it were a string.
+ * A value handler for values of an unknown type. Retrieves/updates value as if it were a string.
  */
 public class PostgreUnknownValueHandler extends JDBCAbstractValueHandler {
     public static final PostgreUnknownValueHandler INSTANCE = new PostgreUnknownValueHandler();
