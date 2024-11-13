@@ -22,6 +22,7 @@
 
         <local-p2-repo.version>${dbeaver-version}</local-p2-repo.version>
         <local-p2-repo.url>https://p2.dev.dbeaver.com/eclipse-repo/${local-p2-repo.version}</local-p2-repo.url>
+        <lsp4j-p2-repo.url>https://download.eclipse.org/lsp4j/updates/releases/${lsp4j-version}/</lsp4j-p2-repo.url>
 
         <key.storage.path>/etc/</key.storage.path>
         <tsa/>
@@ -39,6 +40,11 @@
         <repository>
             <id>local-contrib</id>
             <url>${local-p2-repo.url}</url>
+            <layout>p2</layout>
+        </repository>
+        <repository>
+            <id>lsp4j-repo</id>
+            <url>${lsp4j-p2-repo.url}</url>
             <layout>p2</layout>
         </repository>
     </repositories>
