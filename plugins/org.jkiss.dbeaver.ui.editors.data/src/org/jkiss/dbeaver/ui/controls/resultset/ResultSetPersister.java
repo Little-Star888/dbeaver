@@ -110,6 +110,7 @@ class ResultSetPersister {
     private final List<DataStatementInfo> insertStatements = new ArrayList<>();
     private final List<DataStatementInfo> deleteStatements = new ArrayList<>();
     private final List<DataStatementInfo> updateStatements = new ArrayList<>();
+    private final List<DBDValue> clonedValues = new ArrayList<>();
 
     private final List<DBEPersistAction> script = new ArrayList<>();
 
@@ -395,7 +396,10 @@ class ResultSetPersister {
         throws DBException {
         // Make statements
         for (ResultSetRow row : this.rowIdentifiers.keySet()) {
-            if (row.changes == null) continue;
+            Map<DBDAttributeBinding, Object> changes = collectUpdateChanges(row);
+            if (changes == null) {
+                continue;
+            }
 
             DBDRowIdentifier rowIdentifier = this.rowIdentifiers.get(row);
             DBSEntity table;
@@ -412,7 +416,7 @@ class ResultSetPersister {
             {
                 DataStatementInfo statement = new DataStatementInfo(DBSManipulationType.UPDATE, row, table);
                 // Updated columns
-                for (DBDAttributeBinding changedAttr : row.changes.keySet()) {
+                for (DBDAttributeBinding changedAttr : changes.keySet()) {
                     if (!isVirtualColumn(changedAttr)) {
                         statement.updateAttributes.add(
                             new DBDAttributeValue(
@@ -426,14 +430,18 @@ class ResultSetPersister {
                     for (DBDAttributeBinding metaColumn : idColumns) {
                         Object keyValue = model.getCellValue(metaColumn, row);
                         // Try to find old key oldValue
-                        if (row.changes != null && row.changes.containsKey(metaColumn)) {
-                            keyValue = row.changes.get(metaColumn);
+                        if (changes.containsKey(metaColumn)) {
+                            keyValue = changes.get(metaColumn);
                             if (keyValue instanceof DBDContent) {
-                                if (keyValue instanceof DBDValueCloneable) {
-                                    keyValue = ((DBDValueCloneable) keyValue).cloneValue(monitor);
-                                    ((DBDContent) keyValue).resetContents();
+                                if (keyValue instanceof DBDValueCloneable vc) {
+                                    keyValue = vc.cloneValue(monitor);
+                                    if (keyValue instanceof DBDContent copiedContext) {
+                                        clonedValues.add(copiedContext);
+                                        copiedContext.resetContents();
+                                    }
                                 } else {
-                                    throw new DBCException("Column '" + metaColumn.getFullyQualifiedName(DBPEvaluationContext.UI) + "' can't be used as a key. Value clone is not supported.");
+                                    throw new DBCException("Column '" + metaColumn.getFullyQualifiedName(DBPEvaluationContext.UI) +
+                                       "' can't be used as a key. Value clone is not supported.");
                                 }
                             }
                         }
@@ -443,6 +451,57 @@ class ResultSetPersister {
                 updateStatements.add(statement);
             }
         }
+    }
+
+    // Filter changes
+    // Depending on attributes structure we leave only leaf elements or entire document (for document-oriented databases)
+    @Nullable
+    private static Map<DBDAttributeBinding, Object> collectUpdateChanges(ResultSetRow row) {
+        if (CommonUtils.isEmpty(row.changes)) {
+            return null;
+        }
+        Map<DBDAttributeBinding, Object> changes = new LinkedHashMap<>(row.changes.size());
+        List<DBDAttributeBinding> attrRefs = new ArrayList<>();
+        boolean hasComplexUpdates = false;
+        for (Map.Entry<DBDAttributeBinding, Object> change : row.changes.entrySet()) {
+            if (change.getValue() instanceof DBDAttributeBinding ab) {
+                attrRefs.add(ab);
+            }
+            if (!hasComplexUpdates && isComplexNestedAttribute(change.getKey())) {
+                hasComplexUpdates = true;
+            }
+        }
+        if (hasComplexUpdates && !attrRefs.isEmpty()) {
+            // If we have complex values then leave only nested elements attributes
+            for (Map.Entry<DBDAttributeBinding, Object> change : row.changes.entrySet()) {
+                if (change.getValue() instanceof DBDAttributeBinding ab && attrRefs.contains(ab)) {
+                    changes.put(ab, row.changes.get(ab));
+                }
+            }
+        } else {
+            // Otherwise remove root element from the list
+            for (Map.Entry<DBDAttributeBinding, Object> change : row.changes.entrySet()) {
+                if (attrRefs.contains(change.getKey())) {
+                    continue;
+                }
+                if (change.getValue() instanceof DBDAttributeBinding ab) {
+                    changes.put(change.getKey(), row.changes.get(ab));
+                } else {
+                    changes.put(change.getKey(), change.getValue());
+                }
+            }
+        }
+        return changes;
+    }
+
+    // Returns true only if our attribute has parent of type array
+    private static boolean isComplexNestedAttribute(DBDAttributeBinding attr) {
+        for (DBDAttributeBinding parent = attr.getParentObject(); parent != null; parent = parent.getParentObject()) {
+            if (parent.getDataKind() == DBPDataKind.ARRAY) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean execute(@Nullable DBRProgressMonitor monitor, boolean generateScript, @NotNull ResultSetSaveSettings settings, @Nullable final DataUpdateListener listener)
@@ -466,11 +525,18 @@ class ResultSetPersister {
         for (ResultSetRow row : changedRows) {
             if (row.changes != null) {
                 for (Map.Entry<DBDAttributeBinding, Object> changedValue : row.changes.entrySet()) {
+                    if (changedValue.getValue() instanceof DBDAttributeBinding) {
+                        continue;
+                    }
                     Object curValue = model.getCellValue(changedValue.getKey(), row);
                     // If new value and old value are the same - do not release it
                     if (curValue != changedValue.getValue()) {
                         DBUtils.releaseValue(curValue);
-                        model.updateCellValue(changedValue.getKey(), row, null, changedValue.getValue(), false);
+                        try {
+                            model.updateCellValue(changedValue.getKey(), row, null, changedValue.getValue(), false);
+                        } catch (DBException e) {
+                            log.error(e);
+                        }
                     }
                 }
                 row.changes = null;
@@ -521,6 +587,7 @@ class ResultSetPersister {
                 }
             }
         }
+
         model.refreshChangeCount();
         return rowsChanged;
     }
@@ -644,6 +711,11 @@ class ResultSetPersister {
                 error = executeStatements(monitor);
             } finally {
                 model.setUpdateInProgress(null);
+
+                for (DBDValue value : clonedValues) {
+                    value.release();
+                }
+                clonedValues.clear();
             }
 
             if (!generateScript) {
@@ -705,6 +777,9 @@ class ResultSetPersister {
                 Throwable[] error = new Throwable[1];
                 DBExecUtils.tryExecuteRecover(monitor, session.getDataSource(), param -> {
                     error[0] = executeStatements(session);
+                    if (error[0] != null) {
+                        throw new InvocationTargetException(error[0]);
+                    }
                 });
                 return error[0];
 

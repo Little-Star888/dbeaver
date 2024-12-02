@@ -20,7 +20,6 @@ import org.jkiss.code.NotNull;
 import org.jkiss.code.Nullable;
 import org.jkiss.dbeaver.Log;
 import org.jkiss.dbeaver.model.DBUtils;
-import org.jkiss.dbeaver.model.app.DBPPlatformDesktop;
 import org.jkiss.dbeaver.model.data.DBDDataFormatterProfile;
 import org.jkiss.dbeaver.model.data.DBDDisplayFormat;
 import org.jkiss.dbeaver.model.data.json.JSONUtils;
@@ -31,6 +30,7 @@ import org.jkiss.dbeaver.runtime.DBWorkbench;
 import org.jkiss.dbeaver.tools.transfer.*;
 import org.jkiss.dbeaver.tools.transfer.internal.DTMessages;
 import org.jkiss.dbeaver.tools.transfer.processor.ExecuteCommandEventProcessor;
+import org.jkiss.dbeaver.tools.transfer.processor.FailedExportFileCleanerProcessor;
 import org.jkiss.dbeaver.tools.transfer.processor.ShowInExplorerEventProcessor;
 import org.jkiss.dbeaver.tools.transfer.registry.DataTransferEventProcessorDescriptor;
 import org.jkiss.dbeaver.utils.GeneralUtils;
@@ -333,12 +333,13 @@ public class StreamConsumerSettings implements IDataTransferConsumerSettings {
         maxOutFileSize = CommonUtils.toLong(settings.get("maxOutFileSize"), maxOutFileSize);
 
         final boolean openFolderOnFinish = CommonUtils.getBoolean(settings.get("openFolderOnFinish"), false);
+        final boolean deleteFileInCaseOfFail = CommonUtils.getBoolean(settings.get("deleteFileInCaseOfFail"), true);
         final boolean executeProcessOnFinish = CommonUtils.getBoolean(settings.get("executeProcessOnFinish"), false);
         final String finishProcessCommand = CommonUtils.toString(settings.get("finishProcessCommand"));
 
         String formatterProfile = CommonUtils.toString(settings.get("formatterProfile"));
         if (!CommonUtils.isEmpty(formatterProfile)) {
-            this.formatterProfile = DBPPlatformDesktop.getInstance().getDataFormatterRegistry().getCustomProfile(formatterProfile);
+            this.formatterProfile = DBWorkbench.getPlatform().getDataFormatterRegistry().getCustomProfile(formatterProfile);
         }
         valueFormat = DBDDisplayFormat.safeValueOf(CommonUtils.toString(settings.get(SETTING_VALUE_FORMAT)));
 
@@ -381,6 +382,10 @@ public class StreamConsumerSettings implements IDataTransferConsumerSettings {
 
         if (openFolderOnFinish && !eventProcessors.containsKey(ShowInExplorerEventProcessor.ID)) {
             eventProcessors.put(ShowInExplorerEventProcessor.ID, new HashMap<>());
+        }
+
+        if (deleteFileInCaseOfFail && !eventProcessors.containsKey(FailedExportFileCleanerProcessor.ID)) {
+            eventProcessors.put(FailedExportFileCleanerProcessor.ID, new HashMap<>());
         }
 
         if (executeProcessOnFinish && !eventProcessors.containsKey(ExecuteCommandEventProcessor.ID)) {

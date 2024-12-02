@@ -35,6 +35,7 @@ import org.jkiss.dbeaver.model.impl.jdbc.JDBCUtils;
 import org.jkiss.dbeaver.model.runtime.DBRProgressMonitor;
 import org.jkiss.dbeaver.model.struct.DBSDataType;
 import org.jkiss.dbeaver.model.struct.DBSObject;
+import org.jkiss.dbeaver.runtime.DBWorkbench;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -48,6 +49,8 @@ public class CubridDataSource extends GenericDataSource
 {
     private final CubridMetaModel metaModel;
     private boolean supportMultiSchema;
+    private boolean isEOLVersion;
+    private final CubridPrivilageCache privilageCache;
     private final CubridServerCache serverCache;
     private ArrayList<CubridCharset> charsets;
     private Map<String, CubridCollation> collations;
@@ -59,6 +62,7 @@ public class CubridDataSource extends GenericDataSource
             throws DBException {
         super(monitor, container, metaModel, new CubridSQLDialect());
         this.metaModel = new CubridMetaModel();
+        this.privilageCache = new CubridPrivilageCache();
         this.serverCache = new CubridServerCache();
     }
 
@@ -72,6 +76,15 @@ public class CubridDataSource extends GenericDataSource
     @NotNull
     public List<GenericSchema> getCubridUsers(@NotNull DBRProgressMonitor monitor) throws DBException {
         return this.getSchemas();
+    }
+    
+    @NotNull
+    public List<CubridPrivilage> getCubridPrivilages(@NotNull DBRProgressMonitor monitor) throws DBException {
+        return privilageCache.getAllObjects(monitor, this);
+    }
+
+    public CubridServerCache getServerCache() {
+        return serverCache;
     }
 
     @Nullable
@@ -87,6 +100,11 @@ public class CubridDataSource extends GenericDataSource
     @NotNull
     public boolean supportsServer() {
         return getSupportMultiSchema();
+    }
+    
+    @NotNull
+    public CubridPrivilageCache getCubridPrivilageCache() {
+        return privilageCache;
     }
 
     @Nullable
@@ -195,8 +213,12 @@ public class CubridDataSource extends GenericDataSource
     @Override
     public void initialize(@NotNull DBRProgressMonitor monitor) throws DBException {
         super.initialize(monitor);
-        loadCharsets(monitor);
-        loadCollations(monitor);
+        if (!isEOLVersion()) {
+            loadCharsets(monitor);
+            loadCollations(monitor);
+        } else {
+            DBWorkbench.getPlatformUI().showMessageBox("Connected CUBRID Info", "The connected CUBRID is an EOL version. Limited features are available.", false);
+        }
     }
 
     @NotNull
@@ -204,6 +226,7 @@ public class CubridDataSource extends GenericDataSource
     public DBSObject refreshObject(@NotNull DBRProgressMonitor monitor) throws DBException {
         super.refreshObject(monitor);
         serverCache.clearCache();
+        privilageCache.clearCache();
         return this;
     }
 
@@ -213,6 +236,15 @@ public class CubridDataSource extends GenericDataSource
 
     public void setSupportMultiSchema(@NotNull boolean supportMultiSchema) {
         this.supportMultiSchema = supportMultiSchema;
+    }
+
+    @NotNull
+    public boolean isEOLVersion() {
+        return isEOLVersion;
+    }
+
+    public void setEOLVersion(@NotNull boolean isEOLVersion) {
+        this.isEOLVersion = isEOLVersion;
     }
 
     public class CubridServerCache extends JDBCObjectCache<CubridDataSource, CubridServer> {
@@ -237,10 +269,35 @@ public class CubridDataSource extends GenericDataSource
             return new CubridServer(container, dbResult);
         }
     }
+    
+    public class CubridPrivilageCache extends JDBCObjectCache<CubridDataSource, CubridPrivilage> {
+        @NotNull
+        @Override
+        protected JDBCStatement prepareObjectsStatement(
+                @NotNull JDBCSession session,
+                @NotNull CubridDataSource container)
+                throws SQLException {
+            String sql = "select * from db_user";
+            final JDBCPreparedStatement dbStat = session.prepareStatement(sql);
+            return dbStat;
+        }
+
+        @Nullable
+        @Override
+        protected CubridPrivilage fetchObject(
+                @NotNull JDBCSession session,
+                @NotNull CubridDataSource container,
+                @NotNull JDBCResultSet dbResult)
+                throws SQLException, DBException {
+            String name = JDBCUtils.safeGetString(dbResult, "name");
+            return new CubridPrivilage(container,name, dbResult);
+        }
+    }
 
     @NotNull
     @Override
     public boolean splitProceduresAndFunctions() {
         return true;
     }
+
 }

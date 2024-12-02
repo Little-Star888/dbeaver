@@ -718,19 +718,19 @@
         <menuContribution allPopups="false" locationURI="popup:org.eclipse.ui.popup.any?after=navigator_additions_end">
             <separator name="copy" visible="true"/>
 
-            <command commandId="org.eclipse.ui.edit.copy" label="%command.org.eclipse.ui.edit.copy.name">
+            <command commandId="org.eclipse.ui.edit.copy">
                 <visibleWhen checkEnabled="true"/>
             </command>
-            <command commandId="org.eclipse.ui.edit.paste" label="%command.org.eclipse.ui.edit.paste.name">
+            <command commandId="org.eclipse.ui.edit.paste">
                 <visibleWhen checkEnabled="true"/>
             </command>
             <command commandId="org.jkiss.dbeaver.core.edit.copy.special" label="%command.org.jkiss.dbeaver.core.edit.copy.adv_info">
                 <visibleWhen checkEnabled="true"/>
             </command>
-            <command commandId="org.eclipse.ui.edit.delete" label="%command.org.eclipse.ui.edit.delete.name">
+            <command commandId="org.eclipse.ui.edit.delete">
                 <visibleWhen checkEnabled="true"/>
             </command>
-            <command commandId="org.eclipse.ui.edit.rename" label="%command.org.eclipse.ui.edit.rename.name">
+            <command commandId="org.eclipse.ui.edit.rename">
                 <visibleWhen checkEnabled="true"/>
             </command>
             
@@ -828,6 +828,9 @@
             <command commandId="org.eclipse.ui.navigate.collapseAll"/>
             <command commandId="org.jkiss.dbeaver.core.navigator.linkeditor"/>
             <command commandId="org.jkiss.dbeaver.core.navigator.preferences"/>
+            <command commandId="org.jkiss.dbeaver.core.project.refresh">
+                <parameter name="singleProject" value="true"/>
+            </command>
         </menuContribution>
 
         <menuContribution allPopups="false" locationURI="toolbar:org.jkiss.dbeaver.core.databaseNavigator">
@@ -1204,6 +1207,13 @@
                 message="%confirm.disable_network_handler.message"
                 toggleMessage="default"
                 group="%confirmation.group.general.actions"/>
+        <confirmation
+                id="test_connection_persist"
+                title="%confirm.test_connection_persist.title"
+                description="%confirm.test_connection_persist.tip"
+                message="%confirm.test_connection_persist.message"
+                toggleMessage="default"
+                group="Connections"/>
     </extension>
 
     <extension point="org.eclipse.ui.preferencePages">
@@ -1228,6 +1238,14 @@
         <notification id="reconnect.success" name="Datasource invalidation success"/>
         <notification id="reconnect.failure" name="Datasource invalidation failure"/>
         <notification id="agent.notify" name="Long-time operations" description="This is a notification for long-time operations.&#10;It will be shown for all operations that have exceeded the specified timeout." soundEnabled="true"/>
+    </extension>
+
+    <extension point="org.jkiss.dbeaver.clearHistoryHandler">
+        <handler
+            id="clearBrowserCookies"
+            name="%handler.clearBrowserCookies.name"
+            description="%handler.clearBrowserCookies.description"
+            handler="org.jkiss.dbeaver.ui.browser.handlers.BrowserClearCookiesHandler"/>
     </extension>
 
 </plugin>

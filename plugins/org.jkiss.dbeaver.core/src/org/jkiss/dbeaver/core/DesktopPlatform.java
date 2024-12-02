@@ -42,7 +42,6 @@ import org.jkiss.dbeaver.model.runtime.features.DBRFeatureRegistry;
 import org.jkiss.dbeaver.registry.BasePlatformImpl;
 import org.jkiss.dbeaver.registry.DataSourceProviderRegistry;
 import org.jkiss.dbeaver.registry.GlobalEventManagerImpl;
-import org.jkiss.dbeaver.registry.formatter.DataFormatterRegistry;
 import org.jkiss.dbeaver.registry.language.PlatformLanguageRegistry;
 import org.jkiss.dbeaver.runtime.SecurityProviderUtils;
 import org.jkiss.dbeaver.runtime.qm.QMLogFileWriter;
@@ -124,8 +123,6 @@ public class DesktopPlatform extends BasePlatformImpl implements DBPPlatformDesk
             }
         }
 
-        DBRFeatureRegistry.getInstance().startTracking();
-
         if (getPreferenceStore().getBoolean(DBeaverPreferences.SECURITY_USE_BOUNCY_CASTLE)) {
             // Register BC security provider
             SecurityProviderUtils.registerSecurityProvider();
@@ -147,6 +144,8 @@ public class DesktopPlatform extends BasePlatformImpl implements DBPPlatformDesk
         this.queryManager.registerMetaListener(qmLogWriter);
 
         super.initialize();
+
+        DBRFeatureRegistry.getInstance().startTracking();
 
         log.debug("Platform initialized (" + (System.currentTimeMillis() - startTime) + "ms)");
     }
@@ -305,12 +304,6 @@ public class DesktopPlatform extends BasePlatformImpl implements DBPPlatformDesk
     @Override
     public DBPGlobalEventManager getGlobalEventManager() {
         return GlobalEventManagerImpl.getInstance();
-    }
-
-    @NotNull
-    @Override
-    public DBPDataFormatterRegistry getDataFormatterRegistry() {
-        return DataFormatterRegistry.getInstance();
     }
 
     @NotNull

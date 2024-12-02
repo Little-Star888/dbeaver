@@ -17,6 +17,9 @@
 package org.jkiss.dbeaver.model.impl.jdbc;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.jkiss.api.ObjectWithContextParameters;
+import org.jkiss.api.verification.FileSystemAccessVerifyer;
+import org.jkiss.api.verification.ObjectWithVerification;
 import org.jkiss.code.NotNull;
 import org.jkiss.code.Nullable;
 import org.jkiss.dbeaver.DBDatabaseException;
@@ -26,6 +29,7 @@ import org.jkiss.dbeaver.ModelPreferences;
 import org.jkiss.dbeaver.model.*;
 import org.jkiss.dbeaver.model.access.DBAAuthCredentials;
 import org.jkiss.dbeaver.model.access.DBAAuthModel;
+import org.jkiss.dbeaver.model.app.DBPProject;
 import org.jkiss.dbeaver.model.connection.*;
 import org.jkiss.dbeaver.model.exec.*;
 import org.jkiss.dbeaver.model.exec.jdbc.JDBCDatabaseMetaData;
@@ -121,43 +125,29 @@ public abstract class JDBCDataSource extends AbstractDataSource
         this.defaultRemoteInstance = new JDBCRemoteInstance(monitor, this, true);
     }
 
-    protected Connection openConnection(@NotNull DBRProgressMonitor monitor, @Nullable JDBCExecutionContext context, @NotNull String purpose)
-        throws DBCException
-    {
+    protected Connection openConnection(
+        @NotNull DBRProgressMonitor monitor,
+        @Nullable JDBCExecutionContext context,
+        @NotNull String purpose
+    ) throws DBCException {
+        return openConnection(
+            monitor,
+            context,
+            new DBPConnectionConfiguration(container.getActualConnectionConfiguration()),
+            purpose);
+    }
+
+    protected Connection openConnection(
+        @NotNull DBRProgressMonitor monitor,
+        @Nullable JDBCExecutionContext context,
+        @NotNull DBPConnectionConfiguration connectionInfo,
+        @NotNull String purpose
+    ) throws DBCException {
         DBPDriver driver = container.getDriver();
-        DBPConnectionConfiguration connectionInfo = new DBPConnectionConfiguration(container.getActualConnectionConfiguration());
         Properties connectProps = getAllConnectionProperties(monitor, context, purpose, connectionInfo);
         String url = getConnectionURL(connectionInfo);
 
-        final DBPDriverSubstitutionDescriptor driverSubstitution = container.getDriverSubstitution();
-        if (driverSubstitution != null) {
-            final DBPDataSourceProviderDescriptor dataSourceProvider = DBWorkbench.getPlatform().getDataSourceProviderRegistry()
-                .getDataSourceProvider(driverSubstitution.getProviderId());
-
-            if (dataSourceProvider != null) {
-                final DBPDriver substitutedDriver = dataSourceProvider.getDriver(driverSubstitution.getDriverId());
-
-                if (substitutedDriver != null) {
-                    final DBPDriverSubstitution substitution = driverSubstitution.getInstance();
-                    final Properties substitutedProperties = substitution.getConnectionProperties(monitor, container, connectionInfo);
-                    final String substitutedUrl = substitution.getConnectionURL(container, connectionInfo);
-
-                    if (substitutedProperties != null) {
-                        connectProps.putAll(substitutedProperties);
-                    }
-
-                    if (substitutedUrl != null) {
-                        url = substitutedUrl;
-                    }
-                } else {
-                    log.warn("Couldn't find driver '" + driverSubstitution.getDriverId()
-                        + "' for driver substitution '" + driverSubstitution.getId() + "', using original driver");
-                }
-            } else {
-                log.warn("Couldn't find data source provider '" + driverSubstitution.getProviderId()
-                    + "' for driver substitution '" + driverSubstitution.getId() + "', using original driver");
-            }
-        }
+        url = substituteDriverIfNeeded(monitor, connectionInfo, connectProps, url);
 
         final JDBCConnectionConfigurer connectionConfigurer = GeneralUtils.adapt(this, JDBCConnectionConfigurer.class);
 
@@ -207,6 +197,7 @@ public abstract class JDBCDataSource extends AbstractDataSource
                 } catch (Throwable e) {
                     log.debug("Error in " + driverInstance.getClass().getName() + ".acceptsURL() - " + url, e);
                 }
+                initializeDriverContext(driverInstance);
             }
 
             JDBCConnectionOpener connectTask = new JDBCConnectionOpener(
@@ -272,6 +263,60 @@ public abstract class JDBCDataSource extends AbstractDataSource
         catch (Throwable e) {
             throw new DBCConnectException("Unexpected driver error occurred while connecting to the database", e);
         }
+    }
+
+    private void initializeDriverContext(Driver driverInstance) {
+        if (driverInstance instanceof ObjectWithContextParameters owcp) {
+            DBPProject project = getContainer().getProject();
+            owcp.setObjectContextParameter(DBConstants.CONTEXT_PARAMETER_PROJECT, getContainer().getProject());
+            owcp.setObjectContextParameter(DBConstants.CONTEXT_PARAMETER_DATA_SOURCE, getContainer());
+            if (driverInstance instanceof ObjectWithVerification
+                && DBWorkbench.getPlatform().getApplication().isMultiuser()
+            ) {
+                owcp.setObjectContextParameter(ObjectWithVerification.CONTEXT_PARAMETER_FILE_SYSTEM_VERIFIER,
+                    (FileSystemAccessVerifyer) path -> {
+                        if (IOUtils.isFileFromDefaultFS(path)) {
+                            return path.normalize().startsWith(project.getAbsolutePath());
+                        }
+                        //allow all files from external storage
+                        return true;
+                    });
+
+            }
+        }
+    }
+
+    private String substituteDriverIfNeeded(@NotNull DBRProgressMonitor monitor, @NotNull DBPConnectionConfiguration connectionInfo, Properties connectProps, String url) {
+        final DBPDriverSubstitutionDescriptor driverSubstitution = container.getDriverSubstitution();
+        if (driverSubstitution != null) {
+            final DBPDataSourceProviderDescriptor dataSourceProvider = DBWorkbench.getPlatform().getDataSourceProviderRegistry()
+                .getDataSourceProvider(driverSubstitution.getProviderId());
+
+            if (dataSourceProvider != null) {
+                final DBPDriver substitutedDriver = dataSourceProvider.getDriver(driverSubstitution.getDriverId());
+
+                if (substitutedDriver != null) {
+                    final DBPDriverSubstitution substitution = driverSubstitution.getInstance();
+                    final Properties substitutedProperties = substitution.getConnectionProperties(monitor, container, connectionInfo);
+                    final String substitutedUrl = substitution.getConnectionURL(container, connectionInfo);
+
+                    if (substitutedProperties != null) {
+                        connectProps.putAll(substitutedProperties);
+                    }
+
+                    if (substitutedUrl != null) {
+                        url = substitutedUrl;
+                    }
+                } else {
+                    log.warn("Couldn't find driver '" + driverSubstitution.getDriverId()
+                        + "' for driver substitution '" + driverSubstitution.getId() + "', using original driver");
+                }
+            } else {
+                log.warn("Couldn't find data source provider '" + driverSubstitution.getProviderId()
+                    + "' for driver substitution '" + driverSubstitution.getId() + "', using original driver");
+            }
+        }
+        return url;
     }
 
     @Nullable
@@ -776,11 +821,11 @@ public abstract class JDBCDataSource extends AbstractDataSource
                 return ErrorType.UNIQUE_KEY_VIOLATION;
             }
         }
-        if (GeneralUtils.getRootCause(error) instanceof SocketException) {
+        if (CommonUtils.getRootCause(error) instanceof SocketException) {
             return ErrorType.CONNECTION_LOST;
         }
         if (error instanceof DBCConnectException) {
-            Throwable rootCause = GeneralUtils.getRootCause(error);
+            Throwable rootCause = CommonUtils.getRootCause(error);
             if (rootCause instanceof ClassNotFoundException) {
                 // Looks like bad driver configuration
                 return ErrorType.DRIVER_CLASS_MISSING;
@@ -812,16 +857,30 @@ public abstract class JDBCDataSource extends AbstractDataSource
     }
 
     /////////////////////////////////////////////////
-    // DBDFormatSettings
+    // Canceling
 
     public void cancelStatementExecute(DBRProgressMonitor monitor, JDBCStatement statement) throws DBException {
         try {
             statement.cancel();
         }
         catch (SQLException e) {
+            if (e instanceof SQLFeatureNotSupportedException) {
+                // ignore
+                return;
+            }
             throw new DBDatabaseException(e, this);
         }
     }
+
+    public boolean cancelCurrentExecution(@NotNull Connection connection, @Nullable Thread connectionThread) throws DBException {
+        if (connectionThread != null) {
+            connectionThread.interrupt();
+        }
+        return true;
+    }
+
+    /////////////////////////////////////////////////
+    // Certs
 
     protected String saveCertificateToFile(String rootCertProp) throws IOException {
         Path certPath = Files.createTempFile(

@@ -204,7 +204,7 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
     private final List<DBPDriverLibrary> libraries = new ArrayList<>();
     private final List<DBPDriverLibrary> origFiles = new ArrayList<>();
     private final List<ProviderPropertyDescriptor> mainPropertyDescriptors = new ArrayList<>();
-    private final List<ProviderPropertyDescriptor> providerPropertyDescriptors = new ArrayList<>();
+    private final Set<ProviderPropertyDescriptor> providerPropertyDescriptors = new LinkedHashSet<>();
     private final List<OSDescriptor> supportedSystems = new ArrayList<>();
 
     private final List<ReplaceInfo> driverReplacements = new ArrayList<>();
@@ -224,7 +224,6 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
 
     private Class<?> driverClass;
     private boolean isLoaded;
-    private Object driverInstance;
     private DriverClassLoader classLoader;
 
     private transient boolean isFailed = false;
@@ -781,23 +780,17 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
     @Override
     public <T> T getDriverInstance(@NotNull DBRProgressMonitor monitor)
             throws DBException {
-        if (driverInstance == null) {
+        if (driverClass == null) {
             loadDriver(monitor);
         }
-        if (isInternalDriver() && driverInstance == null) {
-            return (T)createDriverInstance();
-        }
-        return (T)driverInstance;
+        return (T) createDriverInstance();
     }
 
     public void resetDriverInstance() {
-        this.driverInstance = null;
         this.driverClass = null;
         this.isLoaded = false;
 
-        if (!DBWorkbench.isDistributed()) {
-            this.resolvedFiles.clear();
-        }
+        this.resolvedFiles.clear();
     }
 
     private Object createDriverInstance()
@@ -1344,12 +1337,6 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
                         ex);
                 }
 
-                // Create driver instance
-                /*if (!this.isInternalDriver())*/
-                {
-                    driverInstance = createDriverInstance();
-                }
-
                 isLoaded = true;
                 isFailed = false;
             }
@@ -1619,7 +1606,7 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
                         break;
                     }
                     Path driverFolder = getWorkspaceDriversStorageFolder();
-                    Path localDriverFile = driverFolder.resolve(depFile.getFile());
+                    Path localDriverFile = driverFolder.resolve(depFile.getFile().toString());
                     if (!Files.exists(localDriverFile) || depFile.getFileCRC() == 0 ||
                         depFile.getFileCRC() != calculateFileCRC(localDriverFile))
                     {
@@ -1648,7 +1635,7 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
                     }
                     try {
                         Path driverFolder = getWorkspaceDriversStorageFolder();
-                        Path localDriverFile = driverFolder.resolve(fileInfo.getFile());
+                        Path localDriverFile = driverFolder.resolve(fileInfo.getFile().toString());
                         if (!Files.exists(localDriverFile.getParent())) {
                             Files.createDirectories(localDriverFile.getParent());
                         }
@@ -1870,6 +1857,8 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
                         libraryFiles.add(fileInfo);
                         resolvedFiles.put(library, libraryFiles);
                         continue;
+                    } else {
+                        log.debug("Driver library path '" + library.getPath() + "' cannot be resolved at '" + customFile + "'. Skipping.");
                     }
                 }
                 Path srcLocalFile = library.getLocalFile();
@@ -1939,7 +1928,7 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
                 if (fileName.endsWith(".txt")) {
                     continue;
                 }
-                Path trgDirFile = trgLocalFile.resolve(dirFile.getFileName());
+                Path trgDirFile = trgLocalFile.resolve(dirFile.getFileName().toString());
                 if (Files.isDirectory(dirFile)) {
                     resolveDirectories(targetFileLocation, library, dirFile, trgDirFile, libraryFiles);
                 } else {

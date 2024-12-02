@@ -93,8 +93,6 @@ class ConnectionPageSettings extends ActiveWizardPage<ConnectionWizard> implemen
     @Nullable
     private IDataSourceConnectionEditor connectionEditor;
     private IDataSourceConnectionEditor originalConnectionEditor;
-    @Nullable
-    private final DataSourceDescriptor dataSource;
     private final Set<DataSourceDescriptor> activated = new HashSet<>();
     private IDialogPage[] subPages, extraPages;
     private CTabFolder tabFolder;
@@ -105,14 +103,12 @@ class ConnectionPageSettings extends ActiveWizardPage<ConnectionWizard> implemen
     ConnectionPageSettings(
         @NotNull ConnectionWizard wizard,
         @NotNull DataSourceViewDescriptor viewDescriptor,
-        @Nullable DataSourceDescriptor dataSource,
         @Nullable DBPDriverSubstitutionDescriptor driverSubstitution
     ) {
         super(PAGE_NAME + "." + viewDescriptor.getId());
 
         this.wizard = wizard;
         this.viewDescriptor = viewDescriptor;
-        this.dataSource = dataSource;
         this.driverSubstitution = driverSubstitution;
 
         if (driverSubstitution != null) {
@@ -188,6 +184,7 @@ class ConnectionPageSettings extends ActiveWizardPage<ConnectionWizard> implemen
             control.setRedraw(true);
         }
         //getContainer().updateTitleBar();
+        UIUtils.asyncExec(() -> control.setFocus());
     }
 
     @Override
@@ -538,9 +535,6 @@ class ConnectionPageSettings extends ActiveWizardPage<ConnectionWizard> implemen
     @NotNull
     @Override
     public DataSourceDescriptor getActiveDataSource() {
-        if (dataSource != null) {
-            return dataSource;
-        }
         return wizard.getActiveDataSource();
     }
 
@@ -593,6 +587,12 @@ class ConnectionPageSettings extends ActiveWizardPage<ConnectionWizard> implemen
         if (connectionEditor != null) {
             connectionEditor.dispose();
             connectionEditor = null;
+        }
+        if (extraPages != null) {
+            for (IDialogPage ep : extraPages) {
+                ep.dispose();
+            }
+            extraPages = null;
         }
         super.dispose();
     }

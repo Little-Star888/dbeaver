@@ -30,6 +30,7 @@ import org.jkiss.dbeaver.model.data.DBDDisplayFormat;
 import org.jkiss.dbeaver.model.data.DBDLabelValuePair;
 import org.jkiss.dbeaver.model.data.DBDValueHandler;
 import org.jkiss.dbeaver.model.exec.DBCExecutionContext;
+import org.jkiss.dbeaver.model.exec.DBCExecutionContextDefaults;
 import org.jkiss.dbeaver.model.exec.DBCExecutionPurpose;
 import org.jkiss.dbeaver.model.exec.DBCSession;
 import org.jkiss.dbeaver.model.impl.DBObjectNameCaseTransformer;
@@ -48,9 +49,7 @@ import org.jkiss.dbeaver.model.sql.completion.hippie.HippieProposalProcessor;
 import org.jkiss.dbeaver.model.sql.parser.SQLParserPartitions;
 import org.jkiss.dbeaver.model.sql.parser.SQLWordPartDetector;
 import org.jkiss.dbeaver.model.struct.*;
-import org.jkiss.dbeaver.model.struct.rdb.DBSProcedure;
-import org.jkiss.dbeaver.model.struct.rdb.DBSProcedureContainer;
-import org.jkiss.dbeaver.model.struct.rdb.DBSTableColumn;
+import org.jkiss.dbeaver.model.struct.rdb.*;
 import org.jkiss.dbeaver.model.text.TextUtils;
 import org.jkiss.dbeaver.runtime.DBWorkbench;
 import org.jkiss.utils.ArrayUtils;
@@ -262,24 +261,29 @@ public class SQLCompletionAnalyzer implements DBRRunnableParametrized<DBRProgres
                     }
                 } else if (dataSource instanceof DBSObjectContainer) {
                     // Try to get from active object
-                    DBSObject selectedObject = getActiveInstanceObject();
-                    DBSObject rootObject;
-                    if (selectedObject != null) {
-                        makeProposalsFromChildren(selectedObject, null, false, parameters);
-                        rootObject = DBUtils.getPublicObject(selectedObject.getParentObject());
-                    } else {
-                        rootObject = dataSource;
+                    DBCExecutionContext context = request.getContext().getExecutionContext();
+                    if (context != null) {
+                        DBCExecutionContextDefaults<?, ?> contextDefaults = context.getContextDefaults();
+                        if (contextDefaults != null) {
+                            DBSSchema defaultSchema = contextDefaults.getDefaultSchema();
+                            if (defaultSchema != null) {
+                                makeProposalsFromChildren(defaultSchema, null, false, parameters);
+                            }
+                            DBSCatalog defaultCatalog = contextDefaults.getDefaultCatalog();
+                            if (defaultCatalog != null) {
+                                makeProposalsFromChildren(defaultCatalog, null, false, parameters);
+                            }
+                        }
                     }
-                    if (!(rootObject instanceof DBPDataSource)) {
-                        makeDataSourceProposals(parameters);
-                    }
+                    // add top level objects to proposals
+                    makeDataSourceProposals(parameters);
                 }
                 if (!isInLiteral) {
                     if (rootObjects != null) {
                         for (DBSObject obj : rootObjects) {
                             makeProposalsFromChildren(obj, null, false, parameters);
                         }
-                    } else if (getActiveInstanceObject() == null && dataSource != null) {
+                    } else if (getActiveInstanceObject() == null) {
                         // get completion from data source
                         makeProposalsFromChildren(dataSource, null, false, parameters);
                     }
@@ -605,13 +609,13 @@ public class SQLCompletionAnalyzer implements DBRRunnableParametrized<DBRProgres
                         DBDValueHandler valueHandler = DBUtils.findValueHandler(session, attribute);
                         DBPImage attrImage = null;
                         for (DBDLabelValuePair valuePair : valueEnumeration) {
-                            String displayString = SQLUtils.convertValueToSQL(session.getDataSource(), attribute, valueHandler, valuePair.getValue(), DBDDisplayFormat.UI);
+                            String displayString = SQLUtils.convertValueToSQL(session.getDataSource(), attribute, valueHandler, valuePair.getValue(), DBDDisplayFormat.UI, false);
                             if (!CommonUtils.isEmpty(valuePair.getLabel()) && !CommonUtils.equalObjects(valuePair.getLabel(), valuePair.getValue())) {
                                 displayString += " - " + valuePair.getLabel() + "";
                             }
                             String sqlValue = isInLiteral ?
                                 valueHandler.getValueDisplayString(attribute, valuePair.getValue(), DBDDisplayFormat.NATIVE) :
-                                SQLUtils.convertValueToSQL(dataSource.getDataSource(), attribute, valueHandler, valuePair.getValue(), DBDDisplayFormat.NATIVE);
+                                SQLUtils.convertValueToSQL(dataSource.getDataSource(), attribute, valueHandler, valuePair.getValue(), DBDDisplayFormat.NATIVE, false);
                             proposals.add(request.getContext().createProposal(
                                 request,
                                 displayString,

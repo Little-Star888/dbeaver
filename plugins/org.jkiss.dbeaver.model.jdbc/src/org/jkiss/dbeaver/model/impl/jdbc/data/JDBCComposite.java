@@ -109,6 +109,9 @@ public abstract class JDBCComposite implements DBDComposite, DBDValueCloneable {
 
     public String getStringRepresentation()
     {
+        if (values != null) {
+            return Arrays.toString(values);
+        }
         return CommonUtils.toString(getRawValue());
     }
 
@@ -172,7 +175,7 @@ public abstract class JDBCComposite implements DBDComposite, DBDValueCloneable {
     public Object getAttributeValue(@NotNull DBSAttributeBase attribute) {
         int position = attribute.getOrdinalPosition();
         if (position >= values.length) {
-            log.debug("Attribute index is out of range (" + position + ">=" + values.length + ")");
+            log.debug("Index for attribute '" + attribute.getName() + "' is out of range (" + position + ">=" + values.length + ")");
             return null;
         }
         return values[position];
@@ -295,10 +298,9 @@ public abstract class JDBCComposite implements DBDComposite, DBDValueCloneable {
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof StructAttribute)) {
+            if (!(obj instanceof StructAttribute attr)) {
                 return false;
             }
-            StructAttribute attr = (StructAttribute)obj;
             return CommonUtils.equalObjects(name, attr.name) &&
                 valueType == attr.valueType &&
                 maxLength == attr.maxLength &&

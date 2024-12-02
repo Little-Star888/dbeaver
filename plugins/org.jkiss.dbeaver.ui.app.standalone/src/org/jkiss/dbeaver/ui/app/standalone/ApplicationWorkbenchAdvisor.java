@@ -55,6 +55,7 @@ import org.jkiss.dbeaver.model.app.DBPApplication;
 import org.jkiss.dbeaver.model.app.DBPProject;
 import org.jkiss.dbeaver.model.impl.preferences.BundlePreferenceStore;
 import org.jkiss.dbeaver.model.task.DBTTaskManager;
+import org.jkiss.dbeaver.registry.BasePlatformImpl;
 import org.jkiss.dbeaver.registry.DataSourceRegistry;
 import org.jkiss.dbeaver.runtime.DBWorkbench;
 import org.jkiss.dbeaver.runtime.OperationSystemState;
@@ -103,7 +104,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
         WORKBENCH_PREF_PAGE_ID + "/org.eclipse.ui.preferencePages.Workspace/org.eclipse.ui.preferencePages.BuildOrder",
         //WORKBENCH_PREF_PAGE_ID + "/org.eclipse.ui.preferencePages.ContentTypes",
         WORKBENCH_PREF_PAGE_ID + "/org.eclipse.ui.preferencePages.General.LinkHandlers",
-        WORKBENCH_PREF_PAGE_ID + "/org.eclipse.ui.preferencePages.Startup",
+        //WORKBENCH_PREF_PAGE_ID + "/org.eclipse.ui.preferencePages.Startup",
         WORKBENCH_PREF_PAGE_ID + "/org.eclipse.ui.trace.tracingPage",
         WORKBENCH_PREF_PAGE_ID + "/org.eclipse.epp.mpc.projectnatures",
         "org.eclipse.ui.internal.console.ansi.preferences.AnsiConsolePreferencePage",
@@ -112,6 +113,8 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
         WORKBENCH_PREF_PAGE_ID + "/" + EDITORS_PREF_PAGE_ID,
         WORKBENCH_PREF_PAGE_ID + "/" + EDITORS_PREF_PAGE_ID + "/org.eclipse.ui.preferencePages.AutoSave",
+
+        "org.eclipse.equinox.internal.p2.ui.sdk.ProvisioningPreferencePage",    // Install-Update
 
         // Team preferences - not needed in CE
         //"org.eclipse.team.ui.TeamPreferences",
@@ -134,7 +137,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
     // Move to General
     private static final String[] GENERAL_PREF_PAGES = {
-        "org.eclipse.equinox.internal.p2.ui.sdk.ProvisioningPreferencePage",    // Install-Update
         "org.eclipse.debug.ui.DebugPreferencePage"                              // Debugger
     };
 
@@ -385,6 +387,12 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
             if (desktop.isSupported(Desktop.Action.APP_EVENT_SYSTEM_SLEEP)) {
                 desktop.removeAppEventListener(systemSleepListener);
             }
+        }
+
+        if (DBWorkbench.getPlatform() instanceof BasePlatformImpl basePlatform) {
+            // Dispose navigator model earlier because it may lock some UI resources
+            // and we want to free them before application display will be disposed
+            basePlatform.disposeNavigatorModel();
         }
     }
 

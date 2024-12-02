@@ -38,12 +38,20 @@ public interface DBWHandlerDescriptor {
 
     String getDescription();
 
+    @NotNull
+    String getImplClassName();
+
     /**
      * Handler type
      */
     DBWHandlerType getType();
 
     boolean isSecured();
+
+    /**
+     * Whether this network handler requires a connection to exist on the remote server
+     */
+    boolean isDistributed();
 
     /**
      * Handler properties.

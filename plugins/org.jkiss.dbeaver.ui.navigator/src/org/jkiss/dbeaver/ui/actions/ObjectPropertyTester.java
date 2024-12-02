@@ -27,6 +27,7 @@ import org.jkiss.dbeaver.model.DBPDataSource;
 import org.jkiss.dbeaver.model.DBPDataSourceContainer;
 import org.jkiss.dbeaver.model.DBPOrderedObject;
 import org.jkiss.dbeaver.model.DBUtils;
+import org.jkiss.dbeaver.model.app.DBPProject;
 import org.jkiss.dbeaver.model.app.DBPResourceHandler;
 import org.jkiss.dbeaver.model.edit.*;
 import org.jkiss.dbeaver.model.navigator.*;
@@ -76,7 +77,6 @@ public class ObjectPropertyTester extends PropertyTester {
     @SuppressWarnings("unchecked")
     @Override
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-
         DBNNode node = RuntimeUtils.getObjectAdapter(receiver, DBNNode.class);
         if (node == null) {
             return false;
@@ -135,9 +135,9 @@ public class ObjectPropertyTester extends PropertyTester {
 */
             }
             case PROP_SUPPORTS_NATIVE_EXECUTION:
-                if (receiver instanceof DBNResource) {
+                if (receiver instanceof DBNResource dbnResource) {
                     List<DBPDataSourceContainer> associatedDataSources
-                        = (List<DBPDataSourceContainer>) ((DBNResource) receiver).getAssociatedDataSources();
+                        = (List<DBPDataSourceContainer>) dbnResource.getAssociatedDataSources();
                     if (CommonUtils.isEmpty(associatedDataSources)) {
                         return false;
                     }
@@ -163,8 +163,8 @@ public class ObjectPropertyTester extends PropertyTester {
                     return false;
                 }
 
-                if (node instanceof DBSWrapper) {
-                    DBSObject object = ((DBSWrapper) node).getObject();
+                if (node instanceof DBSWrapper wrapper) {
+                    DBSObject object = wrapper.getObject();
                     if (object == null || DBUtils.isReadOnly(object) || !(node.getParentNode() instanceof DBNContainer) ||
                         !DBWorkbench.getPlatform().getWorkspace().hasRealmPermission(RMConstants.PERMISSION_METADATA_EDITOR)
                     ) {
@@ -172,10 +172,13 @@ public class ObjectPropertyTester extends PropertyTester {
                     }
                     DBEObjectMaker objectMaker = getObjectManager(object.getClass(), DBEObjectMaker.class);
                     return objectMaker != null && objectMaker.canDeleteObject(object);
-                } else if (node instanceof DBNResource) {
-                    if ((((DBNResource) node).getFeatures() & DBPResourceHandler.FEATURE_DELETE) != 0) {
+                } else if (node instanceof DBNResource dbnResource) {
+                    if ((dbnResource.getFeatures() & DBPResourceHandler.FEATURE_DELETE) != 0) {
                         return true;
                     }
+                } else if (node instanceof DBNProject projectNode) {
+                    DBPProject project = projectNode.getProject();
+                    return project != project.getWorkspace().getActiveProject();
                 } else if (isResourceNode(node)) {
                     return true;
                 }
@@ -208,11 +211,11 @@ public class ObjectPropertyTester extends PropertyTester {
             }
             case PROP_CAN_MOVE_UP:
             case PROP_CAN_MOVE_DOWN: {
-                if (node instanceof DBNDatabaseNode) {
+                if (node instanceof DBNDatabaseNode dbNode) {
                     if (DBNUtils.isReadOnly(node)) {
                         return false;
                     }
-                    DBSObject object = ((DBNDatabaseNode) node).getObject();
+                    DBSObject object = dbNode.getObject();
                     if (object instanceof DBPOrderedObject) {
                         DBEObjectReorderer objectReorderer = getObjectManager(object.getClass(), DBEObjectReorderer.class);
                         if (objectReorderer != null) {
@@ -227,16 +230,19 @@ public class ObjectPropertyTester extends PropertyTester {
                 break;
             }
             case PROP_CAN_FILTER: {
+                if (node instanceof DBNDataSource ds && ds.getDataSource() == null) {
+                    return false;
+                }
                 if (node instanceof DBNDatabaseItem) {
                     node = node.getParentNode();
                 }
-                if (node instanceof DBNDatabaseFolder && ((DBNDatabaseFolder) node).getItemsMeta() != null) {
+                if (node instanceof DBNDatabaseNode dbNode && dbNode.getItemsMeta() != null) {
                     return true;
                 }
                 break;
             }
             case PROP_CAN_FILTER_OBJECT: {
-                if (node.getParentNode() instanceof DBNDatabaseFolder && ((DBNDatabaseFolder) node.getParentNode()).getItemsMeta() != null) {
+                if (node.getParentNode() instanceof DBNDatabaseNode dbNode && dbNode.getItemsMeta() != null) {
                     return true;
                 }
                 break;
@@ -245,8 +251,8 @@ public class ObjectPropertyTester extends PropertyTester {
                 if (node instanceof DBNDatabaseItem) {
                     node = node.getParentNode();
                 }
-                if (node instanceof DBNDatabaseFolder && ((DBNDatabaseFolder) node).getItemsMeta() != null) {
-                    DBSObjectFilter filter = ((DBNDatabaseFolder) node).getNodeFilter(((DBNDatabaseFolder) node).getItemsMeta(), true);
+                if (node instanceof DBNDatabaseNode dbNode && dbNode.getItemsMeta() != null) {
+                    DBSObjectFilter filter = dbNode.getNodeFilter(dbNode.getItemsMeta(), true);
                     if ("defined".equals(expectedValue)) {
                         return filter != null && !filter.isEmpty();
                     } else {
@@ -275,7 +281,8 @@ public class ObjectPropertyTester extends PropertyTester {
      * Check whether the owner project of the specified node has required permissions
      */
     public static boolean nodeProjectHasPermission(@NotNull DBNNode node, @NotNull String permissionName) {
-        return node.getOwnerProject().hasRealmPermission(permissionName);
+        DBPProject ownerProject = node.getOwnerProjectOrNull();
+        return ownerProject != null && ownerProject.hasRealmPermission(permissionName);
     }
 
     public static boolean canCreateObject(DBNNode node, Boolean onlySingle) {

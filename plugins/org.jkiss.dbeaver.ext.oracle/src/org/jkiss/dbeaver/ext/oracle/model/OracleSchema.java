@@ -37,6 +37,7 @@ import org.jkiss.dbeaver.model.runtime.DBRProgressMonitor;
 import org.jkiss.dbeaver.model.struct.DBSEntity;
 import org.jkiss.dbeaver.model.struct.DBSObject;
 import org.jkiss.dbeaver.model.struct.DBSObjectContainer;
+import org.jkiss.dbeaver.model.struct.DBSVisibilityScopeProvider;
 import org.jkiss.dbeaver.model.struct.rdb.DBSProcedureContainer;
 import org.jkiss.dbeaver.model.struct.rdb.DBSProcedureType;
 import org.jkiss.dbeaver.model.struct.rdb.DBSSchema;
@@ -57,13 +58,14 @@ public class OracleSchema extends OracleGlobalObject implements
     DBPSystemObject,
     DBSProcedureContainer,
     DBPObjectStatisticsCollector,
-    DBPScriptObject
+    DBPScriptObject,
+    DBSVisibilityScopeProvider
 {
     private static final Log log = Log.getLog(OracleSchema.class);
 
     // Synonyms read is very expensive. Exclude them from children by default
     // Children are used in auto-completion which must be fast
-    private static boolean SYNONYMS_AS_CHILDREN = false;
+    private boolean synonymsAsChildren = false;
 
     final public TableCache tableCache = new TableCache();
     final public ConstraintCache constraintCache = new ConstraintCache();
@@ -90,15 +92,14 @@ public class OracleSchema extends OracleGlobalObject implements
     private Date createTime;
     private transient OracleUser user;
 
-    public OracleSchema(OracleDataSource dataSource, long id, String name)
-    {
+    public OracleSchema(OracleDataSource dataSource, long id, String name) {
         super(dataSource, id > 0);
         this.id = id;
         this.name = name;
+        synonymsAsChildren = CommonUtils.getBoolean(dataSource.getContainer().getConnectionConfiguration().getProviderProperty(OracleConstants.PROP_SEARCH_METADATA_IN_SYNONYMS));
     }
 
-    public OracleSchema(@NotNull OracleDataSource dataSource, @NotNull ResultSet dbResult)
-    {
+    public OracleSchema(@NotNull OracleDataSource dataSource, @NotNull ResultSet dbResult) {
         super(dataSource, true);
         this.id = JDBCUtils.safeGetLong(dbResult, "USER_ID");
         this.name = JDBCUtils.safeGetString(dbResult, "USERNAME");
@@ -107,7 +108,7 @@ public class OracleSchema extends OracleGlobalObject implements
             this.name = "? " + super.hashCode();
         }
         this.createTime = JDBCUtils.safeGetTimestamp(dbResult, "CREATED");
-        SYNONYMS_AS_CHILDREN = CommonUtils.getBoolean(dataSource.getContainer().getConnectionConfiguration().getProviderProperty(OracleConstants.PROP_SEARCH_METADATA_IN_SYNONYMS));
+        synonymsAsChildren = CommonUtils.getBoolean(dataSource.getContainer().getConnectionConfiguration().getProviderProperty(OracleConstants.PROP_SEARCH_METADATA_IN_SYNONYMS));
     }
 
     public boolean isPublic()
@@ -373,11 +374,9 @@ public class OracleSchema extends OracleGlobalObject implements
     }
 
     @Override
-    public Collection<DBSObject> getChildren(@NotNull DBRProgressMonitor monitor)
-        throws DBException
-    {
+    public Collection<DBSObject> getChildren(@NotNull DBRProgressMonitor monitor) throws DBException {
         List<DBSObject> children = new ArrayList<>(tableCache.getAllObjects(monitor, this));
-        if (SYNONYMS_AS_CHILDREN) {
+        if (synonymsAsChildren) {
             children.addAll(synonymCache.getAllObjects(monitor, this));
         }
         children.addAll(packageCache.getAllObjects(monitor, this));
@@ -392,7 +391,7 @@ public class OracleSchema extends OracleGlobalObject implements
         if (table != null) {
             return table;
         }
-        if (SYNONYMS_AS_CHILDREN) {
+        if (synonymsAsChildren) {
             OracleSynonym synonym = synonymCache.getObject(monitor, this, childName);
             if (synonym != null) {
                 return synonym;
@@ -407,6 +406,11 @@ public class OracleSchema extends OracleGlobalObject implements
         throws DBException
     {
         return OracleTable.class;
+    }
+
+    @Override
+    public List<DBSObjectContainer> getPublicScopes(@NotNull DBRProgressMonitor monitor) {
+        return List.of(this.getDataSource().getPublicSchema());
     }
 
     @Override

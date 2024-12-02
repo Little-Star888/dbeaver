@@ -100,6 +100,11 @@ public class JDBCExecutionContext extends AbstractExecutionContext<JDBCDataSourc
         return dbCon;
     }
 
+    @Nullable
+    public Connection getConnectionOrNull() {
+        return this.connection;
+    }
+
     public void connect(DBRProgressMonitor monitor) throws DBCException {
         connect(monitor, null, null, null, true);
     }
@@ -288,8 +293,11 @@ public class JDBCExecutionContext extends AbstractExecutionContext<JDBCDataSourc
     //////////////////////////////////////////////////////////////
 
     @Override
-    public DBPTransactionIsolation getTransactionIsolation() {
+    public DBPTransactionIsolation getTransactionIsolation() throws DBCException {
         if (transactionIsolationLevel == null) {
+            if (isAutoCommit()) {
+                return JDBCTransactionIsolation.getByCode(Connection.TRANSACTION_NONE);
+            }
             if (!txnIsolationLevelReadInProgress) {
                 txnIsolationLevelReadInProgress = true;
                 new AbstractJob("Get transaction isolation level") {
@@ -324,10 +332,9 @@ public class JDBCExecutionContext extends AbstractExecutionContext<JDBCDataSourc
     @Override
     public void setTransactionIsolation(@NotNull DBRProgressMonitor monitor, @NotNull DBPTransactionIsolation transactionIsolation)
         throws DBCException {
-        if (!(transactionIsolation instanceof JDBCTransactionIsolation)) {
+        if (!(transactionIsolation instanceof JDBCTransactionIsolation jdbcTIL)) {
             throw new DBCException(ModelMessages.model_jdbc_exception_invalid_transaction_isolation_parameter);
         }
-        JDBCTransactionIsolation jdbcTIL = (JDBCTransactionIsolation) transactionIsolation;
         try {
             getConnection().setTransactionIsolation(jdbcTIL.getCode());
             transactionIsolationLevel = jdbcTIL.getCode();
@@ -350,6 +357,14 @@ public class JDBCExecutionContext extends AbstractExecutionContext<JDBCDataSourc
                     DBExecUtils.tryExecuteRecover(monitor, getDataSource(), monitor1 -> {
                         try {
                             autoCommit = getConnection().getAutoCommit();
+                            if (!autoCommit) {
+                                try {
+                                    transactionIsolationLevel = getConnection().getTransactionIsolation();
+                                } catch (Throwable e) {
+                                    transactionIsolationLevel = Connection.TRANSACTION_NONE;
+                                    log.debug("Error getting transaction isolation level: " + e.getMessage());
+                                }
+                            }
                         } catch (Exception e) {
                             log.error("Error getting auto commit state", e);
                         }
@@ -380,11 +395,24 @@ public class JDBCExecutionContext extends AbstractExecutionContext<JDBCDataSourc
     @Override
     public void setAutoCommit(@NotNull DBRProgressMonitor monitor, boolean autoCommit)
         throws DBCException {
+        if (this.autoCommit != null && this.autoCommit == autoCommit) {
+            return;
+        }
         monitor.subTask("Set JDBC connection auto-commit " + autoCommit);
         try {
             Connection dbCon = getConnection();
             dbCon.setAutoCommit(autoCommit);
             this.autoCommit = dbCon.getAutoCommit();
+            if (!this.autoCommit) {
+                try {
+                    transactionIsolationLevel = getConnection().getTransactionIsolation();
+                } catch (Throwable e) {
+                    transactionIsolationLevel = Connection.TRANSACTION_NONE;
+                    log.debug("Error getting transaction isolation level: " + e.getMessage());
+                }
+            } else {
+                transactionIsolationLevel = null;
+            }
         } catch (SQLException e) {
             throw new JDBCException(e, this);
         } finally {

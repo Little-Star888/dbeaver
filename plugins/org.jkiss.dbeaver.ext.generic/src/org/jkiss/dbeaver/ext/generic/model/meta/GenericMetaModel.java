@@ -393,6 +393,10 @@ public class GenericMetaModel {
                             }
                             String procedureCatalog = GenericUtils.safeGetStringTrimmed(procObject, dbResult, JDBCConstants.PROCEDURE_CAT);
                             String procedureName = GenericUtils.safeGetStringTrimmed(procObject, dbResult, JDBCConstants.PROCEDURE_NAME);
+                            if (procedureName == null) {
+                                // It may be a function?
+                                continue;
+                            }
                             String specificName = GenericUtils.safeGetStringTrimmed(procObject, dbResult, JDBCConstants.SPECIFIC_NAME);
                             int procTypeNum = GenericUtils.safeGetInt(procObject, dbResult, JDBCConstants.PROCEDURE_TYPE);
                             String remarks = GenericUtils.safeGetString(procObject, dbResult, JDBCConstants.REMARKS);
@@ -777,7 +781,7 @@ public class GenericMetaModel {
                 typeName = typeName.substring(0, typeName.length() - 2);
             }
         } else {
-            typeName = "N/A";
+            typeName = getDefaultTypeName();
         }
 
         {
@@ -1057,4 +1061,8 @@ public class GenericMetaModel {
             ((JDBCDataSourceInfo) dataSourceInfo).supportsViews();
     }
 
+    @NotNull
+    protected String getDefaultTypeName() {
+        return "N/A";  //$NON-NLS-1$
+    }
 }
