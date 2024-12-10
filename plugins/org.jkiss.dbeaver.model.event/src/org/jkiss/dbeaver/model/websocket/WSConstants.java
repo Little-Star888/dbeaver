@@ -16,10 +16,13 @@
  */
 package org.jkiss.dbeaver.model.websocket;
 
+import java.time.Duration;
+
 /**
  * WebSocket event constants
  */
 public interface WSConstants {
+    long IDLE_TIMEOUT = Duration.ofMinutes(5).toMillis();
     int NORMAL_STATUS = 1000;
 
     String WS_AUTH_HEADER = "SM-Auth-Token";
