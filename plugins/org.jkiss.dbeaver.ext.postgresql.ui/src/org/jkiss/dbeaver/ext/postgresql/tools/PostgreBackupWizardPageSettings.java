@@ -100,7 +100,7 @@ class PostgreBackupWizardPageSettings extends PostgreToolWizardPageSettings<Post
         encodingCombo.setText(settings.getEncoding());
 
         useInsertsCheck = UIUtils.createCheckbox(formatGroup,
-        	PostgreMessages.wizard_backup_page_setting_checkbox_use_insert,
+            PostgreMessages.wizard_backup_page_setting_checkbox_use_insert,
             PostgreMessages.wizard_backup_page_setting_checkbox_use_insert_tip,
             settings.isUseInserts(),
             2

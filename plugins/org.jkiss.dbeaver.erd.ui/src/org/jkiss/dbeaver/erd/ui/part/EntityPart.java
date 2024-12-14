@@ -211,8 +211,8 @@ public class EntityPart extends NodePart {
      */
     @Override
     public EntityFigure getContentPane() {
-//		EntityFigure figure = (EntityFigure) getFigure();
-//		return figure.getColumnsFigure();
+//        EntityFigure figure = (EntityFigure) getFigure();
+//        return figure.getColumnsFigure();
         return getFigure();
     }
 

@@ -88,18 +88,18 @@ public class CSVImporterTest {
   
     @Test
     public void guessColumnTypesWithLongData() throws DBException, IOException {
-    	List<StreamDataImporterColumnInfo> columnsInfo = readColumnsInfo("2147483648,-9223372036854775808", false);
-    	Assert.assertEquals(2,  columnsInfo.size());
-    	Assert.assertEquals(DBPDataKind.NUMERIC, columnsInfo.get(0).getDataKind());
-    	Assert.assertEquals("INTEGER", columnsInfo.get(0).getTypeName());
-    	Assert.assertEquals(DBPDataKind.NUMERIC, columnsInfo.get(1).getDataKind());
-    	Assert.assertEquals("INTEGER", columnsInfo.get(1).getTypeName());
+        List<StreamDataImporterColumnInfo> columnsInfo = readColumnsInfo("2147483648,-9223372036854775808", false);
+        Assert.assertEquals(2,  columnsInfo.size());
+        Assert.assertEquals(DBPDataKind.NUMERIC, columnsInfo.get(0).getDataKind());
+        Assert.assertEquals("INTEGER", columnsInfo.get(0).getTypeName());
+        Assert.assertEquals(DBPDataKind.NUMERIC, columnsInfo.get(1).getDataKind());
+        Assert.assertEquals("INTEGER", columnsInfo.get(1).getTypeName());
     }
     
     @Test
     public void returnsEmptyListWithEmptyFile() throws DBException, IOException {
-    	List<StreamDataImporterColumnInfo> columnsInfo = readColumnsInfo("", false);
-    	Assert.assertEquals(0,  columnsInfo.size());
+        List<StreamDataImporterColumnInfo> columnsInfo = readColumnsInfo("", false);
+        Assert.assertEquals(0,  columnsInfo.size());
     }
     
 

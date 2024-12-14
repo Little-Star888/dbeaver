@@ -1122,9 +1122,9 @@ public class ResultSetModel {
                     if (comparator != null) {
                         result = comparator.compare(cell1, cell2);
                     } else if (cell1 instanceof String && cell2 instanceof String) {
-                    	result = (cell1.toString()).compareToIgnoreCase(cell2.toString());
+                        result = (cell1.toString()).compareToIgnoreCase(cell2.toString());
                     } else {
-                    	result = DBUtils.compareDataValues(cell1, cell2);
+                        result = DBUtils.compareDataValues(cell1, cell2);
                     }
                           
                     if (co.isOrderDescending()) {

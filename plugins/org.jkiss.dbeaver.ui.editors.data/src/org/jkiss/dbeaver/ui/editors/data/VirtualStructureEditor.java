@@ -265,7 +265,7 @@ public class VirtualStructureEditor extends AbstractDatabaseObjectEditor<DBSEnti
                 public void widgetSelected(SelectionEvent e) {
                     DBVEntityConstraint virtualUK = (DBVEntityConstraint) ukTable.getSelection()[0].getData();
                     if (!UIUtils.confirmAction(parent.getShell(),
-                    		DataEditorsMessages.virtual_structure_editor_confirm_action_delete_key,
+                            DataEditorsMessages.virtual_structure_editor_confirm_action_delete_key,
                         NLS.bind(DataEditorsMessages.virtual_structure_editor_confirm_action_question_delete, virtualUK.getName()))) {
                         return;
                     }
@@ -346,7 +346,7 @@ public class VirtualStructureEditor extends AbstractDatabaseObjectEditor<DBSEnti
                 public void widgetSelected(SelectionEvent e) {
                     DBVEntityForeignKey virtualFK = (DBVEntityForeignKey) fkTable.getSelection()[0].getData();
                     if (!UIUtils.confirmAction(parent.getShell(),
-                    		DataEditorsMessages.virtual_structure_editor_confirm_action_delete_fk,
+                            DataEditorsMessages.virtual_structure_editor_confirm_action_delete_fk,
                         NLS.bind(DataEditorsMessages.virtual_structure_editor_confirm_action_question_delete_foreign, virtualFK.getName()))) {
                         return;
                     }

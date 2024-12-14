@@ -63,7 +63,7 @@ public abstract class PostgreTableBase extends JDBCTable<PostgreDataSource, Post
     private long oid;
     private long ownerId;
     private String description;
-	private boolean isPartition;
+    private boolean isPartition;
     private PostgreTablePersistence persistence;
     private Object acl;
     private String[] relOptions;
@@ -278,9 +278,9 @@ public abstract class PostgreTableBase extends JDBCTable<PostgreDataSource, Post
     }
 
     @DPIElement(cache = true)
-	public boolean isPartition() {
-		return isPartition;
-	}
+    public boolean isPartition() {
+        return isPartition;
+    }
 
     public void setPartition(boolean partition) {
         isPartition = partition;

@@ -68,7 +68,7 @@ public class DatabaseNotificationSink {
 
                         synchronized (DatabaseNotificationSink.class) {
                             if (currentlyNotifying.size() > 0) {
-//										popup.close();
+//                                        popup.close();
                                 showPopup();
                             }
                         }

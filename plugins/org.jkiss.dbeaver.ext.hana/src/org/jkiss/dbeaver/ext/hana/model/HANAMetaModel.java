@@ -360,7 +360,7 @@ public class HANAMetaModel extends GenericMetaModel
     @Override
     public DBSEntityConstraintType getUniqueConstraintType(JDBCResultSet dbResult) throws DBException, SQLException {
         return JDBCUtils.safeGetBoolean(dbResult, "IS_PRIMARY_KEY", HANAConstants.SYS_BOOLEAN_TRUE)
-        		? DBSEntityConstraintType.PRIMARY_KEY : DBSEntityConstraintType.UNIQUE_KEY;
+                ? DBSEntityConstraintType.PRIMARY_KEY : DBSEntityConstraintType.UNIQUE_KEY;
     }
 
     @Override

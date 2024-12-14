@@ -54,7 +54,7 @@ public class PendingTransactionsDialog extends TransactionInfoDialog {
 
     @Override
     protected boolean isResizable() {
-    	return true;
+        return true;
     }
 
     @Override

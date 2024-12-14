@@ -60,11 +60,11 @@ public class ExasolTableUniqueKey extends JDBCTableConstraint<ExasolTable, Exaso
     }
 
     public ExasolTableUniqueKey(
-    		ExasolTable exasolTable, 
-    		DBSEntityConstraintType constraintType,
-    		Boolean enabled,
-    		String name
-    		) {
+            ExasolTable exasolTable, 
+            DBSEntityConstraintType constraintType,
+            Boolean enabled,
+            String name
+            ) {
         super(exasolTable, name, "", constraintType, false);
         this.enabled = enabled;
     }
@@ -139,8 +139,8 @@ public class ExasolTableUniqueKey extends JDBCTableConstraint<ExasolTable, Exaso
     
     
 
-	public boolean hasColumn(ExasolTableColumn column)
-	{
+    public boolean hasColumn(ExasolTableColumn column)
+    {
         if (this.columns != null) {
             for (ExasolTableKeyColumn constColumn : columns) {
                 if (constColumn.getAttribute() == column) {
@@ -149,19 +149,19 @@ public class ExasolTableUniqueKey extends JDBCTableConstraint<ExasolTable, Exaso
             }
         }
         return false;
-	}
+    }
 
-	@Override
-	public String getObjectDefinitionText(DBRProgressMonitor monitor, Map<String, Object> options)
-			throws DBException
-	{
-		return ExasolUtils.getPKDdl(this, monitor);
-	}
-	
-	public void setEnabled(Boolean enable)
-	{
-		this.enabled = enable;
-	}
+    @Override
+    public String getObjectDefinitionText(DBRProgressMonitor monitor, Map<String, Object> options)
+            throws DBException
+    {
+        return ExasolUtils.getPKDdl(this, monitor);
+    }
+    
+    public void setEnabled(Boolean enable)
+    {
+        this.enabled = enable;
+    }
 
     
 }

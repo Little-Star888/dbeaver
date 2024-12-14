@@ -19,8 +19,8 @@
   -->
 
 <toc label="DBeaver Help">
-	<topic label="About DBeaver" href="docs/help/html/about.html">
-	</topic>
+    <topic label="About DBeaver" href="docs/help/html/about.html">
+    </topic>
     <topic label="Manage connections">
         <topic href="docs/help/html/dialogs/driver-manager.html" label="Manage drivers"/>
         <topic href="docs/help/html/dialogs/driver-editor.html" label="Driver editor dialog"/>

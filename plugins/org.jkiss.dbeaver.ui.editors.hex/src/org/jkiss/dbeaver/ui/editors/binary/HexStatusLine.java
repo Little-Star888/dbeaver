@@ -145,7 +145,7 @@ public class HexStatusLine extends Composite {
         if (isDisposed() || position.isDisposed()) return;
 
         String posText = BinaryEditorMessages.editor_binary_hex_status_line_offset + pos + " (dec) = " + Long.toHexString(pos) + " (binary)";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-//	String posText = String.format("Offset: %1$d (dec) = %1$X (binary)", pos);
+//    String posText = String.format("Offset: %1$d (dec) = %1$X (binary)", pos);
         position.setText(posText);
         //position.pack(true);
     }
@@ -162,7 +162,7 @@ public class HexStatusLine extends Composite {
         String valBinText = "0000000" + Long.toBinaryString(val); //$NON-NLS-1$
         String valText = BinaryEditorMessages.editor_binary_hex_status_line_value + val + " (dec) = " + Integer.toHexString(0x0ff & val) + " (binary) = " +  //$NON-NLS-2$ //$NON-NLS-3$
             valBinText.substring(valBinText.length() - 8) + " (bin)"; //$NON-NLS-1$
-//	String valText = String.format("Value: %1$d (dec) = %1$X (binary) = %2$s (bin)", val, valBinText.substring(valBinText.length()-8));
+//    String valText = String.format("Value: %1$d (dec) = %1$X (binary) = %2$s (bin)", val, valBinText.substring(valBinText.length()-8));
         value.setText(valText);
         //value.pack(true);
     }
@@ -178,7 +178,7 @@ public class HexStatusLine extends Composite {
 
         String selText = BinaryEditorMessages.editor_binary_hex_status_line_selection + sel[0] + " (0x" + Long.toHexString(sel[0]) + ") - " + sel[1] +  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
             " (0x" + Long.toHexString(sel[1]) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-//	String selText = String.format("Selection: %1$d (0x%1$X) - %2$d (0x%2$X)", sel[0], sel[1]);
+//    String selText = String.format("Selection: %1$d (0x%1$X) - %2$d (0x%2$X)", sel[0], sel[1]);
         position.setText(selText);
         //position.pack(true);
     }

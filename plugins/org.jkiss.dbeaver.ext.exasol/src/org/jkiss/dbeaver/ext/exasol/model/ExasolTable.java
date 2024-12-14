@@ -81,7 +81,7 @@ public class ExasolTable extends ExasolTableBase implements DBPScriptObject, DBP
     
     private ExasolTable getObject()
     {
-    	return this;
+        return this;
     }
 
     public class AdditionalInfo extends TableAdditionalInfo {
@@ -99,8 +99,8 @@ public class ExasolTable extends ExasolTableBase implements DBPScriptObject, DBP
         
         @Property(viewable = true, expensive = false,  updatable = false, order = 95)
         public Boolean getHasPartitionKey(DBRProgressMonitor monitor) throws DBCException {
-    		return hasPartitionKey;
-    	}
+            return hasPartitionKey;
+        }
         @Property(viewable = true, expensive = false, editable = false, order = 100)
         public Timestamp getLastCommit(DBRProgressMonitor monitor) throws DBCException {
             return lastCommit;
@@ -128,7 +128,7 @@ public class ExasolTable extends ExasolTableBase implements DBPScriptObject, DBP
         
         @Property(viewable = true, expensive = false, editable = false, order = 300, category = DBConstants.CAT_STATISTICS)
         public long getTableCount(DBRProgressMonitor monitor) throws DBCException {
-        	return this.tablecount;
+            return this.tablecount;
         }
 
     }    
@@ -224,8 +224,8 @@ public class ExasolTable extends ExasolTableBase implements DBPScriptObject, DBP
             additionalInfo.loaded = true;
             return;
         }
-    	JDBCSession session = DBUtils.openMetaSession(monitor, this, ExasolMessages.read_table_details );
-    	
+        JDBCSession session = DBUtils.openMetaSession(monitor, this, ExasolMessages.read_table_details );
+
         String sqlTableInfo = String.format(readAdditionalTableInfo,
                 getDataSource().ishasPriorityGroups() ? "table_has_partition_key,"  : "false as table_has_partition_key,",
                 tablePrefix,
@@ -235,7 +235,7 @@ public class ExasolTable extends ExasolTableBase implements DBPScriptObject, DBP
 
         // two statements necessary as the exasol optimizer is very stupid from time to time
         try (JDBCPreparedStatement stmt = session.prepareStatement(sqlTableInfo))
-    	{
+        {
             stmt.setBigDecimal(1, this.getObjectId());
             stmt.setBigDecimal(2, this.getObjectId());
             stmt.setString(3, this.getSchema().getName());
@@ -255,7 +255,7 @@ public class ExasolTable extends ExasolTableBase implements DBPScriptObject, DBP
         } catch (SQLException e) {
             throw new DBCException(e, session.getExecutionContext());
         }
-    	    
+
         String sqlTableSize = String.format(readTableSize,
                 tablePrefix
                 );
@@ -280,12 +280,12 @@ public class ExasolTable extends ExasolTableBase implements DBPScriptObject, DBP
     
     @Override
     public void refreshObjectState(DBRProgressMonitor monitor)
-    		throws DBCException
+            throws DBCException
     {
-    	this.read(monitor);
-    	this.tablePartitionColumnCache.clearCache();
-    	this.getSchema().getIndexCache().clearObjectCache(this);
-    	super.refreshObjectState(monitor);
+        this.read(monitor);
+        this.tablePartitionColumnCache.clearCache();
+        this.getSchema().getIndexCache().clearObjectCache(this);
+        super.refreshObjectState(monitor);
     }
     
     public TableAdditionalInfo getAdditionalInfo()
@@ -338,7 +338,7 @@ public class ExasolTable extends ExasolTableBase implements DBPScriptObject, DBP
     @Override
     @Association
     public Collection<ExasolTableForeignKey> getAssociations(@NotNull DBRProgressMonitor monitor) throws DBException {
-    	return getSchema().getAssociationCache().getObjects(monitor, getSchema(), this);
+        return getSchema().getAssociationCache().getObjects(monitor, getSchema(), this);
     }
     
     public synchronized DBSTableForeignKey getAssociation(DBRProgressMonitor monitor, String fkName) throws DBException {
@@ -348,9 +348,9 @@ public class ExasolTable extends ExasolTableBase implements DBPScriptObject, DBP
     
     
     public ExasolTableUniqueKey getPrimaryKey(@NotNull DBRProgressMonitor monitor) throws DBException {
-    	if (getConstraints(monitor).isEmpty())
-    		return null;
-    	return getConstraints(monitor).iterator().next();
+        if (getConstraints(monitor).isEmpty())
+            return null;
+        return getConstraints(monitor).iterator().next();
     }
     
 
@@ -401,33 +401,33 @@ public class ExasolTable extends ExasolTableBase implements DBPScriptObject, DBP
     
     public Collection<ExasolTableColumn> getDistributionKey(DBRProgressMonitor monitor) throws DBException
     {
-    	ArrayList<ExasolTableColumn> distKeyCols = new ArrayList<ExasolTableColumn>();
-    	
-    	for(ExasolTableColumn c : getAttributes(monitor))
-    	{
-    		if (c.isDistKey())
-    		{
-    			distKeyCols.add(c);
-    		}
-    	}
-    	return distKeyCols;
+        ArrayList<ExasolTableColumn> distKeyCols = new ArrayList<ExasolTableColumn>();
+
+        for(ExasolTableColumn c : getAttributes(monitor))
+        {
+            if (c.isDistKey())
+            {
+                distKeyCols.add(c);
+            }
+        }
+        return distKeyCols;
     }
     public ExasolTablePartitionColumn getPartition(String name) throws DBException {
-    	return tablePartitionColumnCache.getCachedObject(name);
-	}
+        return tablePartitionColumnCache.getCachedObject(name);
+    }
     
     public Collection<ExasolTablePartitionColumn> getPartitions(DBRProgressMonitor monitor) throws DBException {
-    	return tablePartitionColumnCache.getAllObjects(monitor, this);
+        return tablePartitionColumnCache.getAllObjects(monitor, this);
     }
     
     public ExasolTablePartitionColumnCache getPartitionCache()
     {
-    	return tablePartitionColumnCache;
+        return tablePartitionColumnCache;
     }
     
     public Collection<ExasolTableColumn> getAvailableColumns(DBRProgressMonitor monitor) throws DBException
     {
-    	return tablePartitionColumnCache.getAvailableTableColumns(this, monitor);
+        return tablePartitionColumnCache.getAvailableTableColumns(this, monitor);
     }
     
     public void setHasPartitionKey(Boolean hasPartitionKey) {

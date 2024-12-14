@@ -201,7 +201,7 @@ public class DisplayedContent implements StyledTextContent {
         for (TextChangeListener myTextListener : textListeners) myTextListener.textChanged(changedEvent);
 
         event = new TextChangingEvent(this);
-//	event.start = forward ? linesTimesColumns : 0;
+//    event.start = forward ? linesTimesColumns : 0;
         event.start = forward ? linesTimesColumns - 1 : 0;
         event.newText = "";
         event.replaceCharCount = linesInText * numberOfColumns - linesTimesColumns + currentLimit;
@@ -210,7 +210,7 @@ public class DisplayedContent implements StyledTextContent {
         event.newLineCount = 0;
         for (TextChangeListener myTextListener : textListeners) myTextListener.textChanging(event);
 
-//	data.delete(event.start, event.start + event.replaceCharCount);
+//    data.delete(event.start, event.start + event.replaceCharCount);
         if (forward)
             data.delete(linesTimesColumns, linesTimesColumns + event.replaceCharCount);
         else

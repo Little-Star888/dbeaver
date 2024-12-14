@@ -140,7 +140,7 @@ public class GisTransformUtils {
         if (crs1 instanceof GeodeticCRS && crs2 instanceof GeodeticCRS) {
             Set<CoordinateOperation> coordOps = CoordinateOperationFactory.createCoordinateOperations((GeodeticCRS) crs1, (GeodeticCRS) crs2);
             if (!coordOps.isEmpty()) {
-            	CoordinateOperation op = CoordinateOperationFactory.getMostPrecise(coordOps);
+                CoordinateOperation op = CoordinateOperationFactory.getMostPrecise(coordOps);
                 // Transform coord using the op CoordinateOperation from crs1 to crs2
                 jtsValue = transformGeometry(jtsValue, op);
                 return jtsValue;

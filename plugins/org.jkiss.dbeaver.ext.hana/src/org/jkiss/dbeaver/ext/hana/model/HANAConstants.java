@@ -21,7 +21,7 @@ public class HANAConstants {
     // HANA cloud connections use regular HTTPS port
     public static final String HTTPS_PORT_SUFFIX = ":443";
     
-	// boolean like columns in SYS schema are stored as VARCHAR(5) with values TRUE, FALSE
+    // boolean like columns in SYS schema are stored as VARCHAR(5) with values TRUE, FALSE
     public static final String SYS_BOOLEAN_TRUE = "TRUE";
     public static final String SYS_BOOLEAN_FALSE = "FALSE";
     

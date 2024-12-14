@@ -64,7 +64,7 @@ public class TrinoMetaModel extends GenericMetaModel {
             {
                 try (JDBCResultSet dbResult = dbStat.executeQuery()) {
                     if (dbResult.next()) {
-                    	return dbResult.getString(1);
+                        return dbResult.getString(1);
                     } else {
                         return "-- View definition not found in system catalog";
                     }
@@ -73,7 +73,7 @@ public class TrinoMetaModel extends GenericMetaModel {
         } catch (SQLException e) {
             throw new DBDatabaseException(e, dataSource);
         }
-    }	
+    }
 
     @Override
     public String getTableDDL(@NotNull DBRProgressMonitor monitor, @NotNull GenericTableBase sourceObject, @NotNull Map<String, Object> options) throws DBException {

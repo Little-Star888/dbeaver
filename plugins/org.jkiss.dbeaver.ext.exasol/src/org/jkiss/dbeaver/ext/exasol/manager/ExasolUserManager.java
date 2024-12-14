@@ -60,7 +60,7 @@ public class ExasolUserManager extends SQLObjectEditor<ExasolUser, ExasolDataSou
     protected ExasolUser createDatabaseObject(@NotNull DBRProgressMonitor monitor,
                                               @NotNull DBECommandContext context, Object container, Object copyFrom, @NotNull Map<String, Object> options)
         throws DBException {
-    	return new ExasolUser((ExasolDataSource) container, "user", "", "", "password", "", ExasolUserType.LOCAL);
+        return new ExasolUser((ExasolDataSource) container, "user", "", "", "password", "", ExasolUserType.LOCAL);
     }
 
     @Override
@@ -136,17 +136,17 @@ public class ExasolUserManager extends SQLObjectEditor<ExasolUser, ExasolDataSou
         }
 
         if (command.getProperties().containsKey("priority")) {
-        	
-        	ExasolPriority priority = obj.getPriority();
-        	
-        	if (ExasolConstants.PRIORITY_GROUP_CLASS.equals(priority.getClass().getName())) {
+
+            ExasolPriority priority = obj.getPriority();
+
+            if (ExasolConstants.PRIORITY_GROUP_CLASS.equals(priority.getClass().getName())) {
                 String script = String.format("GRANT PRIORITY GROUP %s to %s", DBUtils.getQuotedIdentifier(priority), DBUtils.getQuotedIdentifier(obj));
                 actionList.add(new SQLDatabasePersistAction(ExasolMessages.manager_assign_priority_group, script));
-        	}
-        	if (ExasolConstants.CONSUMER_GROUP_CLASS.equals(priority.getClass().getName())) {
+            }
+            if (ExasolConstants.CONSUMER_GROUP_CLASS.equals(priority.getClass().getName())) {
                 String script = String.format("ALTER USER  %s SET CONSUMER_GROUP = %s", DBUtils.getQuotedIdentifier(obj), DBUtils.getQuotedIdentifier(priority));
                 actionList.add(new SQLDatabasePersistAction(ExasolMessages.manager_assign_priority_group, script));
-        	}
+            }
         }
 
         if (command.getProperties().containsKey("dn")) {

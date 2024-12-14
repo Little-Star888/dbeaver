@@ -63,7 +63,7 @@ class GridColumnRenderer extends AbstractRenderer {
     }
     
     public static Rectangle getFilterControlBounds() {
-    	return IMAGE_FILTER.getBounds();
+        return IMAGE_FILTER.getBounds();
     }
 
     @Nullable

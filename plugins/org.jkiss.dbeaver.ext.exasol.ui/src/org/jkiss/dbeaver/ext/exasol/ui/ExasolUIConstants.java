@@ -43,16 +43,16 @@ public class ExasolUIConstants {
     
     static
     {
-    	rowSeparators.add("CRLF");
-    	rowSeparators.add("CR");
-    	rowSeparators.add("LF");
+        rowSeparators.add("CRLF");
+        rowSeparators.add("CR");
+        rowSeparators.add("LF");
     }
     
     static
     {
-    	stringSepModes.add("AUTO");
-    	stringSepModes.add("ALWAYS");
-    	stringSepModes.add("NEVER");
+        stringSepModes.add("AUTO");
+        stringSepModes.add("ALWAYS");
+        stringSepModes.add("NEVER");
     }
     
     static

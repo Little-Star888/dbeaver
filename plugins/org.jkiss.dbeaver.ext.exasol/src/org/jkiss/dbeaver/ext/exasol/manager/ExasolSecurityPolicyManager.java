@@ -91,36 +91,36 @@ public class ExasolSecurityPolicyManager
     protected void addObjectModifyActions(@NotNull DBRProgressMonitor monitor, @NotNull DBCExecutionContext executionContext, @NotNull List<DBEPersistAction> actionList,
                                           @NotNull ObjectChangeCommand command, @NotNull Map<String, Object> options)
     {
-    	
-    	ExasolSecurityPolicy policy = command.getObject();
-    	
-    	if (policy.getEnabled())
-    	{
-    		String script = String.format("ALTER SYSTEM SET PASSWORD_SECURITY_POLICY='%s'", policy.getSecurityString());
-    		actionList.add(new SQLDatabasePersistAction(script));
-    	} else {
-    		String script = String.format("ALTER SYSTEM SET PASSWORD_SECURITY_POLICY='OFF'", policy.getSecurityString());
-    		actionList.add(new SQLDatabasePersistAction(script));
-    	}
+        
+        ExasolSecurityPolicy policy = command.getObject();
+        
+        if (policy.getEnabled())
+        {
+            String script = String.format("ALTER SYSTEM SET PASSWORD_SECURITY_POLICY='%s'", policy.getSecurityString());
+            actionList.add(new SQLDatabasePersistAction(script));
+        } else {
+            String script = String.format("ALTER SYSTEM SET PASSWORD_SECURITY_POLICY='OFF'", policy.getSecurityString());
+            actionList.add(new SQLDatabasePersistAction(script));
+        }
 
     }
     
     @Override
     public boolean canDeleteObject(@NotNull ExasolSecurityPolicy object) {
-    	return false;
+        return false;
     }
 
     @Override
     public boolean canCreateObject(@NotNull Object container) {
-    	return false;
+        return false;
     }
 
 
-	@Override
-	protected void addObjectCreateActions(@NotNull DBRProgressMonitor monitor, @NotNull DBCExecutionContext executionContext, @NotNull List<DBEPersistAction> actions,
+    @Override
+    protected void addObjectCreateActions(@NotNull DBRProgressMonitor monitor, @NotNull DBCExecutionContext executionContext, @NotNull List<DBEPersistAction> actions,
                                           @NotNull ObjectCreateCommand command,
                                           @NotNull Map<String, Object> options) {
-	}
+    }
     
     
     

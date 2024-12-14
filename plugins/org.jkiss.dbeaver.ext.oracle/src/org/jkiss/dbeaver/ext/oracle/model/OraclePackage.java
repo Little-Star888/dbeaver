@@ -204,7 +204,7 @@ public class OraclePackage extends OracleSchemaObject
     public void refreshObjectState(@NotNull DBRProgressMonitor monitor) throws DBCException
     {
         this.valid = OracleUtils.getObjectStatus(monitor, this, OracleObjectType.PACKAGE) &&
-        		OracleUtils.getObjectStatus(monitor, this, OracleObjectType.PACKAGE_BODY);
+                OracleUtils.getObjectStatus(monitor, this, OracleObjectType.PACKAGE_BODY);
     }
 
     @Override

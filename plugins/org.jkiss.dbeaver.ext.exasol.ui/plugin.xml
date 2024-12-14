@@ -46,20 +46,20 @@
         </editorContribution>
     </extension>
     
-	<extension point="org.jkiss.dbeaver.databaseEditor">    
-	    <editor
-	              class="org.jkiss.dbeaver.ext.exasol.ui.editors.ExasolSourceViewEditor"
-	              contributor="org.jkiss.dbeaver.ui.editors.sql.SQLEditorContributorNested"
-	              description="%editor.exasol.source.view.description"
-	              icon="#sql_text"
-	              id="exasol.source.view"
-	              label="%editor.exasol.source.view.label"
-	              position="additions_middle"
-	              type="folder">
-	           <objectType name="org.jkiss.dbeaver.ext.exasol.model.ExasolView"/>
-	           <objectType name="org.jkiss.dbeaver.ext.exasol.model.ExasolScript"/>
-	           <objectType name="org.jkiss.dbeaver.ext.exasol.model.ExasolFunction"/>
-	    </editor>
+    <extension point="org.jkiss.dbeaver.databaseEditor">
+        <editor
+                  class="org.jkiss.dbeaver.ext.exasol.ui.editors.ExasolSourceViewEditor"
+                  contributor="org.jkiss.dbeaver.ui.editors.sql.SQLEditorContributorNested"
+                  description="%editor.exasol.source.view.description"
+                  icon="#sql_text"
+                  id="exasol.source.view"
+                  label="%editor.exasol.source.view.label"
+                  position="additions_middle"
+                  type="folder">
+               <objectType name="org.jkiss.dbeaver.ext.exasol.model.ExasolView"/>
+               <objectType name="org.jkiss.dbeaver.ext.exasol.model.ExasolScript"/>
+               <objectType name="org.jkiss.dbeaver.ext.exasol.model.ExasolFunction"/>
+        </editor>
         <editor
                 class="org.jkiss.dbeaver.ui.editors.sql.SQLSourceViewer"
                 contributor="org.jkiss.dbeaver.ui.editors.sql.SQLEditorContributorNested"

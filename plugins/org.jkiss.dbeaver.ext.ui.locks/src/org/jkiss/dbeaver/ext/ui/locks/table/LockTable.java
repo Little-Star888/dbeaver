@@ -162,7 +162,7 @@ public class LockTable extends DatabaseObjectListControl<DBAServerLock> {
             try {
                 try (DBCExecutionContext isolatedContext = lockManager.getDataSource().getDefaultInstance().openIsolatedContext(monitor, "View locks", null)) {
                     try (DBCSession session = isolatedContext.openSession(monitor, DBCExecutionPurpose.UTIL, "Kill server session by lock")) {
-                    		lockManager.alterSession(session, this.lock, options);	                       
+                            lockManager.alterSession(session, this.lock, options);                           
                         return null;
                     }
                 }

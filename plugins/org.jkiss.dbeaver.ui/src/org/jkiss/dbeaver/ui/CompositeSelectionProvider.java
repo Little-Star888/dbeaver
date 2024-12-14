@@ -77,10 +77,10 @@ public class CompositeSelectionProvider implements ISelectionProvider {
         } else {
             this.selection = selection;
             if (!CommonUtils.isEmpty(listeners)) {
-            	SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
-            	for (ISelectionChangedListener listener : listeners) {
-            		 listener.selectionChanged(event);
-            	}
+                SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
+                for (ISelectionChangedListener listener : listeners) {
+                     listener.selectionChanged(event);
+                }
             }
         }
     }
@@ -93,7 +93,7 @@ public class CompositeSelectionProvider implements ISelectionProvider {
     public void setProvider(ISelectionProvider newProvider)
     {
         if (this.provider != newProvider){
-        	ISelection newSelection = null;
+            ISelection newSelection = null;
             if (!CommonUtils.isEmpty(listeners)) {
                 if (this.provider != null){
                     for (ISelectionChangedListener listener : listeners) {
@@ -106,16 +106,16 @@ public class CompositeSelectionProvider implements ISelectionProvider {
                          newProvider.addSelectionChangedListener(listener);
                     }
 
-	                newSelection = newProvider.getSelection();
+                    newSelection = newProvider.getSelection();
                 } else {
-                	newSelection = this.selection;
+                    newSelection = this.selection;
                 }
             }
             this.provider = newProvider;
 
             if (newSelection != null){
-            	//force a selection change event propagation
-            	setSelection(newSelection);
+                //force a selection change event propagation
+                setSelection(newSelection);
             }
         }
     }

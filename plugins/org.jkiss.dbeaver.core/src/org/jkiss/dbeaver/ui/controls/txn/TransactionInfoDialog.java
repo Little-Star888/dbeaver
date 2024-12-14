@@ -56,7 +56,7 @@ public abstract class TransactionInfoDialog extends AbstractPopupPanel {
 
     @Override
     protected boolean isResizable() {
-    	return true;
+        return true;
     }
 
     protected abstract DBCExecutionContext getCurrentContext();

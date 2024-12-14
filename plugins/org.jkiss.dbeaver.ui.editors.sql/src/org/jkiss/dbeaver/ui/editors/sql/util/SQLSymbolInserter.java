@@ -458,13 +458,13 @@ public class SQLSymbolInserter implements VerifyKeyListener, ILinkedModeListener
     }
     
     private String getSelection() {
-    	ISelectionProvider selectionProvider = editor.getSelectionProvider();
+        ISelectionProvider selectionProvider = editor.getSelectionProvider();
         if (selectionProvider == null) {
             return null;
         }
         ITextSelection selection = (ITextSelection) selectionProvider.getSelection();
         if(selection == null) {
-        	return null;
+            return null;
         }
         return selection.getText();
     }

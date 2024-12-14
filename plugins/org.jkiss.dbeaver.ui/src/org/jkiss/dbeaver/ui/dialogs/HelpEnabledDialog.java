@@ -44,7 +44,7 @@ public abstract class HelpEnabledDialog extends BaseDialog {
 
     @Override
     protected boolean isResizable() {
-    	return true;
+        return true;
     }
 
 //    protected Button createHelpButton(Composite parent)

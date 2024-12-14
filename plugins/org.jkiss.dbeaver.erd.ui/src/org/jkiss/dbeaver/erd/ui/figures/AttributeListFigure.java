@@ -45,9 +45,9 @@ public class AttributeListFigure extends Figure {
         layout.horizontalSpacing = 0;
 /*
         FlowLayout layout = new FlowLayout(false);
-		layout.setMinorAlignment(FlowLayout.ALIGN_TOPLEFT);
-		layout.setStretchMinorAxis(true);
-		layout.setMinorSpacing(2);
+        layout.setMinorAlignment(FlowLayout.ALIGN_TOPLEFT);
+        layout.setStretchMinorAxis(true);
+        layout.setMinorSpacing(2);
 */
         setLayoutManager(layout);
         setBorder(new ColumnFigureBorder());

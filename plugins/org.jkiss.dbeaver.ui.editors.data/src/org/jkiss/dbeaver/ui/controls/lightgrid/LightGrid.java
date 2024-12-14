@@ -2170,9 +2170,9 @@ public abstract class LightGrid extends Canvas {
             if (x < x2) {
                 int ltSort = getContentProvider().getSortOrder(null);
                 if (ltSort != SWT.NONE 
-                		&& x > x2 - GridColumnRenderer.SORT_WIDTH - GridColumnRenderer.ARROW_MARGIN 
-                		&& x < x2 - GridColumnRenderer.ARROW_MARGIN 
-                		&& y > GridColumnRenderer.TOP_MARGIN)
+                        && x > x2 - GridColumnRenderer.SORT_WIDTH - GridColumnRenderer.ARROW_MARGIN
+                        && x < x2 - GridColumnRenderer.ARROW_MARGIN
+                        && y > GridColumnRenderer.TOP_MARGIN)
                 {
                     columnBeingSorted = null;
                     overSorter = true;
@@ -2190,9 +2190,9 @@ public abstract class LightGrid extends Canvas {
                             }
 
                             if(column.isOverFilterButton(x - x2, y)) {
-                            	columnBeingFiltered = column;
-                            	overFilter = true;
-                            	break;
+                                columnBeingFiltered = column;
+                                overFilter = true;
+                                break;
                             }
 
                             if (column.isOverIcon(x, y)) {
@@ -2242,12 +2242,12 @@ public abstract class LightGrid extends Canvas {
         }
 
         if(overFilter != hoveringOnColumnFilter) {
-        	if(!overSorter) {
-        		columnBeingFiltered = null;
-        		setCursor(null);
-        	}
-        		
-        	hoveringOnColumnFilter = overFilter;
+            if(!overSorter) {
+                columnBeingFiltered = null;
+                setCursor(null);
+            }
+
+            hoveringOnColumnFilter = overFilter;
         }
         
         if (overResizer != hoveringOnColumnResizer) {
@@ -3214,8 +3214,8 @@ public abstract class LightGrid extends Canvas {
         }
         
         if(hoveringOnColumnFilter) {
-        	handleHoverOnColumnHeader(e.x, e.y);
-        	 if (hoveringOnColumnFilter) {
+            handleHoverOnColumnHeader(e.x, e.y);
+             if (hoveringOnColumnFilter) {
                  return;
              }
         }
@@ -4546,9 +4546,9 @@ public abstract class LightGrid extends Canvas {
         }
         List<GridCell> cells = new ArrayList<>(selectedCells.size());
         for (GridPos pos : selectedCells) {
-        	GridCell cell = posToCell(pos);
-        	if (cell != null)
-        		cells.add(cell);
+            GridCell cell = posToCell(pos);
+            if (cell != null)
+                cells.add(cell);
         }
         return cells;
     }

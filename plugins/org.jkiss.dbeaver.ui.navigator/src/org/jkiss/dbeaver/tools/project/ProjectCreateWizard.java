@@ -51,7 +51,7 @@ public class ProjectCreateWizard extends BasicNewProjectResourceWizard implement
     private ProjectCreateRemotePage remoteProjectPage;
 
     public ProjectCreateWizard() {
-	}
+    }
 
     public IProject getProject() {
         return project;
@@ -87,7 +87,7 @@ public class ProjectCreateWizard extends BasicNewProjectResourceWizard implement
     }
 
     @Override
-	public boolean performFinish() {
+    public boolean performFinish() {
         if (!DBWorkbench.getPlatform().getWorkspace().canManageProjects()) {
             DBWorkbench.getPlatformUI().showError(
                 UINavigatorMessages.dialog_project_create_wizard_error_cannot_create,
@@ -138,7 +138,7 @@ public class ProjectCreateWizard extends BasicNewProjectResourceWizard implement
         } else {
             return false;
         }
-	}
+    }
 
     private IProject createProject(DBRProgressMonitor monitor) throws CoreException {
         final IProgressMonitor nestedMonitor = RuntimeUtils.getNestedMonitor(monitor);

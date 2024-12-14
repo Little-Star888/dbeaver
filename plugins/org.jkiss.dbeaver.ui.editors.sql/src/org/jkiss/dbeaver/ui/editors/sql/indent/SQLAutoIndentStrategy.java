@@ -56,9 +56,9 @@ public class SQLAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
     private String[] delimiters;
 
     private enum CommentType {
-    	Unknown,
-    	Block,
-    	EndOfLine
+        Unknown,
+        Block,
+        EndOfLine
     }
 
     /**
@@ -181,63 +181,63 @@ public class SQLAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
         for (int i = quoteStart; i < quoteEnd; i++) {
             final char ch = sourceCode.charAt(i);
             
-	        if (inString) {
-	        	if (prevChar == escapeChar) {
-		            switch (ch) {
-	                case 'n':
-	                    if (!endsWithLF(result, '\n')) {
-	                        result.append("\n");
-	                    }
-	                    break;
-	                case 'r':
-	                    if (!endsWithLF(result, '\r')) {
-	                        result.append("\r");
-	                    }
-	                    break;
-	                case 't':
-	                    result.append("\t");
-	                    break;
-	                default:
-	                    result.append(ch);
-	                    break;
-		            }
-	        	}
-	        	else {
-		            switch (ch) {
-	                case '"':
-	                    inString = false;
-	                    break;
-	                default:
-	                    if (ch == escapeChar) {
-	                        break;
-	                    }
+            if (inString) {
+                if (prevChar == escapeChar) {
+                    switch (ch) {
+                    case 'n':
+                        if (!endsWithLF(result, '\n')) {
+                            result.append("\n");
+                        }
+                        break;
+                    case 'r':
+                        if (!endsWithLF(result, '\r')) {
+                            result.append("\r");
+                        }
+                        break;
+                    case 't':
+                        result.append("\t");
+                        break;
+                    default:
+                        result.append(ch);
+                        break;
+                    }
+                }
+                else {
+                    switch (ch) {
+                    case '"':
+                        inString = false;
+                        break;
+                    default:
+                        if (ch == escapeChar) {
+                            break;
+                        }
                         result.append(ch);
                     }
-		        }
-	        }
+                }
+            }
             else if (inComment) {
-        		if (commentType == CommentType.Unknown && prevChar == '/' && ch == '*') {
-        			commentType = CommentType.Block;
-        		}
-        		else if (commentType == CommentType.Unknown && prevChar == '/' && ch == '/') {
-        			commentType = CommentType.EndOfLine;
-        		}
-        		else if (commentType == CommentType.Block && prevChar == '*' && ch == '/' ) {
-    				inComment = false;
-        		}
-        		else if (commentType == CommentType.EndOfLine && ch == '\n') {
-    				inComment = false;
-        		}
-        	}
+                if (commentType == CommentType.Unknown && prevChar == '/' && ch == '*') {
+                    commentType = CommentType.Block;
+                }
+                else if (commentType == CommentType.Unknown && prevChar == '/' && ch == '/') {
+                    commentType = CommentType.EndOfLine;
+                }
+                else if (commentType == CommentType.Block && prevChar == '*' && ch == '/' ) {
+                    inComment = false;
+                }
+                else if (commentType == CommentType.EndOfLine && ch == '\n') {
+                    inComment = false;
+                }
+            }
             else {
-            	switch (ch) {
-            	case '/':
-            		inComment = true;
-            		commentType = CommentType.Unknown;
-            		break;
-            	case '"':
-            		inString = true;
-            		break;
+                switch (ch) {
+                case '/':
+                    inComment = true;
+                    commentType = CommentType.Unknown;
+                    break;
+                case '"':
+                    inString = true;
+                    break;
                 case '\n':
                 case '\r':
                     // Append linefeed even if it is outside of quotes
@@ -246,7 +246,7 @@ public class SQLAutoIndentStrategy extends DefaultIndentLineAutoEditStrategy {
                         result.append(ch == '\n' ? "\n" : "\r");
                     }
                     break;
-            	}
+                }
             }
             
             prevChar = ch;

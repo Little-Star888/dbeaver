@@ -72,7 +72,7 @@ public class GenerateUUIDHandler extends NavigatorHandlerObjectBase {
                 ISelection selection = textViewer.getSelectionProvider().getSelection();
                 if (selection instanceof TextSelection) {
                     try {
-                    	String uuid = generateUUID();
+                        String uuid = generateUUID();
                         int offset = ((TextSelection) selection).getOffset();
                         int length = ((TextSelection) selection).getLength();
                         textViewer.getDocument().replace(

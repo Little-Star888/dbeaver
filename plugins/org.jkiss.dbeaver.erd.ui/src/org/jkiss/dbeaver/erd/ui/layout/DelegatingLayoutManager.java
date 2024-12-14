@@ -82,7 +82,7 @@ public class DelegatingLayoutManager implements LayoutManager {
 
                     if (entityDiagram.isLayoutManualAllowed() && !entityDiagram.isNeedsAutoLayout()) {
 
-                        //	yes we are okay to start populating the table bounds
+                        //    yes we are okay to start populating the table bounds
                         setLayoutManager(container, xyLayoutManager);
                         activeLayoutManager.layout(container);
 

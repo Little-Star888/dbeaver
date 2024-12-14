@@ -1944,7 +1944,7 @@ public class HexEditControl extends Composite {
             textAreasStart = position - (numberOfLines / 2) * bytesPerLine;
         ensureWholeScreenIsVisible();
         redrawTextAreas(true);
-//	setFocus();
+//    setFocus();
         updateScrollBar();
     }
 
@@ -2050,9 +2050,9 @@ public class HexEditControl extends Composite {
         redrawTextAreas(true);
     }
 
-	public void setDefWidth(int defValue) {
-		this.defWidth = defValue ;
-	}
+    public void setDefWidth(int defValue) {
+        this.defWidth = defValue ;
+    }
 
     public boolean isReadOnly() {
         return readOnly;

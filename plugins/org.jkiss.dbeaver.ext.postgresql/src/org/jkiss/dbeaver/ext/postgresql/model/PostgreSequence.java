@@ -275,10 +275,10 @@ public class PostgreSequence extends PostgreTableBase implements DBSSequence, DB
         getSequenceBody(monitor, sql, true);
         sql.append(';');
 
-		if (!CommonUtils.isEmpty(getDescription())) {
-			sql.append("\nCOMMENT ON SEQUENCE ").append(DBUtils.getEntityScriptName(this, options)).append(" IS ")
-					.append(SQLUtils.quoteString(this, getDescription())).append(";");
-		}
+        if (!CommonUtils.isEmpty(getDescription())) {
+            sql.append("\nCOMMENT ON SEQUENCE ").append(DBUtils.getEntityScriptName(this, options)).append(" IS ")
+                    .append(SQLUtils.quoteString(this, getDescription())).append(";");
+        }
         
         List<DBEPersistAction> actions = new ArrayList<>();
         PostgreUtils.getObjectGrantPermissionActions(monitor, this, actions, options);

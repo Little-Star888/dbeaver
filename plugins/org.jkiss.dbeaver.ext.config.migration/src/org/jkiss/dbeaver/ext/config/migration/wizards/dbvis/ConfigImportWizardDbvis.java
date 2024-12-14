@@ -19,7 +19,7 @@ package org.jkiss.dbeaver.ext.config.migration.wizards.dbvis;
 import org.jkiss.dbeaver.ext.config.migration.wizards.ConfigImportWizard;
 
 public class ConfigImportWizardDbvis extends ConfigImportWizard {
-	
+
     @Override
     protected ConfigImportWizardPageDbvis createMainPage()
     {

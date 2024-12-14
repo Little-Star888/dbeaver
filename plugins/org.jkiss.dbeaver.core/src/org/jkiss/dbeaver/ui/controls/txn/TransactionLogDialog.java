@@ -45,7 +45,7 @@ public class TransactionLogDialog extends TransactionInfoDialog {
 
     @Override
     protected boolean isResizable() {
-    	return true;
+        return true;
     }
 
     @Override

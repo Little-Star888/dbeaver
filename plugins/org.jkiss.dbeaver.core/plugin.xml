@@ -742,8 +742,8 @@
             <menu id="navigate" label="%menu.navigate">
                 <command commandId="org.jkiss.dbeaver.core.object.goto"><visibleWhen checkEnabled="true"/></command>
                 <command commandId="org.jkiss.dbeaver.ui.editors.sql.navigate.object">
-					  <visibleWhen checkEnabled="true"/>
-			    </command>
+                      <visibleWhen checkEnabled="true"/>
+                </command>
             </menu>
         </menuContribution><menuContribution allPopups="false" locationURI="menu:help?after=additions">
             <command commandId="org.jkiss.dbeaver.core.eula.showPopup" label="%command.org.jkiss.dbeaver.ui.eula.showPopup.name"/>

@@ -66,52 +66,52 @@ public class ExasolUserDialog extends BaseDialog {
 
         final Text commentText = UIUtils.createLabelText(group,ExasolMessages.dialog_create_user_comment, "", SWT.BORDER | SWT.MULTI);
         String[] userTypes = new String[] {
-        		ExasolMessages.dialog_create_user_kerberos,
-        		ExasolMessages.dialog_create_user_ldap,
-        		ExasolMessages.dialog_create_user_local
-        		};
+                ExasolMessages.dialog_create_user_kerberos,
+                ExasolMessages.dialog_create_user_ldap,
+                ExasolMessages.dialog_create_user_local
+                };
         final Text passwordText = UIUtils.createLabelText(groupText, ExasolMessages.dialog_create_user_local_password, "", SWT.BORDER | SWT.PASSWORD);
         final Text urlText = UIUtils.createLabelText(groupText,ExasolMessages.dialog_create_user_ldap_dn, "");
         final Text principalText = UIUtils.createLabelText(groupText,ExasolMessages.dialog_create_user_kerberos_principal, "");
-		passwordText.setEnabled(false);
-		urlText.setEnabled(false);
-		principalText.setEnabled(false);
+        passwordText.setEnabled(false);
+        urlText.setEnabled(false);
+        principalText.setEnabled(false);
         int cnt = 0;
 
         for (ExasolUserType type: ExasolUserType.values())
         {
-        	
-	        UIUtils.createRadioButton(
-	        		group,  
-	        		userTypes[cnt], 
-	        		type,
-	        		SelectionListener.widgetSelectedAdapter(selectionEvent -> {
-	        			selectedType = (ExasolUserType)selectionEvent.widget.getData();
-	        			switch (selectedType) {
-						case KERBEROS:
-	        				passwordText.setEnabled(false);
-	        				urlText.setEnabled(false);
-	        				principalText.setEnabled(true);
-							break;
-						case LDAP:
-	        				passwordText.setEnabled(false);
-	        				urlText.setEnabled(true);
-	        				principalText.setEnabled(false);
-							break;
-						case LOCAL:
-	        				passwordText.setEnabled(true);
-	        				urlText.setEnabled(false);
-	        				principalText.setEnabled(false);
-							break;
-						default:
-	        				passwordText.setEnabled(false);
-	        				urlText.setEnabled(false);
-	        				principalText.setEnabled(false);
-						break;
-						}
-	        		}
-	        		));
-	        cnt++;
+            
+            UIUtils.createRadioButton(
+                    group,  
+                    userTypes[cnt], 
+                    type,
+                    SelectionListener.widgetSelectedAdapter(selectionEvent -> {
+                        selectedType = (ExasolUserType)selectionEvent.widget.getData();
+                        switch (selectedType) {
+                        case KERBEROS:
+                            passwordText.setEnabled(false);
+                            urlText.setEnabled(false);
+                            principalText.setEnabled(true);
+                            break;
+                        case LDAP:
+                            passwordText.setEnabled(false);
+                            urlText.setEnabled(true);
+                            principalText.setEnabled(false);
+                            break;
+                        case LOCAL:
+                            passwordText.setEnabled(true);
+                            urlText.setEnabled(false);
+                            principalText.setEnabled(false);
+                            break;
+                        default:
+                            passwordText.setEnabled(false);
+                            urlText.setEnabled(false);
+                            principalText.setEnabled(false);
+                        break;
+                        }
+                    }
+                    ));
+            cnt++;
         }
         urlText.setEnabled(false);
 
@@ -128,16 +128,16 @@ public class ExasolUserDialog extends BaseDialog {
                 //enable/disable OK button
                 
                 if (
-                		name.isEmpty() |
-                		(selectedType == ExasolUserType.KERBEROS & kerberosPrincipal.isEmpty()) |
-                		(selectedType == ExasolUserType.LDAP & ldapDN.isEmpty()) |
-                		(selectedType == ExasolUserType.LOCAL & password.isEmpty()) 
-                	)
+                        name.isEmpty() |
+                        (selectedType == ExasolUserType.KERBEROS & kerberosPrincipal.isEmpty()) |
+                        (selectedType == ExasolUserType.LDAP & ldapDN.isEmpty()) |
+                        (selectedType == ExasolUserType.LOCAL & password.isEmpty()) 
+                    )
                 {
                     getButton(IDialogConstants.OK_ID).setEnabled(false);
-	            } else {
-	                getButton(IDialogConstants.OK_ID).setEnabled(true);
-	            }
+                } else {
+                    getButton(IDialogConstants.OK_ID).setEnabled(true);
+                }
             }
         };
         
@@ -161,7 +161,7 @@ public class ExasolUserDialog extends BaseDialog {
     
     public String getKerberosPrincipal()
     {
-    	return kerberosPrincipal;
+        return kerberosPrincipal;
     }
     
 
@@ -176,7 +176,7 @@ public class ExasolUserDialog extends BaseDialog {
     }
     
     public ExasolUserType getUserType() {
-    	return selectedType;
+        return selectedType;
     }
 
     

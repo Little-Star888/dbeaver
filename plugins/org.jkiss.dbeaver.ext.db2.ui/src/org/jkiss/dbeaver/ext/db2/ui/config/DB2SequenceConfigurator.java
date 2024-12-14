@@ -33,7 +33,7 @@ public class DB2SequenceConfigurator implements DBEObjectConfigurator<DB2Sequenc
 
     @Override
     public DB2Sequence configureObject(@NotNull DBRProgressMonitor monitor, @Nullable DBECommandContext commandContext, @Nullable Object container, @NotNull DB2Sequence sequence, @NotNull Map<String, Object> options) {
-    	DB2Schema schema = (DB2Schema) container;
+        DB2Schema schema = (DB2Schema) container;
         return new UITask<DB2Sequence>() {
             @Override
             protected DB2Sequence runTask() {

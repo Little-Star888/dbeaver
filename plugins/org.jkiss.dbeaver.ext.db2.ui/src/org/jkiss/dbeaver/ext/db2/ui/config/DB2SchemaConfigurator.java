@@ -45,7 +45,7 @@ public class DB2SchemaConfigurator implements DBEObjectConfigurator<DB2Schema> {
         return new UITask<DB2Schema>() {
             @Override
             protected DB2Schema runTask() {
-            	NewSchemaDialog dialog = new NewSchemaDialog(UIUtils.getActiveWorkbenchShell());
+                NewSchemaDialog dialog = new NewSchemaDialog(UIUtils.getActiveWorkbenchShell());
                 if (dialog.open() != IDialogConstants.OK_ID) {
                     return null;
                 }

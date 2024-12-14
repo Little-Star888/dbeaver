@@ -69,9 +69,9 @@ public class ProjectExportWizard extends Wizard implements IExportWizard {
     }
 
     public ProjectExportWizard() {
-	}
+    }
 
-	@Override
+    @Override
     public void init(IWorkbench workbench, IStructuredSelection selection) {
         setWindowTitle(CoreMessages.dialog_project_export_wizard_window_title);
         setNeedsProgressMonitor(true);
@@ -84,8 +84,8 @@ public class ProjectExportWizard extends Wizard implements IExportWizard {
         addPage(mainPage);
     }
 
-	@Override
-	public boolean performFinish() {
+    @Override
+    public boolean performFinish() {
         final ProjectExportData exportData = mainPage.getExportData();
         try {
             UIUtils.run(getContainer(), true, true, monitor -> {
@@ -107,7 +107,7 @@ public class ProjectExportWizard extends Wizard implements IExportWizard {
             return false;
         }
         return true;
-	}
+    }
 
     private void exportProjects(DBRProgressMonitor monitor, final ProjectExportData exportData)
         throws IOException, CoreException, InterruptedException

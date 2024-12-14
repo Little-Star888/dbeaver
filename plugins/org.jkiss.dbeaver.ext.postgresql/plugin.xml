@@ -579,8 +579,8 @@
                 <driver
                         id="postgres-gcloud-jdbc"
                         label="Google Cloud SQL - PostgreSQL"
-	                    icon="icons/google_cloud_sql_icon.png"
-	                    iconBig="icons/google_cloud_sql_icon_big.png"
+                        icon="icons/google_cloud_sql_icon.png"
+                        iconBig="icons/google_cloud_sql_icon_big.png"
                         class="org.postgresql.Driver"
                         sampleURL="jdbc:postgresql:///[{database}]?cloudSqlInstance={host}"
                         useURL="true"

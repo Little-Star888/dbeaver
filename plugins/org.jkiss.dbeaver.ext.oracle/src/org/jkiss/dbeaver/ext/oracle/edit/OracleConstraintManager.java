@@ -79,10 +79,10 @@ public class OracleConstraintManager extends SQLConstraintManager<OracleTableCon
     protected void addObjectCreateActions(@NotNull DBRProgressMonitor monitor, @NotNull DBCExecutionContext executionContext, @NotNull List<DBEPersistAction> actions,
                                           @NotNull ObjectCreateCommand command, @NotNull Map<String, Object> options)
     {
-    	OracleTableConstraint constraint = command.getObject();
+        OracleTableConstraint constraint = command.getObject();
         boolean isView = constraint.getTable().isView();
         String tableType = isView ? "VIEW" : "TABLE";
-    	OracleTableBase table = constraint.getTable();
+        OracleTableBase table = constraint.getTable();
         actions.add(
                 new SQLDatabasePersistAction(
                     ModelMessages.model_jdbc_create_new_constraint,
@@ -90,7 +90,7 @@ public class OracleConstraintManager extends SQLConstraintManager<OracleTableCon
                         "\nADD " + getNestedDeclaration(monitor, table, command, options) +
                     " "  + (!isView && constraint.getStatus() == OracleObjectStatus.ENABLED ? "ENABLE" : "DISABLE" ) +
                     (isView ? " NOVALIDATE" : "")
-                	));
+                    ));
     }
 
     @Override

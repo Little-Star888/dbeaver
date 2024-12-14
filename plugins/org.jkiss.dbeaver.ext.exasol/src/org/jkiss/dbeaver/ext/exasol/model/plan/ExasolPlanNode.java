@@ -131,7 +131,7 @@ public class ExasolPlanNode extends AbstractExecutionPlanNode {
 
     // ----------------------
     // Methods from Interface
-    // ---------------------	
+    // ---------------------
     @Override
     public DBCPlanNode getParent() {
         return parent;

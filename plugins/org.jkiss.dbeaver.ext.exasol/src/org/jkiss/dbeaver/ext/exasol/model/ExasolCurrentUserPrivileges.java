@@ -31,7 +31,7 @@ public class ExasolCurrentUserPrivileges {
 
     private static final Log LOG = Log.getLog(ExasolCurrentUserPrivileges.class);
 
-	private static final String C_QUERY_DICTIONARY = "/*snapshot execution*/ SELECT CONNECTION_NAME FROM sys.EXA_DBA_CONNECTIONS WHERE false";
+    private static final String C_QUERY_DICTIONARY = "/*snapshot execution*/ SELECT CONNECTION_NAME FROM sys.EXA_DBA_CONNECTIONS WHERE false";
     private static final String C_MAJOR_VERSION = "/*snapshot execution*/ select TO_NUMBER(\"VALUE\") AS VERSION from \"$ODBCJDBC\".DB_METADATA WHERE name LIKE 'databaseMajorVersion'";
     private static final String C_MINOR_VERSION = "/*snapshot execution*/ select TO_NUMBER(\"VALUE\") AS VERSION from \"$ODBCJDBC\".DB_METADATA WHERE name LIKE 'databaseMinorVersion'";
 
@@ -43,8 +43,8 @@ public class ExasolCurrentUserPrivileges {
 
     public ExasolCurrentUserPrivileges(DBRProgressMonitor monitor,
                                        JDBCSession session, ExasolDataSource exasolDataSource) {
-    	
-    	userHasDictionaryAccess = ExasolCurrentUserPrivileges.verifyPriv(C_QUERY_DICTIONARY, session);
+        
+        userHasDictionaryAccess = ExasolCurrentUserPrivileges.verifyPriv(C_QUERY_DICTIONARY, session);
 
         majorVersion = queryVersion(C_MAJOR_VERSION, session);
         minorVersion = queryVersion(C_MINOR_VERSION, session);
@@ -68,28 +68,28 @@ public class ExasolCurrentUserPrivileges {
     }
     
     public Boolean getUserHasDictionaryAccess() {
-    	return userHasDictionaryAccess;
+        return userHasDictionaryAccess;
     }
     
     public Integer getMajorVersion() {
-    	return majorVersion;
+        return majorVersion;
     }
     
     public Integer getMinorVersion() {
-    	return minorVersion;
+        return minorVersion;
     }
     
     public String getTablePrefix(ExasolSysTablePrefix fallback) {
-    	if (userHasDictionaryAccess) {
-    		return ExasolSysTablePrefix.DBA.toString();
-    	}
-    	else {
-    		return fallback.toString();
-    	}
+        if (userHasDictionaryAccess) {
+            return ExasolSysTablePrefix.DBA.toString();
+        }
+        else {
+            return fallback.toString();
+        }
     }
     
     private static Integer queryVersion(String sql, JDBCSession session) {
-    	Integer version;
+        Integer version;
         try (JDBCPreparedStatement dbStat = session.prepareStatement(sql)) {
             try (ResultSet rs = dbStat.executeQuery()) {
                 rs.next();
@@ -97,11 +97,11 @@ public class ExasolCurrentUserPrivileges {
                 return version;
             }
         } catch(SQLException e) {
-        	LOG.error("Error extracting Exasol version: fallback to version 5");
-        	version = 5;
+            LOG.error("Error extracting Exasol version: fallback to version 5");
+            version = 5;
         }
         return version;
-    	
+        
     }
 
     private static Boolean verifyPriv(String sql, JDBCSession session) {
@@ -121,22 +121,22 @@ public class ExasolCurrentUserPrivileges {
     
     public Boolean hasPartitionColumns()
     {
-    	return hasPasswordPolicy();
+        return hasPasswordPolicy();
     }
     
     public Boolean hasPriorityGroups()
     {
-    	return getAtLeastV6() && getMinorVersion() >= 1  && getMajorVersion() < 7;
+        return getAtLeastV6() && getMinorVersion() >= 1  && getMajorVersion() < 7;
     }
     
     public Boolean hasPasswordPolicy()
     {
-    	return (getAtLeastV6() && getMinorVersion() >= 1) || getMajorVersion() >= 7;
+        return (getAtLeastV6() && getMinorVersion() >= 1) || getMajorVersion() >= 7;
     }
     
     public Boolean hasConsumerGroups()
     {
-    	return getMajorVersion() >= 7;
+        return getMajorVersion() >= 7;
     }
 
 

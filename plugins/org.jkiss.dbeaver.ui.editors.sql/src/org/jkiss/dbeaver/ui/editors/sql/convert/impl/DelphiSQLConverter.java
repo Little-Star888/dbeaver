@@ -25,15 +25,15 @@ import java.util.Map;
  * DelphiSQLConverter
  */
 public class DelphiSQLConverter extends SourceCodeSQLConverter {
-	
-	public static final String OPTION_USE_STRING_BUILDER = "use-string-builder";
+
+    public static final String OPTION_USE_STRING_BUILDER = "use-string-builder";
 
     @Override
     protected void convertSourceLines(StringBuilder result, String[] sourceLines, String lineDelimiter, Map<String, Object> options) {
-    	boolean useStringBuilder = CommonUtils.toBoolean(options.get(OPTION_USE_STRING_BUILDER));
+        boolean useStringBuilder = CommonUtils.toBoolean(options.get(OPTION_USE_STRING_BUILDER));
         boolean trailingLineFeed = lineDelimiter.startsWith("#");
         if(useStringBuilder) {
-        	result.append("Query := TStringList.Create;\n");
+            result.append("Query := TStringList.Create;\n");
         }
         for (int i = 0; i < sourceLines.length; i++) {
             if (useStringBuilder) {

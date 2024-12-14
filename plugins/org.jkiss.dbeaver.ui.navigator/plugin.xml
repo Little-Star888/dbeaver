@@ -336,7 +336,7 @@
     </extension>
 
     <extension point="org.eclipse.ui.handlers">
-    	<handler commandId="org.jkiss.dbeaver.ui.object.property.source.activate" class="org.jkiss.dbeaver.ui.editors.entity.handlers.ObjectPropertySwitchToSourceHandler">
+        <handler commandId="org.jkiss.dbeaver.ui.object.property.source.activate" class="org.jkiss.dbeaver.ui.editors.entity.handlers.ObjectPropertySwitchToSourceHandler">
             <enabledWhen>
                 <with variable="activeEditor">
                     <adapt type="org.jkiss.dbeaver.ui.editors.entity.EntityEditor">
@@ -344,7 +344,7 @@
                     </adapt>
                 </with>
             </enabledWhen>
-    	</handler>
+        </handler>
         <!-- Navigator handlers -->
 
         <handler commandId="org.jkiss.dbeaver.core.object.open" class="org.jkiss.dbeaver.ui.navigator.actions.NavigatorHandlerObjectOpen">

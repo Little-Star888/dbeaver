@@ -19,7 +19,7 @@ package org.jkiss.dbeaver.ext.config.migration.wizards.squirrel;
 import org.jkiss.dbeaver.ext.config.migration.wizards.ConfigImportWizard;
 
 public class ConfigImportWizardSquirrel extends ConfigImportWizard {
-	
+    
     @Override
     protected ConfigImportWizardPageSquirrel createMainPage()
     {

@@ -70,12 +70,12 @@ public class ExasolScriptManager extends SQLObjectEditor<ExasolScript, ExasolSch
     
     private String dropScript(ExasolScript script)
     {
-    	if (script.getType().equals("ADAPTER"))
-    	{
-    		return "DROP ADAPTER SCRIPT "  + script.getFullyQualifiedName(DBPEvaluationContext.DDL);
-    	} else {
-    		return "DROP  SCRIPT "  + script.getFullyQualifiedName(DBPEvaluationContext.DDL);
-    	}
+        if (script.getType().equals("ADAPTER"))
+        {
+            return "DROP ADAPTER SCRIPT "  + script.getFullyQualifiedName(DBPEvaluationContext.DDL);
+        } else {
+            return "DROP  SCRIPT "  + script.getFullyQualifiedName(DBPEvaluationContext.DDL);
+        }
     }
     
  

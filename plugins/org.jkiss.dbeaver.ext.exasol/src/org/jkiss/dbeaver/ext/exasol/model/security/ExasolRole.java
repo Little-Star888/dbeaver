@@ -38,27 +38,27 @@ public class ExasolRole extends ExasolGrantee  implements DBARole, DBPNamedObjec
     private Timestamp created;
 
     public ExasolRole(ExasolDataSource dataSource, ResultSet resultSet) {
-    	super(dataSource, resultSet);
-    	if (resultSet != null) {
-	        this.name = JDBCUtils.safeGetString(resultSet, "ROLE_NAME");
-	        this.description = JDBCUtils.safeGetStringTrimmed(resultSet, "ROLE_COMMENT");
-	        this.dataSource = dataSource;
-	        this.created = JDBCUtils.safeGetTimestamp(resultSet, "CREATED");
-    	} else {
-    		this.name = "New Role";
-    	}
+        super(dataSource, resultSet);
+        if (resultSet != null) {
+            this.name = JDBCUtils.safeGetString(resultSet, "ROLE_NAME");
+            this.description = JDBCUtils.safeGetStringTrimmed(resultSet, "ROLE_COMMENT");
+            this.dataSource = dataSource;
+            this.created = JDBCUtils.safeGetTimestamp(resultSet, "CREATED");
+        } else {
+            this.name = "New Role";
+        }
     }
 
     public ExasolRole(ExasolDataSource dataSource, String name,
-			String description)
-	{
-    	super(dataSource,false);
-		this.dataSource = dataSource;
-		this.name = name;
-		this.description = description;
-	}
+            String description)
+    {
+        super(dataSource,false);
+        this.dataSource = dataSource;
+        this.name = name;
+        this.description = description;
+    }
 
-	@NotNull
+    @NotNull
     @Override
     @Property(viewable = true, order = 1)
     public String getName() {
@@ -73,7 +73,7 @@ public class ExasolRole extends ExasolGrantee  implements DBARole, DBPNamedObjec
     @Property(viewable = true, order = 20)
     public Timestamp getCreated()
     {
-    	return this.created;
+        return this.created;
     }
 
     @Override
@@ -83,24 +83,24 @@ public class ExasolRole extends ExasolGrantee  implements DBARole, DBPNamedObjec
 
     
     public void setDescription(String description) {
-    	this.description = description;
+        this.description = description;
     }
     
     @Override
     public String toString()
     {
-    	return "Role "+ getName();
+        return "Role "+ getName();
     }
 
-	@Override
-	public void setName(String newName)
-	{
-		this.name = newName;
-	}
-	
-		
+    @Override
+    public void setName(String newName)
+    {
+        this.name = newName;
+    }
+    
+        
 
 }
 
-	
+    
 

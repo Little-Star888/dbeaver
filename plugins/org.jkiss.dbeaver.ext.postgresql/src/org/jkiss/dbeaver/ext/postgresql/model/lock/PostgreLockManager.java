@@ -1,7 +1,7 @@
 /*
  * DBeaver - Universal Database Manager
  * Copyright (C) 2017 Andrew Khitrin (ahitrin@gmail.com)
- * 				 2017 Dmitriy.Gurov (dvgurov@gmail.com) 
+ *                  2017 Dmitriy.Gurov (dvgurov@gmail.com) 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import java.util.*;
 
 public class PostgreLockManager extends LockGraphManager implements DBAServerLockManager<PostgreLock,PostgreLockItem> {
 
-	public static final String LOCK_QUERY =
+    public static final String LOCK_QUERY =
         "with locks as ( "+
                     "select  "+
                      "pid,locktype, mode,granted,transactionid tid,relation,page,tuple "+
@@ -52,14 +52,14 @@ public class PostgreLockManager extends LockGraphManager implements DBAServerLoc
                        "('RowShareLock','ExclusiveLock',1), ('RowShareLock','AccessExclusiveLock',2),        "+
                        "('RowExclusiveLock','ShareLock', 1), ('RowExclusiveLock','ShareRowExclusiveLock',2),  ('RowExclusiveLock','ExclusiveLock',3), ('RowExclusiveLock','AccessExclusiveLock',4), "+
                        "('ShareUpdateExclusiveLock','ShareUpdateExclusiveLock',1), ('ShareUpdateExclusiveLock','ShareLock',2),  ('ShareUpdateExclusiveLock','ShareRowExclusiveLock',3), ('ShareUpdateExclusiveLock','ExclusiveLock', 4), ('ShareUpdateExclusiveLock','AccessExclusiveLock',5), "+
-                       "('ShareLock','RowExclusiveLock',1),  ('ShareLock','ShareUpdateExclusiveLock',2),  ('ShareLock','ShareRowExclusiveLock',3),  ('ShareLock','ExclusiveLock',4),	   ('ShareLock','AccessExclusiveLock',5), "+
+                       "('ShareLock','RowExclusiveLock',1),  ('ShareLock','ShareUpdateExclusiveLock',2),  ('ShareLock','ShareRowExclusiveLock',3),  ('ShareLock','ExclusiveLock',4),       ('ShareLock','AccessExclusiveLock',5), "+
                        "('ShareRowExclusiveLock','RowExclusiveLock', 1),  ('ShareRowExclusiveLock','ShareUpdateExclusiveLock',    2),  ('ShareRowExclusiveLock','ShareLock',    3),  ('ShareRowExclusiveLock','ShareRowExclusiveLock',4),  ('ShareRowExclusiveLock','ExclusiveLock',5),  ('ShareRowExclusiveLock','AccessExclusiveLock', 6), "+
                        "('ExclusiveLock','RowShareLock',1), ('ExclusiveLock','RowExclusiveLock',2), ('ExclusiveLock','ShareUpdateExclusiveLock',3),  ('ExclusiveLock','ShareLock',4),  ('ExclusiveLock','ShareRowExclusiveLock',5),   ('ExclusiveLock','ExclusiveLock',6),   ('ExclusiveLock','AccessExclusiveLock',7), "+
                        "('AccessExclusiveLock','AccessShareLock',1), ('AccessExclusiveLock','RowShareLock',2), ('AccessExclusiveLock','RowExclusiveLock',3), ('AccessExclusiveLock','ShareUpdateExclusiveLock',4),   ('AccessExclusiveLock','ShareLock',5), ('AccessExclusiveLock','ShareRowExclusiveLock',6), ('AccessExclusiveLock','ExclusiveLock',7),  ('AccessExclusiveLock','AccessExclusiveLock',8) "+
                    ") as t (mode1,mode2,prt)     "+
-        ")	  "+
+        ")      "+
         ",real_locks as ("+
-        "select 	  "+
+        "select       "+
         "la.pid as blocked_pid, "+
         "blocked_activity.usename  AS blocked_user, "+
         "la.blocked     AS blocking_pid, "+
@@ -68,7 +68,7 @@ public class PostgreLockManager extends LockGraphManager implements DBAServerLoc
         "blocking_activity.query   AS statement_in "+
         "from  "+
         "( "+
-        "	select 				 "+
+        "    select                  "+
         "l.*, "+
         "c.mode2, "+
         "c.prt, "+
@@ -111,23 +111,23 @@ public class PostgreLockManager extends LockGraphManager implements DBAServerLoc
                    " root_quest "+
                 " where"+
                    " real_locks.blocking_pid = root_quest.blocking_pid "
-											;
+                                            ;
 
-	public static final String LOCK_ITEM_QUERY = "select "+
-			" coalesce(db.datname,'') as datname, "+
-			" coalesce(lock.locktype,'') as locktype, "+
-			" coalesce(lock.relation::regclass::varchar,'') as relation, "+
-			" coalesce(lock.mode,'') as mode, "+
-			" coalesce(lock.transactionid::varchar,'') as tid, "+
-			" lock.page as page, "+
-			" lock.tuple as tuple, "+
-			" lock.pid as pid, "+
-			" lock.granted"+
-			" from pg_catalog.pg_locks lock "+
-			"   left join pg_catalog.pg_database db "+
-			"     on db.oid = lock.database "+
-			" where  "+
-			"  lock.pid = ? ";
+    public static final String LOCK_ITEM_QUERY = "select "+
+            " coalesce(db.datname,'') as datname, "+
+            " coalesce(lock.locktype,'') as locktype, "+
+            " coalesce(lock.relation::regclass::varchar,'') as relation, "+
+            " coalesce(lock.mode,'') as mode, "+
+            " coalesce(lock.transactionid::varchar,'') as tid, "+
+            " lock.page as page, "+
+            " lock.tuple as tuple, "+
+            " lock.pid as pid, "+
+            " lock.granted"+
+            " from pg_catalog.pg_locks lock "+
+            "   left join pg_catalog.pg_database db "+
+            "     on db.oid = lock.database "+
+            " where  "+
+            "  lock.pid = ? ";
     public static final String pidHold = "hpid";
     public static final String pidWait = "wpid";
 

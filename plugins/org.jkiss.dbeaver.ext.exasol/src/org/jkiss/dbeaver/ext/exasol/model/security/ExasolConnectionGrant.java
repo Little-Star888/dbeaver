@@ -31,68 +31,68 @@ import org.jkiss.dbeaver.model.struct.DBSObject;
 import java.sql.ResultSet;
 
 public class ExasolConnectionGrant 
-		implements DBAPrivilege {
+        implements DBAPrivilege {
 
-	private Boolean adminOption;
-	private String connection;
-	private ExasolDataSource dataSource;
-	private String grantee;
-	private Boolean isPersisted;
-	public ExasolConnectionGrant(ExasolDataSource dataSource,
-			ResultSet dbResult) 
-	{
-		this.adminOption = JDBCUtils.safeGetBoolean(dbResult, "ADMIN_OPTION");
-		this.connection = JDBCUtils.safeGetString(dbResult, "CONNECTION_NAME");
-		this.grantee = JDBCUtils.safeGetString(dbResult, "GRANTEE");
-		this.dataSource = dataSource;
-		this.isPersisted = true;
-	}
-	
-	@Property(viewable = true, order = 10)
-	public ExasolConnection getConnection() throws DBException
-	{
-		return dataSource.getConnection(new VoidProgressMonitor(), connection);
-	}
-	
-	@Property(viewable = true, order = 90)
-	public Boolean getAdminOption()
-	{
-		return this.adminOption;
-	}
+    private Boolean adminOption;
+    private String connection;
+    private ExasolDataSource dataSource;
+    private String grantee;
+    private Boolean isPersisted;
+    public ExasolConnectionGrant(ExasolDataSource dataSource,
+            ResultSet dbResult) 
+    {
+        this.adminOption = JDBCUtils.safeGetBoolean(dbResult, "ADMIN_OPTION");
+        this.connection = JDBCUtils.safeGetString(dbResult, "CONNECTION_NAME");
+        this.grantee = JDBCUtils.safeGetString(dbResult, "GRANTEE");
+        this.dataSource = dataSource;
+        this.isPersisted = true;
+    }
+    
+    @Property(viewable = true, order = 10)
+    public ExasolConnection getConnection() throws DBException
+    {
+        return dataSource.getConnection(new VoidProgressMonitor(), connection);
+    }
+    
+    @Property(viewable = true, order = 90)
+    public Boolean getAdminOption()
+    {
+        return this.adminOption;
+    }
 
-	@Override
-	@Property(hidden = true, length = PropertyLength.MULTILINE)
-	public String getDescription()
-	{
-		return null;
-	}
+    @Override
+    @Property(hidden = true, length = PropertyLength.MULTILINE)
+    public String getDescription()
+    {
+        return null;
+    }
 
-	@Override
-	public DBSObject getParentObject()
-	{
-		return dataSource.getContainer();
-	}
+    @Override
+    public DBSObject getParentObject()
+    {
+        return dataSource.getContainer();
+    }
 
-	@Override
-	public DBPDataSource getDataSource()
-	{
-		return this.dataSource;
-	}
+    @Override
+    public DBPDataSource getDataSource()
+    {
+        return this.dataSource;
+    }
 
-	@Override
-	public String getName()
-	{
-		return grantee;
-	}
+    @Override
+    public String getName()
+    {
+        return grantee;
+    }
 
-	@Override
-	public boolean isPersisted()
-	{
-		return isPersisted;
-	}
+    @Override
+    public boolean isPersisted()
+    {
+        return isPersisted;
+    }
 
-	public Object getGrantee() {
-		return grantee+"|"+connection+"|"+adminOption.toString();
-	}
+    public Object getGrantee() {
+        return grantee+"|"+connection+"|"+adminOption.toString();
+    }
 
 }

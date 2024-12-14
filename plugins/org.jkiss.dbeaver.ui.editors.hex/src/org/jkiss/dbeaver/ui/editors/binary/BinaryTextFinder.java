@@ -312,16 +312,16 @@ public class BinaryTextFinder {
 
         byteBuffer = null;  // multiple FileChannel.read(byteBuffer) leak memory, so don't reuse buffer
         byteBuffer = ByteBuffer.allocate(MAP_SIZE);
-//	if (byteBuffer == null)
-//		byteBuffer = ByteBuffer.allocate(MAP_SIZE);
+//    if (byteBuffer == null)
+//        byteBuffer = ByteBuffer.allocate(MAP_SIZE);
         byteBuffer.limit(size);
         byteBuffer.position(0);
-//	try {
+//    try {
         content.get(byteBuffer, bufferPosition);
-//	} catch (OutOfMemoryError e) {
-//		byteBuffer = null;
-//		byteBuffer = ByteBuffer.allocate(MAP_SIZE);
-        //	byteBuffer.limit(size);
+//    } catch (OutOfMemoryError e) {
+//        byteBuffer = null;
+//        byteBuffer = ByteBuffer.allocate(MAP_SIZE);
+        //    byteBuffer.limit(size);
         //byteBuffer.position(0);
         //content.get(byteBuffer, myCurrentPosition);
         //}

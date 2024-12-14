@@ -395,7 +395,7 @@
             <enabledWhen>
                 <with variable="activePart">
                     <adapt type="org.jkiss.dbeaver.ui.editors.sql.SQLEditor">
-                    	<test property="org.jkiss.dbeaver.core.datasource.projectResourceEditable"/>
+                        <test property="org.jkiss.dbeaver.core.datasource.projectResourceEditable"/>
                     </adapt>
                 </with>
             </enabledWhen>
@@ -1072,7 +1072,7 @@
 
                 <command commandId="org.jkiss.dbeaver.ui.editors.sql.sync.auto" style="toggle"/>
 
-				<menu label="%menu.org.jkiss.dbeaver.ui.editors.sql.connection.separate.label">
+                <menu label="%menu.org.jkiss.dbeaver.ui.editors.sql.connection.separate.label">
                     <dynamic id="org.jkiss.dbeaver.ui.editors.sql.connection.separate.switch" class="org.jkiss.dbeaver.ui.editors.sql.handlers.SQLEditorHandlerSeparateConnectionSwitch"/>
                 </menu>
             </menu>

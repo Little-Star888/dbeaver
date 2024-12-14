@@ -72,7 +72,7 @@ public class QMRegistryImpl implements QMRegistry {
                 handlers.clear();
             }
         }
-      	defaultHandler = null;
+          defaultHandler = null;
     }
 
     @Override

@@ -148,15 +148,15 @@ public class ExasolTableForeignKey extends JDBCTableConstraint<ExasolTable, Exas
     @Override
     @Property(id = "reference", viewable = true)
     public ExasolTableUniqueKey getReferencedConstraint() {
-    	if (referencedKey == null) {
-    	    if (refTable != null) {
+        if (referencedKey == null) {
+            if (refTable != null) {
                 try {
                     referencedKey = refTable.getPrimaryKey(new VoidProgressMonitor());
                 } catch (DBException e) {
                     LOG.error("Error reading pk", e);
                 }
             }
-    	}
+        }
         return referencedKey;
     }
 
@@ -174,11 +174,11 @@ public class ExasolTableForeignKey extends JDBCTableConstraint<ExasolTable, Exas
         this.enabled = enabled;
     }
 
-	@Override
-	public String getObjectDefinitionText(DBRProgressMonitor monitor, Map<String, Object> options)
-			throws DBException
-	{
-		return ExasolUtils.getFKDdl(this, monitor);
-	}
+    @Override
+    public String getObjectDefinitionText(DBRProgressMonitor monitor, Map<String, Object> options)
+            throws DBException
+    {
+        return ExasolUtils.getFKDdl(this, monitor);
+    }
 
 }

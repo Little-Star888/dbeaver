@@ -66,9 +66,9 @@ public class SQLScriptDataReceiver implements DBDDataReceiver {
             try {
                 for (int i = 0; i < rowSize; i++) {
                     if (resultSet.getAttributeValue(i) != null) {
-                    	DBCAttributeMetaData type = attributes.get(i);
-                    	DBDValueHandler valueHandler = DBUtils.findValueHandler(session, type);
-                    	Object object = valueHandler.fetchValueObject(session, resultSet, type, i);
+                        DBCAttributeMetaData type = attributes.get(i);
+                        DBDValueHandler valueHandler = DBUtils.findValueHandler(session, type);
+                        Object object = valueHandler.fetchValueObject(session, resultSet, type, i);
                         dumpWriter.append(object.toString()).append("\t");
                     } else {
                         dumpWriter.append("NULL\t");

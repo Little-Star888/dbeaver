@@ -55,7 +55,7 @@ public class ExasolScript extends AbstractProcedure<ExasolDataSource, ExasolSche
     private ExasolSchema exasolSchema;
 
     public ExasolScript(ExasolSchema schema, ResultSet dbResult) {
-    	super(schema, true);
+        super(schema, true);
         this.owner = JDBCUtils.safeGetString(dbResult, "SCRIPT_OWNER");
         this.createTime = JDBCUtils.safeGetTimestamp(dbResult, "CREATED");
         this.remarks = JDBCUtils.safeGetString(dbResult, "SCRIPT_COMMENT");

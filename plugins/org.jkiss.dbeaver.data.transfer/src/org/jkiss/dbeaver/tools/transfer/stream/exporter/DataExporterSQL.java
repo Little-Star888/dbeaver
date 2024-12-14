@@ -400,7 +400,7 @@ public class DataExporterSQL extends StreamExporterAbstract implements IAppendab
     public void exportFooter(DBRProgressMonitor monitor) {
         PrintWriter out = getWriter();
         if (rowCount > 0) {
-        	if (insertKeyword == InsertKeyword.INSERT_ALL) {
+            if (insertKeyword == InsertKeyword.INSERT_ALL) {
                 out.write(rowDelimiter + identifierCase.transform(KEYWORD_SELECT_FROM_DUAL) + ";");
             } else if (!oneLineEntry) {
                 if (CommonUtils.isNotEmpty(onConflictExpression)) {
@@ -450,8 +450,8 @@ public class DataExporterSQL extends StreamExporterAbstract implements IAppendab
     
     @Override
     public void importData(@NotNull IStreamDataExporterSite site) {
-    	// This method is called before this.init().
-    	// No pre-initialization process is needed.
+        // This method is called before this.init().
+        // No pre-initialization process is needed.
     }
     
     @Override

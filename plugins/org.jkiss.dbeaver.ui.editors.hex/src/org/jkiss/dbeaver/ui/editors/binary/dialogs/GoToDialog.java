@@ -79,7 +79,7 @@ public class GoToDialog extends Dialog {
     private void createRadixPanel()
     {
         RowLayout rowLayout1 = new RowLayout();
-//	rowLayout1.marginHeight = 5;
+//    rowLayout1.marginHeight = 5;
         rowLayout1.marginTop = 2;
         rowLayout1.marginBottom = 2;
         //rowLayout1.marginWidth = 5;

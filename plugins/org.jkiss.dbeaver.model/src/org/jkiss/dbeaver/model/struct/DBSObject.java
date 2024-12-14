@@ -36,7 +36,7 @@ public interface DBSObject extends DBPNamedObject, DBPObjectWithDescription, DBP
      * @return parent object or null
      */
     @DPIContainer
-	DBSObject getParentObject();
+    DBSObject getParentObject();
 
     /**
      * Datasource which this object belongs.

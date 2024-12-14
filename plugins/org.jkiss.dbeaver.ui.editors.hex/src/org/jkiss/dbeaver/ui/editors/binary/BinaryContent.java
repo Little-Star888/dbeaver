@@ -258,7 +258,7 @@ public class BinaryContent {
                 subList.clear();
             } else {  // length == changeList.size()
                 changeList = null;
-//			splitAndShift(position, 0);  // mark them as dirty
+//            splitAndShift(position, 0);  // mark them as dirty
             }
         } else {
             commitChanges();
@@ -448,9 +448,9 @@ public class BinaryContent {
             } else if (changesAdded > 0) {//&& !changesInserted) {
                 rangesModified.add(changesPosition);
                 rangesModified.add((long)changesAdded);
-//		} else if (changeList != null && changesPosition >= changesPosition && changesInserted &&
-                //		positionSoFar - changesPosition > 0) {
-                //	rangesModified.add(Long.valueOf(changesPosition));
+//        } else if (changeList != null && changesPosition >= changesPosition && changesInserted &&
+                //        positionSoFar - changesPosition > 0) {
+                //    rangesModified.add(Long.valueOf(changesPosition));
                 //rangesModified.add(Long.valueOf(positionSoFar - changesPosition));
             }
         }
@@ -835,7 +835,7 @@ public class BinaryContent {
                 clone.position = position;
                 clone.length = 1L;
                 clone.dataOffset = range.dataOffset + position - range.position;
-//			clone.dirty = true;
+//            clone.dirty = true;
                 actions.addLostRange(clone);
             }
         }
@@ -971,7 +971,7 @@ public class BinaryContent {
         while (tailTree.hasNext()) {
             Range currentRange = tailTree.next();
             currentRange.position += increment;
-//		currentRange.dirty = true;
+//        currentRange.dirty = true;
         }
     }
 
@@ -991,10 +991,10 @@ public class BinaryContent {
             secondRange.length -= delta;
             secondRange.dataOffset += delta;
             secondRange.position = secondRange.position + delta + increment;
-//		secondRange.dirty |= increment != 0;
+//        secondRange.dirty |= increment != 0;
         } else {
             firstRange.position += increment;
-//		firstRange.dirty |= increment != 0;
+//        firstRange.dirty |= increment != 0;
         }
         shiftRemainingRanges(increment);
         if (secondRange != null)

@@ -51,7 +51,7 @@ public class OpenSpreadsheetHandler extends AbstractHandler
     @Override
     public Object execute(ExecutionEvent event)
     {
-    	IResultSetController resultSet = ResultSetHandlerMain.getActiveResultSet(HandlerUtil.getActivePart(event));
+        IResultSetController resultSet = ResultSetHandlerMain.getActiveResultSet(HandlerUtil.getActivePart(event));
         if (resultSet == null) {
             DBWorkbench.getPlatformUI().showError("Open Excel", "No active results viewer");
             return null;

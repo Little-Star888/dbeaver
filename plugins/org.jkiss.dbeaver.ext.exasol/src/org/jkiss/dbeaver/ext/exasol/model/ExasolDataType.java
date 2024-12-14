@@ -235,12 +235,12 @@ public class ExasolDataType extends ExasolObject<DBSObject> implements DBSDataTy
     @Override
     @Property(viewable = true, editable = false, order = 4)
     public DBPDataKind getDataKind() {
-    	if (typeDesc == null)
-    	{
-    		return DBPDataKind.UNKNOWN;
-    	} else {
-    		return typeDesc.dataKind;
-    	}
+        if (typeDesc == null)
+        {
+            return DBPDataKind.UNKNOWN;
+        } else {
+            return typeDesc.dataKind;
+        }
     }
 
 
@@ -290,7 +290,7 @@ public class ExasolDataType extends ExasolObject<DBSObject> implements DBSDataTy
         private final Integer minScale;
         private final Integer maxScale;
         @SuppressWarnings("unused")
-		private final String name;
+        private final String name;
 
         private TypeDesc(DBPDataKind dataKind, Integer sqlType, Integer precision, Integer minScale, Integer maxScale, String name) {
             this.name = name;

@@ -73,7 +73,7 @@ class PostgreRestoreWizardPageSettings extends PostgreToolWizardPageSettings<Pos
         formatCombo.addListener(SWT.Selection, updateListener);
 
         cleanFirstButton = UIUtils.createCheckbox(formatGroup,
-        	PostgreMessages.wizard_restore_page_setting_btn_clean_first,
+            PostgreMessages.wizard_restore_page_setting_btn_clean_first,
             PostgreMessages.wizard_restore_page_setting_btn_clean_first_tip,
             settings.isCleanFirst(),
             2

@@ -111,7 +111,7 @@ public class OracleQueryPlanner  extends AbstractExecutionPlanSerializer impleme
             public void addNodeProperties(DBCPlanNode node, JsonObject nodeJson) {
 
                 JsonArray attributes = new JsonArray();
-                if (node instanceof OraclePlanNode) {					
+                if (node instanceof OraclePlanNode) {
                     OraclePlanNode oraNode = (OraclePlanNode) node;
                     attributes.add(createAttr("statement_id", oraNode.getStatementId()));
                     attributes.add(createAttr("plan_id", oraNode.getPlanId()));
@@ -148,7 +148,7 @@ public class OracleQueryPlanner  extends AbstractExecutionPlanSerializer impleme
                     attributes.add(createAttr("time", oraNode.getTime()));
                     attributes.add(createAttr("qblock_name", oraNode.getQblockName()));
                     attributes.add(createAttr("other_xml", oraNode.getOtherXml()));
-                    attributes.add(createAttr("parent_id", oraNode.getParentId()));				   
+                    attributes.add(createAttr("parent_id", oraNode.getParentId()));
                 }
                 nodeJson.add(PROP_ATTRIBUTES, attributes);
 

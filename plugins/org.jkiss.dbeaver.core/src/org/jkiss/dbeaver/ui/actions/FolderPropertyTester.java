@@ -22,12 +22,12 @@ import org.jkiss.dbeaver.model.navigator.DBNLocalFolder;
 
 public class FolderPropertyTester extends PropertyTester {
 
-	static protected final Log log = Log.getLog(FolderPropertyTester.class);
+    static protected final Log log = Log.getLog(FolderPropertyTester.class);
 
     @Override
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
         if (!(receiver instanceof DBNLocalFolder)) {
-        	log.info(String.format("%s cannot be used with %s type", this.getClass().getName(), receiver.getClass().getName()));
+            log.info(String.format("%s cannot be used with %s type", this.getClass().getName(), receiver.getClass().getName()));
             return false;
         }
         DBNLocalFolder localFolder = (DBNLocalFolder) receiver;

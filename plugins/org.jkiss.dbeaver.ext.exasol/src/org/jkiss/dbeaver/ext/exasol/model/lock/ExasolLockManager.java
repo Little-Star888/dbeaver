@@ -96,148 +96,148 @@ public class ExasolLockManager extends LockGraphManager
 
     public static final String LOCK_ITEM_QUERY =
         "/*snapshot execution*/ with\r\n" +
-        "	EXA_SQL as (\r\n" +
-        "		select\r\n" +
-        "			SESSION_ID,\r\n" +
-        "			STMT_ID,\r\n" +
-        "			COMMAND_CLASS,\r\n" +
-        "			COMMAND_NAME,\r\n" +
-        "			SUCCESS\r\n" +
-        "		from\r\n" +
-        "			--EXA_DBA_AUDIT_SQL                   -- delivers more exact results (if available)\r\n" +
-        "			EXA_SQL_LAST_DAY\r\n" +
-        "		where\r\n" +
-        "			SESSION_ID in (select SESSION_ID from EXA_DBA_SESSIONS)\r\n" +
-        "	),\r\n" +
-        "	SESSION_RISKS as (\r\n" +
-        "		select\r\n" +
-        "			SESSION_ID,\r\n" +
-        "			HAS_LOCKS\r\n" +
-        "		from\r\n" +
-        "			(\r\n" +
-        "				select\r\n" +
-        "					SESSION_ID,\r\n" +
-        "					decode(\r\n" +
-        "						greatest(CURRENT_ACCESS, LAST_ACCESS),\r\n" +
-        "						0,\r\n" +
-        "						'NONE',\r\n" +
-        "						1,\r\n" +
-        "						'READ LOCKS',\r\n" +
-        "						2,\r\n" +
-        "						'WRITE LOCKS'\r\n" +
-        "					) HAS_LOCKS\r\n" +
-        "				from\r\n" +
-        "					(\r\n" +
-        "						select\r\n" +
-        "							S.SESSION_ID,\r\n" +
-        "							case\r\n" +
-        "								when\r\n" +
-        "									(S.STATUS not in ('IDLE', 'DISCONNECTED')) OR\r\n" +
-        "									(\r\n" +
-        "										S.COMMAND_NAME not in ('COMMIT', 'ROLLBACK', 'NOT SPECIFIED')\r\n" +
-        "									)\r\n" +
-        "								then\r\n" +
-        "									case\r\n" +
-        "										when\r\n" +
-        "											S.COMMAND_NAME in (\r\n" +
-        "												'SELECT', 'DESCRIBE', 'OPEN SCHEMA', 'CLOSE SCHEMA', 'FLUSH STATISTICS', 'EXECUTE SCRIPT'\r\n" +
-        "											)\r\n" +
-        "										then\r\n" +
-        "											1\r\n" +
-        "										else\r\n" +
-        "											2\r\n" +
-        "									end\r\n" +
-        "								else\r\n" +
-        "									0\r\n" +
-        "							end CURRENT_ACCESS,\r\n" +
-        "							zeroifnull(A.ACCESS) LAST_ACCESS\r\n" +
-        "						from\r\n" +
-        "								EXA_DBA_SESSIONS S\r\n" +
-        "							left join\r\n" +
-        "								(\r\n" +
-        "									select\r\n" +
-        "										SESSION_ID,\r\n" +
-        "										max(ACCESS) ACCESS\r\n" +
-        "									FROM\r\n" +
-        "										(\r\n" +
-        "											select\r\n" +
-        "												SESSION_ID,\r\n" +
-        "												case\r\n" +
-        "													when\r\n" +
-        "														(\r\n" +
-        "															COMMAND_NAME not in ('COMMIT', 'ROLLBACK', 'NOT SPECIFIED')\r\n" +
-        "														)\r\n" +
-        "													then\r\n" +
-        "														case\r\n" +
-        "															when\r\n" +
-        "																COMMAND_NAME in (\r\n" +
-        "																	'SELECT',\r\n" +
-        "																	'DESCRIBE',\r\n" +
-        "																	'OPEN SCHEMA',\r\n" +
-        "																	'CLOSE SCHEMA',\r\n" +
-        "																	'FLUSH STATISTICS',\r\n" +
-        "																	'EXECUTE SCRIPT'\r\n" +
-        "																)\r\n" +
-        "															then\r\n" +
-        "																1\r\n" +
-        "															else\r\n" +
-        "																2\r\n" +
-        "														end\r\n" +
-        "													else\r\n" +
-        "														0\r\n" +
-        "												end ACCESS\r\n" +
-        "											from\r\n" +
-        "												EXA_SQL C\r\n" +
-        "											where\r\n" +
-        "												C.COMMAND_CLASS <> 'TRANSACTION' and\r\n" +
-        "												SUCCESS and\r\n" +
-        "												not exists(\r\n" +
-        "													select\r\n" +
-        "														*\r\n" +
-        "													from\r\n" +
-        "														EXA_SQL E\r\n" +
-        "													where\r\n" +
-        "														E.SESSION_ID = C.SESSION_ID and\r\n" +
-        "														E.STMT_ID > C.STMT_ID and\r\n" +
-        "														E.COMMAND_CLASS = 'TRANSACTION'\r\n" +
-        "												)\r\n" +
-        "										)\r\n" +
-        "									group by\r\n" +
-        "										SESSION_ID\r\n" +
-        "								) A\r\n" +
-        "							on\r\n" +
-        "								S.SESSION_ID = A.SESSION_ID\r\n" +
-        "					)\r\n" +
-        "				where\r\n" +
-        "					SESSION_ID <> 4\r\n" +
-        "			)\r\n" +
-        "	)\r\n" +
+        "    EXA_SQL as (\r\n" +
+        "        select\r\n" +
+        "            SESSION_ID,\r\n" +
+        "            STMT_ID,\r\n" +
+        "            COMMAND_CLASS,\r\n" +
+        "            COMMAND_NAME,\r\n" +
+        "            SUCCESS\r\n" +
+        "        from\r\n" +
+        "            --EXA_DBA_AUDIT_SQL                   -- delivers more exact results (if available)\r\n" +
+        "            EXA_SQL_LAST_DAY\r\n" +
+        "        where\r\n" +
+        "            SESSION_ID in (select SESSION_ID from EXA_DBA_SESSIONS)\r\n" +
+        "    ),\r\n" +
+        "    SESSION_RISKS as (\r\n" +
+        "        select\r\n" +
+        "            SESSION_ID,\r\n" +
+        "            HAS_LOCKS\r\n" +
+        "        from\r\n" +
+        "            (\r\n" +
+        "                select\r\n" +
+        "                    SESSION_ID,\r\n" +
+        "                    decode(\r\n" +
+        "                        greatest(CURRENT_ACCESS, LAST_ACCESS),\r\n" +
+        "                        0,\r\n" +
+        "                        'NONE',\r\n" +
+        "                        1,\r\n" +
+        "                        'READ LOCKS',\r\n" +
+        "                        2,\r\n" +
+        "                        'WRITE LOCKS'\r\n" +
+        "                    ) HAS_LOCKS\r\n" +
+        "                from\r\n" +
+        "                    (\r\n" +
+        "                        select\r\n" +
+        "                            S.SESSION_ID,\r\n" +
+        "                            case\r\n" +
+        "                                when\r\n" +
+        "                                    (S.STATUS not in ('IDLE', 'DISCONNECTED')) OR\r\n" +
+        "                                    (\r\n" +
+        "                                        S.COMMAND_NAME not in ('COMMIT', 'ROLLBACK', 'NOT SPECIFIED')\r\n" +
+        "                                    )\r\n" +
+        "                                then\r\n" +
+        "                                    case\r\n" +
+        "                                        when\r\n" +
+        "                                            S.COMMAND_NAME in (\r\n" +
+        "                                                'SELECT', 'DESCRIBE', 'OPEN SCHEMA', 'CLOSE SCHEMA', 'FLUSH STATISTICS', 'EXECUTE SCRIPT'\r\n" +
+        "                                            )\r\n" +
+        "                                        then\r\n" +
+        "                                            1\r\n" +
+        "                                        else\r\n" +
+        "                                            2\r\n" +
+        "                                    end\r\n" +
+        "                                else\r\n" +
+        "                                    0\r\n" +
+        "                            end CURRENT_ACCESS,\r\n" +
+        "                            zeroifnull(A.ACCESS) LAST_ACCESS\r\n" +
+        "                        from\r\n" +
+        "                                EXA_DBA_SESSIONS S\r\n" +
+        "                            left join\r\n" +
+        "                                (\r\n" +
+        "                                    select\r\n" +
+        "                                        SESSION_ID,\r\n" +
+        "                                        max(ACCESS) ACCESS\r\n" +
+        "                                    FROM\r\n" +
+        "                                        (\r\n" +
+        "                                            select\r\n" +
+        "                                                SESSION_ID,\r\n" +
+        "                                                case\r\n" +
+        "                                                    when\r\n" +
+        "                                                        (\r\n" +
+        "                                                            COMMAND_NAME not in ('COMMIT', 'ROLLBACK', 'NOT SPECIFIED')\r\n" +
+        "                                                        )\r\n" +
+        "                                                    then\r\n" +
+        "                                                        case\r\n" +
+        "                                                            when\r\n" +
+        "                                                                COMMAND_NAME in (\r\n" +
+        "                                                                    'SELECT',\r\n" +
+        "                                                                    'DESCRIBE',\r\n" +
+        "                                                                    'OPEN SCHEMA',\r\n" +
+        "                                                                    'CLOSE SCHEMA',\r\n" +
+        "                                                                    'FLUSH STATISTICS',\r\n" +
+        "                                                                    'EXECUTE SCRIPT'\r\n" +
+        "                                                                )\r\n" +
+        "                                                            then\r\n" +
+        "                                                                1\r\n" +
+        "                                                            else\r\n" +
+        "                                                                2\r\n" +
+        "                                                        end\r\n" +
+        "                                                    else\r\n" +
+        "                                                        0\r\n" +
+        "                                                end ACCESS\r\n" +
+        "                                            from\r\n" +
+        "                                                EXA_SQL C\r\n" +
+        "                                            where\r\n" +
+        "                                                C.COMMAND_CLASS <> 'TRANSACTION' and\r\n" +
+        "                                                SUCCESS and\r\n" +
+        "                                                not exists(\r\n" +
+        "                                                    select\r\n" +
+        "                                                        *\r\n" +
+        "                                                    from\r\n" +
+        "                                                        EXA_SQL E\r\n" +
+        "                                                    where\r\n" +
+        "                                                        E.SESSION_ID = C.SESSION_ID and\r\n" +
+        "                                                        E.STMT_ID > C.STMT_ID and\r\n" +
+        "                                                        E.COMMAND_CLASS = 'TRANSACTION'\r\n" +
+        "                                                )\r\n" +
+        "                                        )\r\n" +
+        "                                    group by\r\n" +
+        "                                        SESSION_ID\r\n" +
+        "                                ) A\r\n" +
+        "                            on\r\n" +
+        "                                S.SESSION_ID = A.SESSION_ID\r\n" +
+        "                    )\r\n" +
+        "                where\r\n" +
+        "                    SESSION_ID <> 4\r\n" +
+        "            )\r\n" +
+        "    )\r\n" +
         "select\r\n" +
-        "	HAS_LOCKS,\r\n" +
-        "	case\r\n" +
-        "		when\r\n" +
-        "			DURATION > '1:00:00' and\r\n" +
-        "			STATUS = 'IDLE'\r\n" +
-        "		then\r\n" +
-        "			decode(\r\n" +
-        "				HAS_LOCKS,\r\n" +
-        "				'READ LOCKS',\r\n" +
-        "				'CRITICAL',\r\n" +
-        "				'WRITE LOCKS',\r\n" +
-        "				'VERY CRITICAL',\r\n" +
-        "				NULL\r\n" +
-        "			)\r\n" +
-        "	end EVALUATION,\r\n" +
-        "	S.*\r\n" +
+        "    HAS_LOCKS,\r\n" +
+        "    case\r\n" +
+        "        when\r\n" +
+        "            DURATION > '1:00:00' and\r\n" +
+        "            STATUS = 'IDLE'\r\n" +
+        "        then\r\n" +
+        "            decode(\r\n" +
+        "                HAS_LOCKS,\r\n" +
+        "                'READ LOCKS',\r\n" +
+        "                'CRITICAL',\r\n" +
+        "                'WRITE LOCKS',\r\n" +
+        "                'VERY CRITICAL',\r\n" +
+        "                NULL\r\n" +
+        "            )\r\n" +
+        "    end EVALUATION,\r\n" +
+        "    S.*\r\n" +
         "from\r\n" +
-        "		EXA_DBA_SESSIONS S\r\n" +
-        "	left join\r\n" +
-        "		SESSION_RISKS R\r\n" +
-        "	on\r\n" +
-        "		(S.SESSION_ID = R.SESSION_ID) WHERE S.SESSION_ID = ?\r\n" +
+        "        EXA_DBA_SESSIONS S\r\n" +
+        "    left join\r\n" +
+        "        SESSION_RISKS R\r\n" +
+        "    on\r\n" +
+        "        (S.SESSION_ID = R.SESSION_ID) WHERE S.SESSION_ID = ?\r\n" +
         "order by\r\n" +
-        "	EVALUATION desc,\r\n" +
-        "	LOGIN_TIME;\r\n" +
+        "    EVALUATION desc,\r\n" +
+        "    LOGIN_TIME;\r\n" +
         "";
 
     private final ExasolDataSource dataSource;

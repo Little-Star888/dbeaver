@@ -59,14 +59,14 @@ public abstract class ExasolBaseTableToolDialog extends GenerateMultiSQLDialog<E
     private static final String VARIABLE_DATE = "date";
     private static final String VARIABLE_TABLE = "table";
     private static final String VARIABLE_SCHEMA = "schema";
-	
 
-	ExasolBaseTableToolDialog(IWorkbenchPartSite partSite, String title,
+
+    ExasolBaseTableToolDialog(IWorkbenchPartSite partSite, String title,
                               Collection<ExasolTableBase> objects)
-	{
-		super(partSite, title, objects, true);
-	}
-	
+    {
+        super(partSite, title, objects, true);
+    }
+
     private int getNumberExtraResultingColumns()
     {
         return 0;
@@ -92,24 +92,24 @@ public abstract class ExasolBaseTableToolDialog extends GenerateMultiSQLDialog<E
 
     }
     
-	
-	@Override
-	protected SQLScriptProgressListener<ExasolTableBase> getScriptListener()
-	{
+
+    @Override
+    protected SQLScriptProgressListener<ExasolTableBase> getScriptListener()
+    {
         final int nbExtraColumns = getNumberExtraResultingColumns();
 
         return new SQLScriptStatusDialog<ExasolTableBase>(getTitle() + " " + ExasolMessages.dialog_table_tools_progress,null) {
-        	@Override
-        	protected void createStatusColumns(Tree objectTree)
-        	{
+            @Override
+            protected void createStatusColumns(Tree objectTree)
+            {
                 TreeColumn msgColumn = new TreeColumn(objectTree, SWT.NONE);
                 msgColumn.setText(ExasolMessages.dialog_table_tools_result);
 
                 for (int i = 0; i < nbExtraColumns; i++) {
                     new TreeColumn(objectTree, SWT.NONE);
                 }
-        	}
-        	
+            }
+
             // DF: This method is for tools that return resultsets
             @Override
             public void processObjectResults(@NotNull ExasolTableBase exasolTable, @Nullable DBCStatement statement, @Nullable DBCResultSet resultSet) throws DBCException
@@ -118,7 +118,7 @@ public abstract class ExasolBaseTableToolDialog extends GenerateMultiSQLDialog<E
                     return;
                 }
                 // Retrieve column names
-            	DBCResultSetMetaData rsMetaData = resultSet.getMeta();
+                DBCResultSetMetaData rsMetaData = resultSet.getMeta();
 
                 try {
 
@@ -152,10 +152,10 @@ public abstract class ExasolBaseTableToolDialog extends GenerateMultiSQLDialog<E
             }
 
         
-        	
+
         };
-	}
-	
+    }
+
     @Override
     protected void executeSQL() {
         final String jobName = getShell().getText();
@@ -171,7 +171,7 @@ public abstract class ExasolBaseTableToolDialog extends GenerateMultiSQLDialog<E
             Exception objectProcessingError;
 
             @SuppressWarnings("rawtypes")
-			@Override
+            @Override
             protected IStatus run(final DBRProgressMonitor monitor)
             {
                 final DataSourceJob curJob = this;
@@ -191,14 +191,14 @@ public abstract class ExasolBaseTableToolDialog extends GenerateMultiSQLDialog<E
                             final List<String> lines = objectsSQL.get(object);
                             for (String line : lines) {
                                 try (final Statement statement = ((JDBCSession) session).getOriginal().createStatement()) {
-                                	int affectedRows = statement.executeUpdate(line);
-                                	
-                                	Integer[] resultSetData = new Integer[] { affectedRows };
-                                    	
-                                	final LocalResultSet resultSet = new LocalResultSet<>(session, new JDBCStatementImpl<>((JDBCSession) session, statement, true));
-                                	resultSet.addColumn("ROWS_AFFECTED", DBPDataKind.NUMERIC);
-                                	resultSet.addRow((Object[]) resultSetData );
-                                	
+                                    int affectedRows = statement.executeUpdate(line);
+
+                                    Integer[] resultSetData = new Integer[] { affectedRows };
+
+                                    final LocalResultSet resultSet = new LocalResultSet<>(session, new JDBCStatementImpl<>((JDBCSession) session, statement, true));
+                                    resultSet.addColumn("ROWS_AFFECTED", DBPDataKind.NUMERIC);
+                                    resultSet.addRow((Object[]) resultSetData );
+
                                     // Run in sync because we need result set
                                     UIUtils.syncExec(() -> {
                                             try {

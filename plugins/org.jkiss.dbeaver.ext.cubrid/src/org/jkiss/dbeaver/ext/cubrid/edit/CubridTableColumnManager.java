@@ -69,7 +69,7 @@ public class CubridTableColumnManager extends GenericTableColumnManager implemen
         return column;
     }
 
-	@NotNull
+    @NotNull
     @Override
     public StringBuilder getNestedDeclaration(
             @NotNull DBRProgressMonitor monitor,

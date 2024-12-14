@@ -36,8 +36,8 @@ public class SchedulerJobActionEditor extends SQLSourceViewer<OracleSchedulerJob
 
     @Override
     protected String getSourceText(DBRProgressMonitor monitor) throws DBException {
-    	OracleSchedulerJob schedulerJob = getSourceObject();
-    	return schedulerJob.getJobAction();
+        OracleSchedulerJob schedulerJob = getSourceObject();
+        return schedulerJob.getJobAction();
 //        return ((DBPScriptObjectExt)getSourceObject()).getExtendedDefinitionText(monitor);
     }
 

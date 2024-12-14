@@ -30,71 +30,71 @@ import java.sql.ResultSet;
 
 public class ExasolSystemGrant implements DBAPrivilege {
 
-	
-	private ExasolDataSource dataSource;
-	private Boolean adminOption;
-	private String sysPrivilege;
-	private Boolean isPersisted;
-	private String grantee;
 
-	public ExasolSystemGrant(ExasolDataSource dataSource, ResultSet resultSet) throws DBException
-	{
-		this.dataSource = dataSource;
-		this.sysPrivilege = JDBCUtils.safeGetString(resultSet, "PRIVILEGE");
-		this.adminOption = JDBCUtils.safeGetBoolean(resultSet, "ADMIN_OPTION");
-		this.isPersisted = true;
-		this.grantee = JDBCUtils.safeGetString(resultSet, "GRANTEE");
-	}
+    private ExasolDataSource dataSource;
+    private Boolean adminOption;
+    private String sysPrivilege;
+    private Boolean isPersisted;
+    private String grantee;
 
-	@Property(viewable = true, order = 10)
-	public String getSystemPrivilege()
-	{
-		return this.sysPrivilege;
-	}
-	
-	@Property(viewable = true, order = 20)
-	public Boolean getAdminOption()
-	{
-		return this.adminOption;
-	}
-	
-	@Override
-	@Property(hidden=true, length = PropertyLength.MULTILINE)
-	public String getDescription()
-	{
-		return "";
-	}
+    public ExasolSystemGrant(ExasolDataSource dataSource, ResultSet resultSet) throws DBException
+    {
+        this.dataSource = dataSource;
+        this.sysPrivilege = JDBCUtils.safeGetString(resultSet, "PRIVILEGE");
+        this.adminOption = JDBCUtils.safeGetBoolean(resultSet, "ADMIN_OPTION");
+        this.isPersisted = true;
+        this.grantee = JDBCUtils.safeGetString(resultSet, "GRANTEE");
+    }
 
-	@Override
-	public DBSObject getParentObject()
-	{
-		return dataSource.getContainer();
-	}
+    @Property(viewable = true, order = 10)
+    public String getSystemPrivilege()
+    {
+        return this.sysPrivilege;
+    }
 
-	@Override
-	public DBPDataSource getDataSource()
-	{
-		return dataSource;
-	}
+    @Property(viewable = true, order = 20)
+    public Boolean getAdminOption()
+    {
+        return this.adminOption;
+    }
 
-	@Override
-	@Property(hidden=true)
-	public String getName()
-	{
-		return grantee+"|"+sysPrivilege+"|"+adminOption.toString();
-	}
+    @Override
+    @Property(hidden=true, length = PropertyLength.MULTILINE)
+    public String getDescription()
+    {
+        return "";
+    }
 
-	@Property(hidden=true)
-	public String getGrantee()
-	{
-		return grantee;
-	}
-	
+    @Override
+    public DBSObject getParentObject()
+    {
+        return dataSource.getContainer();
+    }
 
-	@Override
-	public boolean isPersisted()
-	{
-		return isPersisted;
-	}
+    @Override
+    public DBPDataSource getDataSource()
+    {
+        return dataSource;
+    }
+
+    @Override
+    @Property(hidden=true)
+    public String getName()
+    {
+        return grantee+"|"+sysPrivilege+"|"+adminOption.toString();
+    }
+
+    @Property(hidden=true)
+    public String getGrantee()
+    {
+        return grantee;
+    }
+
+
+    @Override
+    public boolean isPersisted()
+    {
+        return isPersisted;
+    }
 
 }

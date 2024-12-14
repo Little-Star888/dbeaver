@@ -61,7 +61,7 @@ public class PrefPageResultSetPresentation extends TargetPrefPage {
     protected boolean hasDataSourceSpecificOptions(DBPDataSourceContainer dataSourceDescriptor) {
         DBPPreferenceStore store = dataSourceDescriptor.getPreferenceStore();
         return
-        	store.contains(ResultSetPreferences.RESULT_SET_AUTO_SWITCH_MODE) ||
+            store.contains(ResultSetPreferences.RESULT_SET_AUTO_SWITCH_MODE) ||
             store.contains(ResultSetPreferences.RESULT_SET_SHOW_FILTERS_IN_SINGLE_TAB_MODE) ||
             store.contains(ResultSetPreferences.RESULT_SET_SHOW_DESCRIPTION) ||
             store.contains(ResultSetPreferences.RESULT_SET_CALC_COLUMN_WIDTH_BY_VALUES) ||

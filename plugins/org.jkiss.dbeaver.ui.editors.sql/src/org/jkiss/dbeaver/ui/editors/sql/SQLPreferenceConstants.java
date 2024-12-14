@@ -97,7 +97,7 @@ public class SQLPreferenceConstants {
 
         @NotNull
         public static SQLExperimentalAutocompletionMode fromPreferences(@NotNull DBPPreferenceStore preferenceStore) {
-            return valueByName(preferenceStore.getString(SQLModelPreferences.EXPERIMENTAL_AUTOCOMPLETION_MODE));	        
+            return valueByName(preferenceStore.getString(SQLModelPreferences.EXPERIMENTAL_AUTOCOMPLETION_MODE));
         }
     }
 

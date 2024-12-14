@@ -117,17 +117,17 @@ public class ExasolSchemaManager
 
     @Override
     protected void addObjectDeleteActions(@NotNull DBRProgressMonitor monitor, @NotNull DBCExecutionContext executionContext, @NotNull List<DBEPersistAction> actions, @NotNull ObjectDeleteCommand command, @NotNull Map<String, Object> options) {
-    	if (command.getObject() instanceof ExasolVirtualSchema)
-    	{
+        if (command.getObject() instanceof ExasolVirtualSchema)
+        {
             actions.add(
                     new SQLDatabasePersistAction("Drop schema", "DROP VIRTUAL SCHEMA " + DBUtils.getQuotedIdentifier(command.getObject()) + " CASCADE") //$NON-NLS-2$
                 );
-    	} else {
+        } else {
             actions.add(
                     new SQLDatabasePersistAction("Drop schema", "DROP SCHEMA " + DBUtils.getQuotedIdentifier(command.getObject()) + " CASCADE") //$NON-NLS-2$
                 );
-    		
-    	}
+
+        }
     }
 
     @Override

@@ -84,9 +84,9 @@ public class SQLEditorMessages extends NLS {
     public static String action_menu_sqleditor_restoreResultsPanel;
 
     public static String script_close_behavior_delete_always;
-	public static String script_close_behavior_delete_only_new_scripts;
-	public static String script_close_behavior_do_not_delete;
-	public static String sql_editor_menu_format;
+    public static String script_close_behavior_delete_only_new_scripts;
+    public static String script_close_behavior_do_not_delete;
+    public static String sql_editor_menu_format;
     public static String sql_editor_error_position;
 
     public static String action_result_tabs_close_all_tabs;

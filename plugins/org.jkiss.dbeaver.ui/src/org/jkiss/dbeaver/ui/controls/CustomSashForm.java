@@ -694,8 +694,8 @@ public class CustomSashForm extends SashForm {
 
     protected void getNewSashArray(SashInfo sashInfo, int[] addArrowTypes, int[] drawArrowTypes) {
 
-//		int[][] thisSash = sashInfo.sashLocs;
-//		if (thisSash == null) 
+//        int[][] thisSash = sashInfo.sashLocs;
+//        if (thisSash == null)
         sashInfo.sashLocs = new int[addArrowTypes.length][];
         int[][] thisSash = sashInfo.sashLocs;
 

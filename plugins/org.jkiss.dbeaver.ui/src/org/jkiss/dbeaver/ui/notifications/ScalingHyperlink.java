@@ -71,7 +71,7 @@ public class ScalingHyperlink extends ImageHyperlink {
             int textWidth = Math.min(bounds.width, totalSize.x);
             int textHeight = totalSize.y;
 
-            //			int descent = gc.getFontMetrics().getDescent();
+            //            int descent = gc.getFontMetrics().getDescent();
             int lineY = bounds.y + (textHeight / 2); // - descent + 1;
             gc.drawLine(bounds.x, lineY, bounds.x + textWidth, lineY);
         }

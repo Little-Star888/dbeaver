@@ -541,7 +541,7 @@ public class FindReplaceDialog extends Dialog {
         formData2.bottom = new FormAttachment(100);
         feedbackComposite.setLayoutData(formData2);
         FormLayout formLayout2 = new FormLayout();
-//	formLayout2.spacing = 5;
+//    formLayout2.spacing = 5;
         feedbackComposite.setLayout(formLayout2);
 
         feedbackLabel = new Label(feedbackComposite, SWT.CENTER);
@@ -686,7 +686,7 @@ public class FindReplaceDialog extends Dialog {
         replaceAllButton.setEnabled(!searching);
 
         closeButton.setEnabled(!searching);
-//		getParent().setEnabled(enableButtons);
+//        getParent().setEnabled(enableButtons);
         if (searching) {
             return;
         }

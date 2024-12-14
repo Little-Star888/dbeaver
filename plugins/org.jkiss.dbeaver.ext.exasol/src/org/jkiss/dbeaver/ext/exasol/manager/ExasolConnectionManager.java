@@ -63,12 +63,12 @@ public class ExasolConnectionManager
     
     private SQLDatabasePersistAction getCommentCommand(ExasolConnection con)
     {
-    	return new SQLDatabasePersistAction(
-                	"Comment on Connection",
-                	String.format("COMMENT ON CONNECTION %s is '%s'",
-    	                DBUtils.getQuotedIdentifier(con),
-    	                ExasolUtils.quoteString(con.getDescription())
-    	            )                
+        return new SQLDatabasePersistAction(
+                    "Comment on Connection",
+                    String.format("COMMENT ON CONNECTION %s is '%s'",
+                        DBUtils.getQuotedIdentifier(con),
+                        ExasolUtils.quoteString(con.getDescription())
+                    )                
                 );
     }
     

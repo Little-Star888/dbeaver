@@ -61,7 +61,7 @@ public final class HippieCompletionEngine {
      * Regular expression that is used to find words.
      */
     // unicode identifier part
-//	private static final String COMPLETION_WORD_REGEX= "[\\p{L}[\\p{Mn}[\\p{Pc}[\\p{Nd}[\\p{Nl}]]]]]+"; //$NON-NLS-1$
+//    private static final String COMPLETION_WORD_REGEX= "[\\p{L}[\\p{Mn}[\\p{Pc}[\\p{Nd}[\\p{Nl}]]]]]+"; //$NON-NLS-1$
     // java identifier part (unicode id part + currency symbols)
     private static final String COMPLETION_WORD_REGEX = "[\\p{L}\\p{Mn}\\p{Pc}\\p{Nd}\\p{Nl}\\p{Sc}]+"; //$NON-NLS-1$
     /**
@@ -85,8 +85,8 @@ public final class HippieCompletionEngine {
      */
     private static final String COMPLETION_BOUNDARY = "(^|" + NON_EMPTY_COMPLETION_BOUNDARY + ")";  //$NON-NLS-1$ //$NON-NLS-2$
     // with a 1.5 JRE, you can do this:
-//	private static final String COMPLETION_WORD_REGEX= "\\p{javaUnicodeIdentifierPart}+"; //$NON-NLS-1$
-//	private static final String COMPLETION_WORD_REGEX= "\\p{javaJavaIdentifierPart}+"; //$NON-NLS-1$
+//    private static final String COMPLETION_WORD_REGEX= "\\p{javaUnicodeIdentifierPart}+"; //$NON-NLS-1$
+//    private static final String COMPLETION_WORD_REGEX= "\\p{javaJavaIdentifierPart}+"; //$NON-NLS-1$
 
     /**
      * Is completion case sensitive? Even if set to <code>false</code>, the

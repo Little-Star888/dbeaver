@@ -45,7 +45,7 @@ public class DashboardCreateWizard extends Wizard implements INewWizard {
     @Nullable
     private IFolder folder;
     private DashboardCreateWizardPage pageContent;
-	private String errorMessage;
+    private String errorMessage;
     private IStructuredSelection entitySelection;
     @Nullable
     private DBPProject project;
@@ -56,9 +56,9 @@ public class DashboardCreateWizard extends Wizard implements INewWizard {
 
     public DashboardCreateWizard(DBPDataSourceContainer dataSourceContainer) {
         this.dataSourceContainer = dataSourceContainer;
-	}
+    }
 
-	@Override
+    @Override
     public void init(IWorkbench workbench, IStructuredSelection selection) {
         setWindowTitle("Create dashboard");
         setNeedsProgressMonitor(true);
@@ -107,20 +107,20 @@ public class DashboardCreateWizard extends Wizard implements INewWizard {
         if (getContainer() != null) {
             //WizardDialog call
             pageContent.setErrorMessage(errorMessage);
-		}
+        }
     }
     
     @Override
     public void setContainer(IWizardContainer wizardContainer) {
-    	super.setContainer(wizardContainer);
-    	if (pageContent != null) {
-    		//New Wizard call
+        super.setContainer(wizardContainer);
+        if (pageContent != null) {
+            //New Wizard call
             pageContent.setErrorMessage(errorMessage);
-		}
+        }
     }
     
-	@Override
-	public boolean performFinish() {
+    @Override
+    public boolean performFinish() {
         try {
             if (dataSourceContainer != null) {
                 DashboardConfigurationList configurationList = new DashboardConfigurationList(dataSourceContainer);
@@ -153,6 +153,6 @@ public class DashboardCreateWizard extends Wizard implements INewWizard {
             DBWorkbench.getPlatformUI().showError("Error creating dashboard", null, e);
         }
         return false;
-	}
+    }
 
 }

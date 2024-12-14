@@ -292,7 +292,7 @@ public class ViewerColumnController<COLUMN, ELEMENT> {
     {
         final Control control = viewer.getControl();
         if (control == null || control.isDisposed()) {
-        	return;
+            return;
         }
         control.setRedraw(false);
         isInitializing = true;

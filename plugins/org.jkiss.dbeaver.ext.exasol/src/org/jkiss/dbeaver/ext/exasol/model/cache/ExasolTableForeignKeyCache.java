@@ -41,58 +41,58 @@ public final class ExasolTableForeignKeyCache
 
     private static final String SQL_FK_TAB =
         "/*snapshot execution*/ select\r\n" +
-            "		CONSTRAINT_NAME,CONSTRAINT_TABLE,CONSTRAINT_SCHEMA,constraint_owner,c.constraint_enabled,constraint_Type," +
+            "        CONSTRAINT_NAME,CONSTRAINT_TABLE,CONSTRAINT_SCHEMA,constraint_owner,c.constraint_enabled,constraint_Type," +
             "cc.column_name,cc.ordinal_position,cc.referenced_schema,cc.referenced_table,cc.referenced_column" +
-            "	from\r\n" +
-            "		(SELECT * FROM 	EXA_ALL_CONSTRAINTS " +
-            "			where\r\n" +
-            "				CONSTRAINT_SCHEMA = '%s' and\r\n" +
-            "				CONSTRAINT_TYPE = 'FOREIGN KEY' AND CONSTRAINT_TABLE = '%s' \r\n" +
+            "    from\r\n" +
+            "        (SELECT * FROM     EXA_ALL_CONSTRAINTS " +
+            "            where\r\n" +
+            "                CONSTRAINT_SCHEMA = '%s' and\r\n" +
+            "                CONSTRAINT_TYPE = 'FOREIGN KEY' AND CONSTRAINT_TABLE = '%s' \r\n" +
             "        ORDER BY 1,2,3 \r\n" +
             "        )c\r\n" +
-            "		inner join\r\n" +
-            "		(SELECT * FROM EXA_ALL_CONSTRAINT_COLUMNS " +
-            "			where\r\n" +
-            "				CONSTRAINT_SCHEMA = '%s' and\r\n" +
-            "				CONSTRAINT_TYPE = 'FOREIGN KEY' AND CONSTRAINT_TABLE = '%s' \r\n" +
+            "        inner join\r\n" +
+            "        (SELECT * FROM EXA_ALL_CONSTRAINT_COLUMNS " +
+            "            where\r\n" +
+            "                CONSTRAINT_SCHEMA = '%s' and\r\n" +
+            "                CONSTRAINT_TYPE = 'FOREIGN KEY' AND CONSTRAINT_TABLE = '%s' \r\n" +
             "        ORDER BY 1,2,3 \r\n" +
-            " 		) cc\r\n" +
-            "	using\r\n" +
-            "			(\r\n" +
-            "				CONSTRAINT_SCHEMA, CONSTRAINT_TABLE, CONSTRAINT_NAME, CONSTRAINT_OWNER, CONSTRAINT_TYPE\r\n" +
-            "			)\r\n" +
-            "	where\r\n" +
-            "		CONSTRAINT_SCHEMA = '%s' and\r\n" +
-            "		CONSTRAINT_TYPE = 'FOREIGN KEY' AND CONSTRAINT_TABLE = '%s' \r\n" +
-            "	order by\r\n" +
-            "		ORDINAL_POSITION";
+            "         ) cc\r\n" +
+            "    using\r\n" +
+            "            (\r\n" +
+            "                CONSTRAINT_SCHEMA, CONSTRAINT_TABLE, CONSTRAINT_NAME, CONSTRAINT_OWNER, CONSTRAINT_TYPE\r\n" +
+            "            )\r\n" +
+            "    where\r\n" +
+            "        CONSTRAINT_SCHEMA = '%s' and\r\n" +
+            "        CONSTRAINT_TYPE = 'FOREIGN KEY' AND CONSTRAINT_TABLE = '%s' \r\n" +
+            "    order by\r\n" +
+            "        ORDINAL_POSITION";
     private static final String SQL_FK_ALL =
         "/*snapshot execution*/ select\r\n" +
-            "		CONSTRAINT_NAME,CONSTRAINT_TABLE,CONSTRAINT_SCHEMA,constraint_owner,c.constraint_enabled,constraint_Type," +
+            "        CONSTRAINT_NAME,CONSTRAINT_TABLE,CONSTRAINT_SCHEMA,constraint_owner,c.constraint_enabled,constraint_Type," +
             "cc.column_name,cc.ordinal_position,cc.referenced_schema,cc.referenced_table,cc.referenced_column" +
-            "	from\r\n" +
-            "		(SELECT * FROM 	EXA_ALL_CONSTRAINTS " +
-            "			where\r\n" +
-            "				CONSTRAINT_SCHEMA = '%s' and\r\n" +
-            "				CONSTRAINT_TYPE = 'FOREIGN KEY'\r\n" +
+            "    from\r\n" +
+            "        (SELECT * FROM     EXA_ALL_CONSTRAINTS " +
+            "            where\r\n" +
+            "                CONSTRAINT_SCHEMA = '%s' and\r\n" +
+            "                CONSTRAINT_TYPE = 'FOREIGN KEY'\r\n" +
             "        ORDER BY 1,2,3 \r\n" +
             "        )c\r\n" +
-            "		inner join\r\n" +
-            "		(SELECT * FROM EXA_ALL_CONSTRAINT_COLUMNS " +
-            "			where\r\n" +
-            "				CONSTRAINT_SCHEMA = '%s' and\r\n" +
-            "				CONSTRAINT_TYPE = 'FOREIGN KEY'  \r\n" +
+            "        inner join\r\n" +
+            "        (SELECT * FROM EXA_ALL_CONSTRAINT_COLUMNS " +
+            "            where\r\n" +
+            "                CONSTRAINT_SCHEMA = '%s' and\r\n" +
+            "                CONSTRAINT_TYPE = 'FOREIGN KEY'  \r\n" +
             "        ORDER BY 1,2,3 \r\n" +
-            " 		) cc\r\n" +
-            "	using\r\n" +
-            "			(\r\n" +
-            "				CONSTRAINT_SCHEMA, CONSTRAINT_TABLE, CONSTRAINT_NAME, CONSTRAINT_OWNER, CONSTRAINT_TYPE\r\n" +
-            "			)\r\n" +
-            "	where\r\n" +
-            "		CONSTRAINT_SCHEMA = '%s' and\r\n" +
-            "		CONSTRAINT_TYPE = 'FOREIGN KEY' \r\n" +
-            "	order by\r\n" +
-            "		ORDINAL_POSITION";
+            "         ) cc\r\n" +
+            "    using\r\n" +
+            "            (\r\n" +
+            "                CONSTRAINT_SCHEMA, CONSTRAINT_TABLE, CONSTRAINT_NAME, CONSTRAINT_OWNER, CONSTRAINT_TYPE\r\n" +
+            "            )\r\n" +
+            "    where\r\n" +
+            "        CONSTRAINT_SCHEMA = '%s' and\r\n" +
+            "        CONSTRAINT_TYPE = 'FOREIGN KEY' \r\n" +
+            "    order by\r\n" +
+            "        ORDINAL_POSITION";
 
     public ExasolTableForeignKeyCache(ExasolTableCache tableCache) {
         super(tableCache, ExasolTable.class, "CONSTRAINT_TABLE", "CONSTRAINT_NAME");

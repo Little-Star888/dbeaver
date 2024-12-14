@@ -32,10 +32,10 @@ public interface DBAServerLockManager<LOCK_TYPE extends DBAServerLock, LOCK_TYPE
     DBPDataSource getDataSource();
     
     Map<?,LOCK_TYPE> getLocks(DBCSession session, Map<String, Object> options)
-    		throws DBException;
+            throws DBException;
     
     Collection<LOCK_TYPE_ITEM> getLockItems(DBCSession session,Map<String, Object> options)
-    		throws DBException;
+            throws DBException;
 
     void alterSession(DBCSession session, LOCK_TYPE sessionType, Map<String, Object> options)
         throws DBException;

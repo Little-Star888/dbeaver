@@ -59,8 +59,8 @@ public class DB2IndexConfigurator implements DBEObjectConfigurator<DB2Index> {
     @Override
     public DB2Index configureObject(@NotNull DBRProgressMonitor monitor, @Nullable DBECommandContext commandContext, @Nullable Object container, @NotNull DB2Index index, @NotNull Map<String, Object> options) {
         return UITask.run(() -> {
-        	DB2TableBase table = (DB2TableBase) container;
-        	EditIndexPage editPage = new EditIndexPage(
+            DB2TableBase table = (DB2TableBase) container;
+            EditIndexPage editPage = new EditIndexPage(
                     DB2Messages.edit_db2_index_manager_dialog_title, index, IX_TYPES);
                 if (!editPage.edit()) {
                     return null;

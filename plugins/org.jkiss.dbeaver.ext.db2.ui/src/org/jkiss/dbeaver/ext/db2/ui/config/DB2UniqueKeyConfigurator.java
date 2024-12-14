@@ -37,10 +37,10 @@ import java.util.Map;
  * DB2 unique constraint configurator
  */
 public class DB2UniqueKeyConfigurator implements DBEObjectConfigurator<DB2TableUniqueKey> {
-	
+
     @Override
     public DB2TableUniqueKey configureObject(@NotNull DBRProgressMonitor monitor, @Nullable DBECommandContext commandContext, @Nullable Object table, @NotNull DB2TableUniqueKey constraint, @NotNull Map<String, Object> options) {
-    	return new UITask<DB2TableUniqueKey>() {
+        return new UITask<DB2TableUniqueKey>() {
             @Override
             protected DB2TableUniqueKey runTask()
             {

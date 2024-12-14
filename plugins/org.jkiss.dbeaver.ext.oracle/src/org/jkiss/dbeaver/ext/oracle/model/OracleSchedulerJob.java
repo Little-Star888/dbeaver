@@ -119,16 +119,16 @@ public class OracleSchedulerJob extends OracleSchemaObject implements OracleStat
     private final ArgumentsCache argumentsCache = new ArgumentsCache();
 
     enum JobState {
-    	DISABLED,
-    	RETRYSCHEDULED,
-    	SCHEDULED,
-    	RUNNING,
-    	COMPLETED,
-    	BROKEN,
-    	FAILED,
-    	REMOTE,
-    	SUCCEEDED,
-    	CHAIN_STALLED;
+        DISABLED,
+        RETRYSCHEDULED,
+        SCHEDULED,
+        RUNNING,
+        COMPLETED,
+        BROKEN,
+        FAILED,
+        REMOTE,
+        SUCCEEDED,
+        CHAIN_STALLED;
     }
 
     protected OracleSchedulerJob(OracleSchema schema, ResultSet dbResult) {
@@ -509,33 +509,33 @@ public class OracleSchedulerJob extends OracleSchemaObject implements OracleStat
 
     }
 
-	public DBSObjectState getObjectState() {
-		DBSObjectState objectState = null;
-		
-		try {
-			if ( JobState.valueOf(state).equals(JobState.RUNNING) ) {
-				objectState = DBSObjectState.ACTIVE;
-			} else if ( JobState.valueOf(state).equals(JobState.BROKEN) ) {
-				objectState = DBSObjectState.INVALID;
-			} else if ( JobState.valueOf(state).equals(JobState.CHAIN_STALLED) ) {
-				objectState = DBSObjectState.INVALID;
-			} else if ( JobState.valueOf(state).equals(JobState.FAILED) ) {
-				objectState = DBSObjectState.INVALID;
-			} else {
-				objectState = DBSObjectState.NORMAL;
-			}
-		} catch (IllegalArgumentException e) {
-			objectState = DBSObjectState.UNKNOWN;
-		}
-		
-		return objectState;
-	}
+    public DBSObjectState getObjectState() {
+        DBSObjectState objectState = null;
 
-	public void refreshObjectState(DBRProgressMonitor monitor) {
+        try {
+            if ( JobState.valueOf(state).equals(JobState.RUNNING) ) {
+                objectState = DBSObjectState.ACTIVE;
+            } else if ( JobState.valueOf(state).equals(JobState.BROKEN) ) {
+                objectState = DBSObjectState.INVALID;
+            } else if ( JobState.valueOf(state).equals(JobState.CHAIN_STALLED) ) {
+                objectState = DBSObjectState.INVALID;
+            } else if ( JobState.valueOf(state).equals(JobState.FAILED) ) {
+                objectState = DBSObjectState.INVALID;
+            } else {
+                objectState = DBSObjectState.NORMAL;
+            }
+        } catch (IllegalArgumentException e) {
+            objectState = DBSObjectState.UNKNOWN;
+        }
+
+        return objectState;
+    }
+
+    public void refreshObjectState(DBRProgressMonitor monitor) {
         if (monitor != null) {
-        	monitor.beginTask("Load action for '" + this.getName() + "'...", 1);
-        	try (final JDBCSession session = DBUtils.openMetaSession(monitor, this, "Load action for " + OracleObjectType.JOB + " '" + this.getName() + "'")) {
-        		try (JDBCPreparedStatement dbStat = session.prepareStatement(
+            monitor.beginTask("Load action for '" + this.getName() + "'...", 1);
+            try (final JDBCSession session = DBUtils.openMetaSession(monitor, this, "Load action for " + OracleObjectType.JOB + " '" + this.getName() + "'")) {
+                try (JDBCPreparedStatement dbStat = session.prepareStatement(
                         "SELECT STATE FROM " + OracleUtils.getSysSchemaPrefix(getDataSource()) + "ALL_SCHEDULER_JOBS " +
                             "WHERE OWNER=? AND JOB_NAME=? ")) {
                     dbStat.setString(1, getOwner() );
@@ -557,17 +557,17 @@ public class OracleSchedulerJob extends OracleSchemaObject implements OracleStat
                             monitor.subTask("Line " + lineCount);
                         }
                         if (jobState != null) {
-                        	state = jobState.toString();
+                            state = jobState.toString();
                         }
                     }
-        		}
+                }
             } catch (Exception e) {
-            	monitor.subTask("Error refreshing job state " + e.getMessage());
+                monitor.subTask("Error refreshing job state " + e.getMessage());
             } finally {
                 monitor.done();
             }
         }
-	}
+    }
 
     public DBEPersistAction[] getRunActions() {
         StringBuffer runScript = new StringBuffer();
@@ -576,7 +576,7 @@ public class OracleSchedulerJob extends OracleSchemaObject implements OracleStat
         runScript.append(getFullyQualifiedName(DBPEvaluationContext.DDL));
         runScript.append("', USE_CURRENT_SESSION => FALSE);");
         runScript.append("END;");
-    	return new DBEPersistAction[] {
+        return new DBEPersistAction[] {
             new OracleObjectPersistAction(
                 OracleObjectType.JOB,
                 "Run Job",
@@ -584,12 +584,12 @@ public class OracleSchedulerJob extends OracleSchemaObject implements OracleStat
             )};
     }
 
-	@Override
-	public String getObjectDefinitionText(DBRProgressMonitor monitor, Map<String, Object> options) throws DBException {
+    @Override
+    public String getObjectDefinitionText(DBRProgressMonitor monitor, Map<String, Object> options) throws DBException {
         if (jobAction == null && monitor != null) {
-        	monitor.beginTask("Load action for '" + this.getName() + "'...", 1);
-        	try (final JDBCSession session = DBUtils.openMetaSession(monitor, this, "Load action for " + OracleObjectType.JOB + " '" + this.getName() + "'")) {
-        		try (JDBCPreparedStatement dbStat = session.prepareStatement(
+            monitor.beginTask("Load action for '" + this.getName() + "'...", 1);
+            try (final JDBCSession session = DBUtils.openMetaSession(monitor, this, "Load action for " + OracleObjectType.JOB + " '" + this.getName() + "'")) {
+                try (JDBCPreparedStatement dbStat = session.prepareStatement(
                         "SELECT JOB_ACTION FROM " + OracleUtils.getSysSchemaPrefix(getDataSource()) + "ALL_SCHEDULER_JOBS " +
                             "WHERE OWNER=? AND JOB_NAME=? ")) {
                     dbStat.setString(1, getOwner() );
@@ -611,12 +611,12 @@ public class OracleSchedulerJob extends OracleSchemaObject implements OracleStat
                             monitor.subTask("Line " + lineCount);
                         }
                         if (action != null) {
-                        	jobAction = action.toString();
+                            jobAction = action.toString();
                         }
                     }
                 } catch (SQLException e) {
                     throw new DBCException(e, session.getExecutionContext());
-        		}
+                }
             } finally {
                 monitor.done();
             }

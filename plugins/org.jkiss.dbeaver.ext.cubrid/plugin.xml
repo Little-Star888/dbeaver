@@ -148,7 +148,7 @@
                         <folder id="procedures-or-functions" label="%tree.procedures_functions.node.name" icon="#folder_procedure" description="%tree.procedures_functions.node.tip">
                             <folder label="%tree.procedures.node.name" icon="#procedures" description="%tree.procedures.node.name" type="org.jkiss.dbeaver.ext.cubrid.model.CubridProcedure">
                                 <items label="%tree.procedure.node.name" path="procedure" property="proceduresOnly">
-	                                <folder label="%tree.parameters.node.name" icon="#columns" description="%tree.parameters.node.name">
+                                    <folder label="%tree.parameters.node.name" icon="#columns" description="%tree.parameters.node.name">
                                         <items label="%tree.parameters.node.name" itemLabel="%tree.column.node.name" path="column" property="params">
                                         </items>
                                     </folder>

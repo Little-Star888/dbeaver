@@ -67,10 +67,10 @@ public class InformixMetaModel extends GenericMetaModel
         @NotNull DBRProgressMonitor monitor,
         @NotNull GenericTableBase sourceObject,
         @NotNull Map<String, Object> options) throws DBException {
-    	String tableDDL = super.getTableDDL(monitor, sourceObject, options);
-    	// Triggers, Serials
-    	// 
-    	return tableDDL + InformixUtils.getTriggerDDL(monitor, sourceObject);
+        String tableDDL = super.getTableDDL(monitor, sourceObject, options);
+        // Triggers, Serials
+        //
+        return tableDDL + InformixUtils.getTriggerDDL(monitor, sourceObject);
     }
 
     @Override

@@ -109,7 +109,7 @@ public class EditVirtualColumnsPage extends BaseObjectEditPage implements IHelpC
                 public void widgetSelected(SelectionEvent e) {
                     DBVEntityAttribute virtualAttr = (DBVEntityAttribute) attrTable.getSelection()[0].getData();
                     if (!UIUtils.confirmAction(parent.getShell(),
-                    	ResultSetMessages.virtual_edit_columns_page_confirm_action_delete,
+                        ResultSetMessages.virtual_edit_columns_page_confirm_action_delete,
                         NLS.bind(ResultSetMessages.virtual_edit_columns_page_confirm_action_question_delete_column, virtualAttr.getName()))) {
                         return;
                     }

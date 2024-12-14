@@ -125,15 +125,15 @@ public class ExasolRoleManager extends SQLObjectEditor<ExasolRole, ExasolDataSou
         }
 
         if (command.getProperties().containsKey("priority")) {
-        	String script = "";
-        	if (ExasolConstants.CONSUMER_GROUP_CLASS.equals(priority.getClass().getName())) { 
-        		script = String.format("ALTER ROLE %s SET CONSUMER_GROUP = %s", DBUtils.getQuotedIdentifier(obj), DBUtils.getQuotedIdentifier(priority));
+            String script = "";
+            if (ExasolConstants.CONSUMER_GROUP_CLASS.equals(priority.getClass().getName())) {
+                script = String.format("ALTER ROLE %s SET CONSUMER_GROUP = %s", DBUtils.getQuotedIdentifier(obj), DBUtils.getQuotedIdentifier(priority));
                 actionList.add(new SQLDatabasePersistAction(ExasolMessages.manager_assign_priority_group, script));
-        	}
-        	else if (ExasolConstants.PRIORITY_GROUP_CLASS.equals(priority.getClass().getName())) {
-        		script = String.format("GRANT PRIORITY GROUP %s to %s", DBUtils.getQuotedIdentifier(priority), DBUtils.getQuotedIdentifier(obj));
+            }
+            else if (ExasolConstants.PRIORITY_GROUP_CLASS.equals(priority.getClass().getName())) {
+                script = String.format("GRANT PRIORITY GROUP %s to %s", DBUtils.getQuotedIdentifier(priority), DBUtils.getQuotedIdentifier(obj));
                 actionList.add(new SQLDatabasePersistAction(ExasolMessages.manager_assign_priority_group, script));
-			} 
+            }
         }
 
 
