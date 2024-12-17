@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -991,8 +990,8 @@ public class EntityEditor extends MultiPageDatabaseEditor
 
     @Override
     protected Control createTopRightControl(Composite composite) {
-        EntityEditorBreadcrumbsPanel bcComposite = new EntityEditorBreadcrumbsPanel(composite, this);
-        bcComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        EntityEditorBreadcrumbsPanel bcComposite = new EntityEditorBreadcrumbsPanel(composite, this, false);
+        //bcComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         return bcComposite;
     }

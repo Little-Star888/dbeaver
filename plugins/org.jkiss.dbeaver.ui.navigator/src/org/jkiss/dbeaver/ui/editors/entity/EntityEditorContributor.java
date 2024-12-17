@@ -19,7 +19,10 @@ package org.jkiss.dbeaver.ui.editors.entity;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IEditorPart;
 import org.jkiss.dbeaver.ui.editors.EditorSearchActionsContributor;
 
@@ -27,27 +30,48 @@ import org.jkiss.dbeaver.ui.editors.EditorSearchActionsContributor;
  * Search actions contributor
  */
 public class EntityEditorContributor extends EditorSearchActionsContributor {
-    private EntityEditor activeEditor;
+
     private BreadcrumbsContributionItem entityStatusItem;
+    private EntityEditor activeEditor;
 
     @Override
     public void setActiveEditor(IEditorPart part) {
         super.setActiveEditor(part);
-        this.activeEditor = part instanceof EntityEditor ee ? ee : null;
+        activeEditor = part instanceof EntityEditor ee ? ee : null;
+        if (entityStatusItem != null && entityStatusItem.panel != null) {
+            entityStatusItem.panel.setEditor(activeEditor);
+        }
     }
 
     @Override
     public void contributeToStatusLine(IStatusLineManager statusLineManager) {
         entityStatusItem = new BreadcrumbsContributionItem();
+        statusLineManager.insertBefore(StatusLineManager.BEGIN_GROUP, entityStatusItem);
     }
 
     private class BreadcrumbsContributionItem extends ContributionItem {
+        EntityEditorBreadcrumbsPanel panel;
 
         @Override
         public void fill(Composite parent) {
-            if (activeEditor != null) {
+            dispose();
+            Label sep = new Label(parent, SWT.SEPARATOR);
+//            new Label(parent, SWT.NONE).setText("BC: ");
+            panel = new EntityEditorBreadcrumbsPanel(parent, activeEditor, true);
+        }
 
+        @Override
+        public boolean isDynamic() {
+            return true;
+        }
+
+
+        @Override
+        public void dispose() {
+            if (panel != null) {
+                panel.dispose();
             }
+            super.dispose();
         }
     }
 }

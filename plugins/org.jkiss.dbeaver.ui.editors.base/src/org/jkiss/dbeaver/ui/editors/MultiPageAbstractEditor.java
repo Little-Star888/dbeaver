@@ -48,7 +48,7 @@ public abstract class MultiPageAbstractEditor extends MultiPageEditorPart {
     private ImageDescriptor curTitleImage;
     private final List<Image> oldImages = new ArrayList<>();
     private int activePageIndex = -1;
-    private List<CTabItem> tabsList = new ArrayList<>();
+    private final List<CTabItem> tabsList = new ArrayList<>();
 
     @Override
     public void init(IEditorSite site, IEditorInput input) throws PartInitException {
@@ -121,8 +121,7 @@ public abstract class MultiPageAbstractEditor extends MultiPageEditorPart {
 
     protected void setContainerStyles() {
         Composite pageContainer = getContainer();
-        if (pageContainer instanceof CTabFolder && !pageContainer.isDisposed()) {
-            CTabFolder tabFolder = (CTabFolder) pageContainer;
+        if (pageContainer instanceof CTabFolder tabFolder && !pageContainer.isDisposed()) {
             tabFolder.setSimple(true);
             tabFolder.setMRUVisible(true);
             tabFolder.setTabPosition(SWT.TOP);
@@ -130,7 +129,7 @@ public abstract class MultiPageAbstractEditor extends MultiPageEditorPart {
             if (topRight != null) {
                 Point trSize = topRight.computeSize(SWT.DEFAULT, SWT.DEFAULT);
                 tabFolder.setTabHeight(trSize.y);
-                tabFolder.setTopRight(topRight, SWT.RIGHT | SWT.WRAP);
+                tabFolder.setTopRight(topRight, SWT.FILL);
             }
 
             /*
@@ -141,20 +140,16 @@ public abstract class MultiPageAbstractEditor extends MultiPageEditorPart {
              * selection.getText(); } } } });
              */
 
-//            tabFolder.setSimple(false);
-            // tabFolder.setBorderVisible(true);
             Layout parentLayout = tabFolder.getParent().getLayout();
-            if (parentLayout instanceof FillLayout) {
-                ((FillLayout) parentLayout).marginHeight = 0;
-//                ((FillLayout)parentLayout).marginWidth = 5;
+            if (parentLayout instanceof FillLayout fillLayout) {
+                fillLayout.marginHeight = 0;
             }
         }
     }
 
     protected void setPageToolTip(int index, String toolTip) {
         Composite pageContainer = getContainer();
-        if (pageContainer instanceof CTabFolder) {
-            CTabFolder tabFolder = (CTabFolder) pageContainer;
+        if (pageContainer instanceof CTabFolder tabFolder) {
             if (index < tabFolder.getItemCount()) {
                 tabFolder.getItem(index).setToolTipText(toolTip);
             }
@@ -173,8 +168,8 @@ public abstract class MultiPageAbstractEditor extends MultiPageEditorPart {
         // Deactivate the nested services from the last active service locator.
         if (activePageIndex >= 0 && getEditorCount() > activePageIndex) {
             final IWorkbenchPart part = getEditor(activePageIndex);
-            if (part instanceof IActiveWorkbenchPart) {
-                ((IActiveWorkbenchPart) part).deactivatePart();
+            if (part instanceof IActiveWorkbenchPart activeWorkbenchPart) {
+                activeWorkbenchPart.deactivatePart();
             }
         }
     }
@@ -244,7 +239,7 @@ public abstract class MultiPageAbstractEditor extends MultiPageEditorPart {
                 if (activePageIndex != -1) {
                     CTabItem tabItem = tabsList.get(activePageIndex);
                     if (tabItem != null && !tabItem.isDisposed()) {
-                        if (tabItem != null && !tabItem.isDisposed()) {
+                        if (!tabItem.isDisposed()) {
                             Control control = tabItem.getControl();
                             if (control != null && !control.isDisposed()) {
                                 control.forceFocus();
@@ -253,9 +248,7 @@ public abstract class MultiPageAbstractEditor extends MultiPageEditorPart {
                     }
                 }
             }
-            case DEFAULT -> {
-                super.setFocus();
-            }
+            case DEFAULT -> super.setFocus();
         }
     }
 }

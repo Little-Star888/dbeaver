@@ -29,6 +29,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
+import org.jkiss.code.NotNull;
+import org.jkiss.code.Nullable;
 import org.jkiss.dbeaver.Log;
 import org.jkiss.dbeaver.model.navigator.DBNDatabaseFolder;
 import org.jkiss.dbeaver.model.navigator.DBNDatabaseNode;
@@ -56,22 +58,35 @@ public class EntityEditorBreadcrumbsPanel extends Composite {
 
     private static final Log log = Log.getLog(EntityEditorBreadcrumbsPanel.class);
 
-    private final EntityEditor editor;
+    @Nullable
+    private EntityEditor editor;
+    private final boolean statusLine;
     private final ToolBar bcToolbar;
 
     private Menu breadcrumbsMenu;
     private ISelectionProvider savedPartSelectionProvider = null;
     private DBNDatabaseNode selectedNode;
 
-    public EntityEditorBreadcrumbsPanel(Composite parent, EntityEditor editor) {
+    public EntityEditorBreadcrumbsPanel(@NotNull Composite parent, @Nullable EntityEditor editor, boolean statusLine) {
         super(parent, SWT.NONE);
         this.editor = editor;
+        this.statusLine = statusLine;
 
-        this.setLayout(new GridLayout(1, false));
+        GridLayout layout = new GridLayout(1, false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        layout.verticalSpacing = 0;
+        layout.horizontalSpacing = 0;
+//        RowLayout rowLayout = new RowLayout();
+//        rowLayout.fill = true;
+        this.setLayout(layout);
 
         // Path
         bcToolbar = new ToolBar(this, SWT.HORIZONTAL | SWT.RIGHT);
-        bcToolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
+        GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+        gd.grabExcessHorizontalSpace = true;
+        gd.grabExcessVerticalSpace = true;
+        bcToolbar.setLayoutData(gd);
         bcToolbar.setForeground(
             UIUtils.isDark(bcToolbar.getBackground().getRGB()) ? UIUtils.COLOR_WHITE : UIStyles.getDefaultTextForeground());
         bcToolbar.addMouseListener(new MouseAdapter() {
@@ -80,18 +95,14 @@ public class EntityEditorBreadcrumbsPanel extends Composite {
                 ToolItem onItem = bcToolbar.getItem(new Point(e.x, e.y));
                 selectedNode = onItem == null ? null : onItem.getData() instanceof DBNDatabaseNode node ? node : null;
                 if (onItem != null && onItem.getData() == VISIBILITY_ITEM) {
-                    toggleToolbars();
+                    UIUtils.asyncExec(() -> toggleToolbars());
                 }
             }
         });
 
-        if (UINavigatorActivator.getDefault().getPreferences().getBoolean(PREF_BREADCRUMBS_VISIBLE)) {
-            fillBreadcrumbs();
-        } else {
-            fillDefaultItems();
-        }
+        fillToolbar();
 
-        if (editor.getEditorInput() instanceof DatabaseLazyEditorInput) {
+        if (editor == null || editor.getEditorInput() instanceof DatabaseLazyEditorInput) {
             bcToolbar.setEnabled(false);
         }
 
@@ -103,6 +114,21 @@ public class EntityEditorBreadcrumbsPanel extends Composite {
         });
     }
 
+    private void fillToolbar() {
+        if (editor != null && UINavigatorActivator.getDefault().getPreferences().getBoolean(PREF_BREADCRUMBS_VISIBLE)) {
+            fillBreadcrumbs();
+        } else {
+            fillDefaultItems();
+        }
+    }
+
+    public void setEditor(@Nullable EntityEditor editor) {
+        this.editor = editor;
+        for (ToolItem item : bcToolbar.getItems()) item.dispose();
+        fillToolbar();
+
+    }
+
     private void toggleToolbars() {
         for (ToolItem item : bcToolbar.getItems()) item.dispose();
 
@@ -110,13 +136,17 @@ public class EntityEditorBreadcrumbsPanel extends Composite {
         boolean bcVisible = !preferences.getBoolean(PREF_BREADCRUMBS_VISIBLE);
         preferences.setValue(PREF_BREADCRUMBS_VISIBLE, bcVisible);
 
+//        if (getParent() instanceof CTabFolder tabFolder) {
+//            tabFolder.setTopRight(new EntityEditorBreadcrumbsPanel(tabFolder, editor), SWT.RIGHT);
+//            return;
+//        }
         if (bcVisible) {
             fillBreadcrumbs();
         } else {
             fillDefaultItems();
         }
-        this.getParent().getParent().layout(true, true);
-        this.getParent().redraw();
+
+        getParent().layout(true, true);
     }
 
     private void fillDefaultItems() {
@@ -148,33 +178,39 @@ public class EntityEditorBreadcrumbsPanel extends Composite {
             MenuManager menuMgr = new MenuManager();
             Menu menu = menuMgr.createContextMenu(bcToolbar);
             menuMgr.addMenuListener(manager -> {
-                savedPartSelectionProvider = editor.getSite().getSelectionProvider();
-                editor.getSite().setSelectionProvider(selProvider);
-                selProvider.setSelection(selProvider.getSelection());
+                if (!statusLine) {
+                    savedPartSelectionProvider = editor.getSite().getSelectionProvider();
+                    editor.getSite().setSelectionProvider(selProvider);
+                    selProvider.setSelection(selProvider.getSelection());
 
-                if (selectedNode == null) {
-                    selProvider.setSelection(new StructuredSelection());
-                } else {
-                    selProvider.setSelection(new StructuredSelection(selectedNode));
+                    if (selectedNode == null) {
+                        selProvider.setSelection(new StructuredSelection());
+                    } else {
+                        selProvider.setSelection(new StructuredSelection(selectedNode));
+                    }
                 }
                 NavigatorUtils.addStandardMenuItem(editor.getSite(), manager, selProvider);
             });
             menuMgr.setRemoveAllWhenShown(true);
             bcToolbar.setMenu(menu);
 
-            editor.getSite().registerContextMenu("entityBreadcrumbsMenu", menuMgr, selProvider);
+            if (!statusLine) {
+                editor.getSite().registerContextMenu("entityBreadcrumbsMenu", menuMgr, selProvider);
+            }
 
-            menu.addMenuListener(new MenuAdapter() {
-                @Override
-                public void menuHidden(MenuEvent e) {
-                    UIUtils.asyncExec(() -> {
-                        if (savedPartSelectionProvider != null) {
-                            editor.getSite().setSelectionProvider(savedPartSelectionProvider);
-                            savedPartSelectionProvider = null;
-                        }
-                    });
-                }
-            });
+            if (!statusLine) {
+                menu.addMenuListener(new MenuAdapter() {
+                    @Override
+                    public void menuHidden(MenuEvent e) {
+                        UIUtils.asyncExec(() -> {
+                            if (savedPartSelectionProvider != null) {
+                                editor.getSite().setSelectionProvider(savedPartSelectionProvider);
+                                savedPartSelectionProvider = null;
+                            }
+                        });
+                    }
+                });
+            }
         }
         fillDefaultItems();
     }
