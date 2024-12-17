@@ -25,7 +25,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.jkiss.dbeaver.Log;
@@ -33,11 +34,11 @@ import org.jkiss.dbeaver.model.navigator.DBNDatabaseFolder;
 import org.jkiss.dbeaver.model.navigator.DBNDatabaseNode;
 import org.jkiss.dbeaver.model.navigator.DBNNode;
 import org.jkiss.dbeaver.model.navigator.DBNUtils;
+import org.jkiss.dbeaver.model.preferences.DBPPreferenceStore;
 import org.jkiss.dbeaver.model.runtime.VoidProgressMonitor;
-import org.jkiss.dbeaver.ui.CustomSelectionProvider;
-import org.jkiss.dbeaver.ui.DBeaverIcons;
-import org.jkiss.dbeaver.ui.UIStyles;
-import org.jkiss.dbeaver.ui.UIUtils;
+import org.jkiss.dbeaver.ui.*;
+import org.jkiss.dbeaver.ui.editors.DatabaseLazyEditorInput;
+import org.jkiss.dbeaver.ui.internal.UINavigatorActivator;
 import org.jkiss.dbeaver.ui.internal.UINavigatorMessages;
 import org.jkiss.dbeaver.ui.navigator.NavigatorUtils;
 import org.jkiss.dbeaver.ui.navigator.actions.NavigatorHandlerObjectOpen;
@@ -48,35 +49,85 @@ import java.util.List;
 
 public class EntityEditorBreadcrumbsPanel extends Composite {
 
+    private static final String PREF_BREADCRUMBS_VISIBLE = "entity.editor.breadcrumbs";
+    private static Object VISIBILITY_ITEM = new Object();
+
     private static final int MAX_BREADCRUMBS_MENU_ITEM = 300;
 
     private static final Log log = Log.getLog(EntityEditorBreadcrumbsPanel.class);
 
     private final EntityEditor editor;
+    private final ToolBar bcToolbar;
 
     private Menu breadcrumbsMenu;
     private ISelectionProvider savedPartSelectionProvider = null;
+    private DBNDatabaseNode selectedNode;
 
     public EntityEditorBreadcrumbsPanel(Composite parent, EntityEditor editor) {
         super(parent, SWT.NONE);
         this.editor = editor;
 
-        this.setLayout(new FillLayout());
+        this.setLayout(new GridLayout(1, false));
 
         // Path
-        DBNDatabaseNode[] selNode = new DBNDatabaseNode[1];
-        ToolBar breadcrumbsPanel = new ToolBar(this, SWT.HORIZONTAL | SWT.RIGHT);
-        //breadcrumbsPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        breadcrumbsPanel.setForeground(
-            UIUtils.isDark(breadcrumbsPanel.getBackground().getRGB()) ? UIUtils.COLOR_WHITE : UIStyles.getDefaultTextForeground());
-        breadcrumbsPanel.addMouseListener(new MouseAdapter() {
+        bcToolbar = new ToolBar(this, SWT.HORIZONTAL | SWT.RIGHT);
+        bcToolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
+        bcToolbar.setForeground(
+            UIUtils.isDark(bcToolbar.getBackground().getRGB()) ? UIUtils.COLOR_WHITE : UIStyles.getDefaultTextForeground());
+        bcToolbar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDown(MouseEvent e) {
-                ToolItem onItem = breadcrumbsPanel.getItem(new Point(e.x, e.y));
-                selNode[0] = onItem == null ? null : (DBNDatabaseNode) onItem.getData();
+                ToolItem onItem = bcToolbar.getItem(new Point(e.x, e.y));
+                selectedNode = onItem == null ? null : onItem.getData() instanceof DBNDatabaseNode node ? node : null;
+                if (onItem != null && onItem.getData() == VISIBILITY_ITEM) {
+                    toggleToolbars();
+                }
             }
         });
 
+        if (UINavigatorActivator.getDefault().getPreferences().getBoolean(PREF_BREADCRUMBS_VISIBLE)) {
+            fillBreadcrumbs();
+        } else {
+            fillDefaultItems();
+        }
+
+        if (editor.getEditorInput() instanceof DatabaseLazyEditorInput) {
+            bcToolbar.setEnabled(false);
+        }
+
+        addDisposeListener(e -> {
+            if (breadcrumbsMenu != null) {
+                breadcrumbsMenu.dispose();
+                breadcrumbsMenu = null;
+            }
+        });
+    }
+
+    private void toggleToolbars() {
+        for (ToolItem item : bcToolbar.getItems()) item.dispose();
+
+        DBPPreferenceStore preferences = UINavigatorActivator.getDefault().getPreferences();
+        boolean bcVisible = !preferences.getBoolean(PREF_BREADCRUMBS_VISIBLE);
+        preferences.setValue(PREF_BREADCRUMBS_VISIBLE, bcVisible);
+
+        if (bcVisible) {
+            fillBreadcrumbs();
+        } else {
+            fillDefaultItems();
+        }
+        this.getParent().getParent().layout(true, true);
+        this.getParent().redraw();
+    }
+
+    private void fillDefaultItems() {
+        boolean bcVisible = UINavigatorActivator.getDefault().getPreferences().getBoolean(PREF_BREADCRUMBS_VISIBLE);
+        ToolItem item = new ToolItem(bcToolbar, SWT.PUSH);
+        item.setData(VISIBILITY_ITEM);
+        item.setImage(DBeaverIcons.getImage(bcVisible ? UIIcon.NOTIFICATION_CLOSE : UIIcon.ASTERISK));
+        item.setToolTipText(bcVisible ? "Hide breadcrumbs" : "Show breadcrumbs");
+    }
+
+    private void fillBreadcrumbs() {
         // Make base node path
         DBNDatabaseNode node = editor.getEditorInput().getNavigatorNode();
 
@@ -87,7 +138,7 @@ public class EntityEditorBreadcrumbsPanel extends Composite {
             }
         }
         for (final DBNDatabaseNode databaseNode : nodeList) {
-            createBreadcrumbs(breadcrumbsPanel, databaseNode);
+            createBreadcrumbs(bcToolbar, databaseNode);
         }
 
         {
@@ -95,22 +146,21 @@ public class EntityEditorBreadcrumbsPanel extends Composite {
             CustomSelectionProvider selProvider = new CustomSelectionProvider();
 
             MenuManager menuMgr = new MenuManager();
-            Menu menu = menuMgr.createContextMenu(breadcrumbsPanel);
+            Menu menu = menuMgr.createContextMenu(bcToolbar);
             menuMgr.addMenuListener(manager -> {
                 savedPartSelectionProvider = editor.getSite().getSelectionProvider();
                 editor.getSite().setSelectionProvider(selProvider);
                 selProvider.setSelection(selProvider.getSelection());
 
-                DBNDatabaseNode curNode = selNode[0];
-                if (curNode == null) {
+                if (selectedNode == null) {
                     selProvider.setSelection(new StructuredSelection());
                 } else {
-                    selProvider.setSelection(new StructuredSelection(selNode));
+                    selProvider.setSelection(new StructuredSelection(selectedNode));
                 }
                 NavigatorUtils.addStandardMenuItem(editor.getSite(), manager, selProvider);
             });
             menuMgr.setRemoveAllWhenShown(true);
-            breadcrumbsPanel.setMenu(menu);
+            bcToolbar.setMenu(menu);
 
             editor.getSite().registerContextMenu("entityBreadcrumbsMenu", menuMgr, selProvider);
 
@@ -126,13 +176,7 @@ public class EntityEditorBreadcrumbsPanel extends Composite {
                 }
             });
         }
-
-        addDisposeListener(e -> {
-            if (breadcrumbsMenu != null) {
-                breadcrumbsMenu.dispose();
-                breadcrumbsMenu = null;
-            }
-        });
+        fillDefaultItems();
     }
 
     private void createBreadcrumbs(ToolBar infoGroup, final DBNDatabaseNode databaseNode) {
