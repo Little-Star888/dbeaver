@@ -38,7 +38,10 @@ import org.jkiss.dbeaver.model.navigator.DBNNode;
 import org.jkiss.dbeaver.model.navigator.DBNUtils;
 import org.jkiss.dbeaver.model.preferences.DBPPreferenceStore;
 import org.jkiss.dbeaver.model.runtime.VoidProgressMonitor;
-import org.jkiss.dbeaver.ui.*;
+import org.jkiss.dbeaver.ui.CustomSelectionProvider;
+import org.jkiss.dbeaver.ui.DBeaverIcons;
+import org.jkiss.dbeaver.ui.UIIcon;
+import org.jkiss.dbeaver.ui.UIUtils;
 import org.jkiss.dbeaver.ui.editors.DatabaseLazyEditorInput;
 import org.jkiss.dbeaver.ui.internal.UINavigatorActivator;
 import org.jkiss.dbeaver.ui.internal.UINavigatorMessages;
@@ -87,8 +90,8 @@ public class EntityEditorBreadcrumbsPanel extends Composite {
         gd.grabExcessHorizontalSpace = true;
         gd.grabExcessVerticalSpace = true;
         bcToolbar.setLayoutData(gd);
-        bcToolbar.setForeground(
-            UIUtils.isDark(bcToolbar.getBackground().getRGB()) ? UIUtils.COLOR_WHITE : UIStyles.getDefaultTextForeground());
+//        bcToolbar.setForeground(
+//            UIUtils.isDark(bcToolbar.getBackground().getRGB()) ? UIUtils.COLOR_WHITE : UIStyles.getDefaultTextForeground());
         bcToolbar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDown(MouseEvent e) {

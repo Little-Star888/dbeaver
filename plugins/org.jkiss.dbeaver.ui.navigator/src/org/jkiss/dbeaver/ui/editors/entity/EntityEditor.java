@@ -990,6 +990,9 @@ public class EntityEditor extends MultiPageDatabaseEditor
 
     @Override
     protected Control createTopRightControl(Composite composite) {
+        if (getEditorInput() instanceof DatabaseLazyEditorInput) {
+            return null;
+        }
         EntityEditorBreadcrumbsPanel bcComposite = new EntityEditorBreadcrumbsPanel(composite, this, false);
         //bcComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 

@@ -36,6 +36,9 @@ public class EntityEditorContributor extends EditorSearchActionsContributor {
 
     @Override
     public void setActiveEditor(IEditorPart part) {
+        if (activeEditor == part) {
+            return;
+        }
         super.setActiveEditor(part);
         activeEditor = part instanceof EntityEditor ee ? ee : null;
         if (entityStatusItem != null && entityStatusItem.panel != null) {
@@ -44,9 +47,17 @@ public class EntityEditorContributor extends EditorSearchActionsContributor {
     }
 
     @Override
+    public void setActivePage(IEditorPart activeEditor) {
+        if (this.activeEditor == activeEditor) {
+            return;
+        }
+        super.setActivePage(activeEditor);
+    }
+
+    @Override
     public void contributeToStatusLine(IStatusLineManager statusLineManager) {
         entityStatusItem = new BreadcrumbsContributionItem();
-        statusLineManager.insertBefore(StatusLineManager.BEGIN_GROUP, entityStatusItem);
+        statusLineManager.insertAfter(StatusLineManager.END_GROUP, entityStatusItem);
     }
 
     private class BreadcrumbsContributionItem extends ContributionItem {
