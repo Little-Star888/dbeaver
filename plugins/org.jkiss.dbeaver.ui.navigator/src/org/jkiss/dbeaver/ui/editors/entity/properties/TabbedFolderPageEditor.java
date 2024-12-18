@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.services.INestable;
+import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.part.MultiPageEditorSite;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -282,10 +283,20 @@ public class TabbedFolderPageEditor extends TabbedFolderPage implements IDatabas
 
     private class TabbedFolderPageEditorSite extends MultiPageEditorSite implements INestedEditorSite {
 
+        private IEditorActionBarContributor actionBarContributor;
+
         public TabbedFolderPageEditorSite(MultiPageEditorPart multiPageEditor, IEditorPart editor) {
             super(multiPageEditor, editor);
         }
-        
+
+        @Override
+        public IEditorActionBarContributor getActionBarContributor() {
+            if (actionBarContributor == null) {
+                actionBarContributor = new EditorActionBarContributor();
+            }
+            return actionBarContributor;
+        }
+
         @Override
         public String getId() {
             String id = editorDescriptor.getId();

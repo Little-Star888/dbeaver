@@ -55,7 +55,7 @@ import java.util.List;
 public class EntityEditorBreadcrumbsPanel extends Composite {
 
     private static final String PREF_BREADCRUMBS_VISIBLE = "entity.editor.breadcrumbs";
-    private static Object VISIBILITY_ITEM = new Object();
+    private static final Object VISIBILITY_ITEM = new Object();
 
     private static final int MAX_BREADCRUMBS_MENU_ITEM = 300;
 
@@ -80,8 +80,6 @@ public class EntityEditorBreadcrumbsPanel extends Composite {
         layout.marginWidth = 0;
         layout.verticalSpacing = 0;
         layout.horizontalSpacing = 0;
-//        RowLayout rowLayout = new RowLayout();
-//        rowLayout.fill = true;
         this.setLayout(layout);
 
         // Path
@@ -139,10 +137,6 @@ public class EntityEditorBreadcrumbsPanel extends Composite {
         boolean bcVisible = !preferences.getBoolean(PREF_BREADCRUMBS_VISIBLE);
         preferences.setValue(PREF_BREADCRUMBS_VISIBLE, bcVisible);
 
-//        if (getParent() instanceof CTabFolder tabFolder) {
-//            tabFolder.setTopRight(new EntityEditorBreadcrumbsPanel(tabFolder, editor), SWT.RIGHT);
-//            return;
-//        }
         if (bcVisible) {
             fillBreadcrumbs();
         } else {
@@ -161,6 +155,9 @@ public class EntityEditorBreadcrumbsPanel extends Composite {
     }
 
     private void fillBreadcrumbs() {
+        if (editor == null) {
+            return;
+        }
         // Make base node path
         DBNDatabaseNode node = editor.getEditorInput().getNavigatorNode();
 
@@ -219,6 +216,9 @@ public class EntityEditorBreadcrumbsPanel extends Composite {
     }
 
     private void createBreadcrumbs(ToolBar infoGroup, final DBNDatabaseNode databaseNode) {
+        if (editor == null) {
+            return;
+        }
         final DBNDatabaseNode curNode = editor.getEditorInput().getNavigatorNode();
 
         // FIXME: Drop-downs are too high - lead to minor UI glitches during editor opening. Also they don't make much sense.
