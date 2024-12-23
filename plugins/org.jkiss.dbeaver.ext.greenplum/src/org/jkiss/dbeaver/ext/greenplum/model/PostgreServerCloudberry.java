@@ -1,6 +1,10 @@
 /*
  * DBeaver - Universal Database Manager
  * Copyright (C) 2010-2024 DBeaver Corp and others
+ * Copyright (C) 2019 Dmitriy Dubson (ddubson@pivotal.io)
+ * Copyright (C) 2019 Gavin Shaw (gshaw@pivotal.io)
+ * Copyright (C) 2019 Zach Marcin (zmarcin@pivotal.io)
+ * Copyright (C) 2019 Nikhil Pawar (npawar@pivotal.io)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +18,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jkiss.dbeaver.ext.cloudberry.edit;
+package org.jkiss.dbeaver.ext.greenplum.model;
 
-import org.jkiss.dbeaver.ext.postgresql.edit.PostgreSchemaManager;
 
-public class CloudberrySchemaManager extends PostgreSchemaManager {
+import org.jkiss.dbeaver.ext.postgresql.model.PostgreDataSource;
+
+/**
+ * PostgreServerGreenplum
+ */
+public class PostgreServerCloudberry extends PostgreServerGreenplum {
+
+    public PostgreServerCloudberry(PostgreDataSource dataSource) {
+        super(dataSource);
+    }
+
+    @Override
+    public String getServerTypeName() {
+        return "Cloudberry";
+    }
 }
