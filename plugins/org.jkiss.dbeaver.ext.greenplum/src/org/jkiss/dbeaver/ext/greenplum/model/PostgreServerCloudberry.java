@@ -24,7 +24,7 @@ package org.jkiss.dbeaver.ext.greenplum.model;
 import org.jkiss.dbeaver.ext.postgresql.model.PostgreDataSource;
 
 /**
- * PostgreServerGreenplum
+ * PostgreServerCloudberry
  */
 public class PostgreServerCloudberry extends PostgreServerGreenplum {
 
