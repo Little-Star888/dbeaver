@@ -83,7 +83,7 @@
                 </driver>
                 <driver
                         id="cloudberry-jdbc"
-                        label="CloudberryDB"
+                        label="Cloudberry"
                         icon="icons/cloudberry_icon.png"
                         iconBig="icons/cloudberry_icon_big.png"
                         class="org.postgresql.Driver"
@@ -91,7 +91,7 @@
                         defaultPort="5432"
                         webURL="https://cloudberrydb.org/"
                         propertiesURL="https://jdbc.postgresql.org/documentation/head/connect.html#connection-parameters"
-                        databaseDocumentationSuffixURL="Database-driver-Cloudberry"
+                        databaseDocumentationSuffixURL="Database-driver-Greenplum"
                         description="%driver.cloudberry.description"
                         categories="sql,analytic">
                     <replace provider="postgresql" driver="postgres-cloudberry-jdbc"/>
