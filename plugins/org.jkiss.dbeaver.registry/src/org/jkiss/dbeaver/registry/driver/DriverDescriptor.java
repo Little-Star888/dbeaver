@@ -1418,13 +1418,12 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
     }
 
     @Override
-    public boolean needsExternalDependencies(@NotNull DBRProgressMonitor monitor) {
+    public boolean needsExternalDependencies() {
         for (DBPDriverLibrary library : libraries) {
             if (library.isDisabled() || library.isOptional() || !library.matchesCurrentPlatform()) {
                 continue;
             }
-            Path localFile = library.getLocalFile(monitor);
-            if (localFile == null || !Files.exists(localFile)) {
+            if (!isResolvedLibraryPresent(library)) {
                 return true;
             }
         }
@@ -1459,21 +1458,11 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
                 continue;
             }
             if (library.isDownloadable()) {
-                boolean allExists = true;
+                boolean allExists;
                 if (resetVersions) {
                     allExists = false;
                 } else {
-                    List<DriverFileInfo> files = resolvedFiles.get(library);
-                    if (files == null) {
-                        allExists = false;
-                    } else {
-                        for (DriverFileInfo file : files) {
-                            if (file.file == null || !Files.exists(file.file)) {
-                                allExists = false;
-                                break;
-                            }
-                        }
-                    }
+                    allExists = isResolvedLibraryPresent(library);
                 }
                 if (!allExists) {
                     downloadCandidates.add(library);
@@ -1495,6 +1484,8 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
             }
             if (!downloadOk) {
                 return Collections.emptyList();
+            } else {
+                setModified(true);
             }
             if (resetVersions) {
                 resetDriverInstance();
@@ -1542,6 +1533,25 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
 
         // Check if local files are zip archives with jars inside
         return DriverUtils.extractZipArchives(result);
+    }
+
+    private boolean isResolvedLibraryPresent(@NotNull DBPDriverLibrary library) {
+        if (library.isDownloadable()) {
+            List<DriverFileInfo> files = resolvedFiles.get(library);
+            if (files == null) {
+                return false;
+            } else {
+                for (DriverFileInfo file : files) {
+                    if (file.file == null || !Files.exists(file.file)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        } else {
+            Path localFile = library.getLocalFile();
+            return localFile != null && Files.exists(localFile);
+        }
     }
 
     private List<Path> syncDpiDependencies(DBPApplication application) {
@@ -1594,8 +1604,7 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
             if (library.isDisabled() || !library.matchesCurrentPlatform()) {
                 continue;
             }
-            if (library instanceof DriverLibraryLocal) {
-                var localLib = (DriverLibraryLocal) library;
+            if (library instanceof DriverLibraryLocal localLib) {
                 if (localLib.isUseOriginalJar()) {
                     var localFile = localLib.getLocalFile();
                     if (localFile == null) {
@@ -1693,10 +1702,6 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
             crc.update(buffer, 0, bytesRead);
         }
         return crc.getValue();
-    }
-
-    Path getWorkspaceStorageFolder() {
-        return getWorkspaceDriversStorageFolder().resolve(getProviderId()).resolve(getId());
     }
 
     List<DriverFileInfo> getCachedFiles(DBPDriverLibrary library) {

@@ -211,7 +211,7 @@ public class DriverUtils {
 
     public static boolean downloadDriverFiles(
         @NotNull DBRProgressMonitor monitor,
-        @NotNull DBPDriver driverDescriptor,
+        @NotNull DriverDescriptor driverDescriptor,
         @NotNull DBPDriverDependencies dependencies
     ) {
         try {
@@ -237,6 +237,7 @@ public class DriverUtils {
                 return false;
             }
         }
+        driverDescriptor.setModified(true);
         return true;
     }
 

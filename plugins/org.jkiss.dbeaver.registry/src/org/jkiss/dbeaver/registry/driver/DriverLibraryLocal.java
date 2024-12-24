@@ -155,12 +155,6 @@ public class DriverLibraryLocal extends DriverLibraryAbstract {
         return platformFile;
     }
 
-    @Nullable
-    @Override
-    public Path getLocalFile(@NotNull DBRProgressMonitor monitor) {
-        return getLocalFile();
-    }
-
     private Path resolveCacheDir() {
         if (isUseOriginalJar()) {
             return DriverDescriptor.getProvidedDriversStorageFolder();
