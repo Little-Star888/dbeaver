@@ -1,10 +1,6 @@
 /*
  * DBeaver - Universal Database Manager
  * Copyright (C) 2010-2024 DBeaver Corp and others
- * Copyright (C) 2019 Dmitriy Dubson (ddubson@pivotal.io)
- * Copyright (C) 2019 Gavin Shaw (gshaw@pivotal.io)
- * Copyright (C) 2019 Zach Marcin (zmarcin@pivotal.io)
- * Copyright (C) 2019 Nikhil Pawar (npawar@pivotal.io)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
