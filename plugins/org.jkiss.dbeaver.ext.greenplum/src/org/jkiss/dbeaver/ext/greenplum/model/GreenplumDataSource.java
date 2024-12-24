@@ -61,6 +61,10 @@ public class GreenplumDataSource extends PostgreDataSource {
                 if (matcher.find()) {
                     gpVersion = new Version(matcher.group(1));
                 }
+                matcher = Pattern.compile("Cloudberry Database").matcher(versionStr);
+                if (matcher.find()) {
+                    gpVersion = new Version(12, 0, 0);
+                }
             }
 
             if (hasAccessToExttable == null) {
