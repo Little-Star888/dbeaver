@@ -38,10 +38,7 @@ import org.jkiss.dbeaver.model.navigator.DBNNode;
 import org.jkiss.dbeaver.model.navigator.DBNUtils;
 import org.jkiss.dbeaver.model.preferences.DBPPreferenceStore;
 import org.jkiss.dbeaver.model.runtime.VoidProgressMonitor;
-import org.jkiss.dbeaver.ui.CustomSelectionProvider;
-import org.jkiss.dbeaver.ui.DBeaverIcons;
-import org.jkiss.dbeaver.ui.UIIcon;
-import org.jkiss.dbeaver.ui.UIUtils;
+import org.jkiss.dbeaver.ui.*;
 import org.jkiss.dbeaver.ui.editors.DatabaseLazyEditorInput;
 import org.jkiss.dbeaver.ui.internal.UINavigatorActivator;
 import org.jkiss.dbeaver.ui.internal.UINavigatorMessages;
@@ -83,7 +80,7 @@ public class EntityEditorBreadcrumbsPanel extends Composite {
         this.setLayout(layout);
 
         // Path
-        bcToolbar = new ToolBar(this, SWT.HORIZONTAL | SWT.RIGHT);
+        bcToolbar = new ToolBar(this, SWT.HORIZONTAL | SWT.RIGHT | SWT.FLAT);
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
         gd.grabExcessHorizontalSpace = true;
         gd.grabExcessVerticalSpace = true;
@@ -100,6 +97,8 @@ public class EntityEditorBreadcrumbsPanel extends Composite {
                 }
             }
         });
+        bcToolbar.setForeground(UIStyles.getDefaultTextForeground());
+        //bcToolbar.setBackground(UIStyles.getDefaultTextForeground());
 
         fillToolbar();
 
@@ -216,15 +215,17 @@ public class EntityEditorBreadcrumbsPanel extends Composite {
     }
 
     private void createBreadcrumbs(ToolBar infoGroup, final DBNDatabaseNode databaseNode) {
-        if (editor == null) {
+        if (editor == null || databaseNode instanceof DBNDatabaseFolder) {
             return;
         }
         final DBNDatabaseNode curNode = editor.getEditorInput().getNavigatorNode();
 
         // FIXME: Drop-downs are too high - lead to minor UI glitches during editor opening. Also they don't make much sense.
-        final ToolItem item = new ToolItem(infoGroup, databaseNode instanceof DBNDatabaseFolder ? SWT.DROP_DOWN : SWT.PUSH);
+        final ToolItem item = new ToolItem(infoGroup, SWT.PUSH);
         item.setText(databaseNode.getNodeDisplayName());
-        item.setImage(DBeaverIcons.getImage(databaseNode.getNodeIconDefault()));
+        if (infoGroup.getItemCount() > 1) {
+            item.setImage(DBeaverIcons.getImage(UIIcon.ARROW_RIGHT));
+        }
         item.setData(databaseNode);
 
         if (databaseNode == curNode) {

@@ -19,7 +19,6 @@ package org.jkiss.dbeaver.ui.editors.entity;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -56,8 +55,8 @@ public class EntityEditorContributor extends EditorSearchActionsContributor {
 
     @Override
     public void contributeToStatusLine(IStatusLineManager statusLineManager) {
-        entityStatusItem = new BreadcrumbsContributionItem();
-        statusLineManager.insertAfter(StatusLineManager.END_GROUP, entityStatusItem);
+        //entityStatusItem = new BreadcrumbsContributionItem();
+        //statusLineManager.insertAfter(StatusLineManager.END_GROUP, entityStatusItem);
     }
 
     private class BreadcrumbsContributionItem extends ContributionItem {
