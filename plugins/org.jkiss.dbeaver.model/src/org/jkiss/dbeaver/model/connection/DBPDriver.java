@@ -241,8 +241,13 @@ public interface DBPDriver extends DBPNamedObject
     }
 
     /**
-     * download all required driver jar files without creating a driver instance
+     * Validates driver library files presence and download them if needed without creating a driver instance
      */
-    void downloadRequiredDependencies(@NotNull DBRProgressMonitor monitor);
+    void validateFilesPresence(@NotNull DBRProgressMonitor monitor);
+
+    /**
+     * Downloads driver library files from external resources if it is possible.
+     */
+    boolean downloadDriverLibraries(@NotNull DBRProgressMonitor monitor, boolean resetVersions);
 
 }
