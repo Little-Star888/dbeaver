@@ -25,13 +25,13 @@ import org.jkiss.dbeaver.model.DBPDataSource;
 import org.jkiss.dbeaver.model.DBPDataSourceContainer;
 import org.jkiss.dbeaver.model.runtime.DBRProgressMonitor;
 
-public class GreenplumDataSourceProvider extends PostgreDataSourceProvider {
-    public GreenplumDataSourceProvider() {
+public class CloudberryDataSourceProvider extends PostgreDataSourceProvider {
+    public CloudberryDataSourceProvider() {
     }
 
     @NotNull
     @Override
     public DBPDataSource openDataSource(@NotNull DBRProgressMonitor monitor, @NotNull DBPDataSourceContainer container) throws DBException {
-        return new GreenplumDataSource(monitor, container);
+        return new CloudberryDataSource(monitor, container);
     }
 }
