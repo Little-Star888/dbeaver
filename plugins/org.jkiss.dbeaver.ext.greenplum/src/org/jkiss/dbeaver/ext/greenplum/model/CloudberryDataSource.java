@@ -35,8 +35,6 @@ public class CloudberryDataSource extends GreenplumDataSource {
     private static final Log log = Log.getLog(CloudberryDataSource.class);
 
     private Version cbVersion;
-    private final Version gpVersion = new Version(7,0,0);
-    private Boolean hasAccessToExttable;
 
     public CloudberryDataSource(DBRProgressMonitor monitor, DBPDataSourceContainer container) throws DBException {
         super(monitor, container);
@@ -55,10 +53,6 @@ public class CloudberryDataSource extends GreenplumDataSource {
                     cbVersion = new Version(matcher.group(1));
                 }
             }
-
-            if (hasAccessToExttable == null) {
-                hasAccessToExttable = PostgreUtils.isMetaObjectExists(session, "pg_exttable", "*");
-            }
         } catch (Throwable e) {
             log.debug("Error reading Cloudberry server version", e);
         }
@@ -67,9 +61,8 @@ public class CloudberryDataSource extends GreenplumDataSource {
         }
     }
 
+    @Override
     boolean isGreenplumVersionAtLeast(int major, int minor) {
-        if (gpVersion.getMajor() < major) {
-            return false;
-        } else return gpVersion.getMajor() != major || gpVersion.getMinor() >= minor;
+        return major <= 7 || minor <= 0; // Cloudberry is based on Greenplum 7.0.0
     }
 }
