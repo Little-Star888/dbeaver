@@ -18,6 +18,7 @@ package org.jkiss.dbeaver.ext.greenplum;
 
 import org.jkiss.code.NotNull;
 import org.jkiss.dbeaver.DBException;
+import org.jkiss.dbeaver.ext.greenplum.model.CloudberryDataSource;
 import org.jkiss.dbeaver.ext.greenplum.model.GreenplumDataSource;
 import org.jkiss.dbeaver.ext.postgresql.PostgreDataSourceProvider;
 import org.jkiss.dbeaver.model.DBPDataSource;
@@ -31,6 +32,9 @@ public class GreenplumDataSourceProvider extends PostgreDataSourceProvider {
     @NotNull
     @Override
     public DBPDataSource openDataSource(@NotNull DBRProgressMonitor monitor, @NotNull DBPDataSourceContainer container) throws DBException {
+        if (container.getDriver().getName().equals("Cloudberry")) {
+            return new CloudberryDataSource(monitor, container);
+        }
         return new GreenplumDataSource(monitor, container);
     }
 }

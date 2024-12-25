@@ -24,28 +24,25 @@ import org.jkiss.code.NotNull;
 import org.jkiss.dbeaver.DBException;
 import org.jkiss.dbeaver.Log;
 import org.jkiss.dbeaver.ext.postgresql.PostgreUtils;
-import org.jkiss.dbeaver.ext.postgresql.model.PostgreDataSource;
 import org.jkiss.dbeaver.model.DBPDataSourceContainer;
 import org.jkiss.dbeaver.model.DBUtils;
 import org.jkiss.dbeaver.model.exec.jdbc.JDBCSession;
 import org.jkiss.dbeaver.model.impl.jdbc.JDBCUtils;
-import org.jkiss.dbeaver.model.meta.Association;
 import org.jkiss.dbeaver.model.runtime.DBRProgressMonitor;
 import org.osgi.framework.Version;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GreenplumDataSource extends PostgreDataSource {
+public class CloudberryDataSource extends GreenplumDataSource {
 
-    private static final Log log = Log.getLog(GreenplumDataSource.class);
+    private static final Log log = Log.getLog(CloudberryDataSource.class);
 
-    private Version gpVersion;
-    private Boolean supportsFmterrtblColumn;
-    private Boolean supportsRelstorageColumn;
+    private Version cbVersion;
+    private final Version gpVersion = new Version(7,0,0);
     private Boolean hasAccessToExttable;
 
-    public GreenplumDataSource(DBRProgressMonitor monitor, DBPDataSourceContainer container) throws DBException {
+    public CloudberryDataSource(DBRProgressMonitor monitor, DBPDataSourceContainer container) throws DBException {
         super(monitor, container);
     }
 
@@ -54,12 +51,12 @@ public class GreenplumDataSource extends PostgreDataSource {
         super.initialize(monitor);
 
         // Read server version
-        try (JDBCSession session = DBUtils.openMetaSession(monitor, this, "Read Greenplum server special info")) {
+        try (JDBCSession session = DBUtils.openMetaSession(monitor, this, "Read Cloudberry server special info")) {
             String versionStr = JDBCUtils.queryString(session, "SELECT VERSION()");
             if (versionStr != null) {
-                Matcher matcher = Pattern.compile("Greenplum Database ([0-9\\.]+)").matcher(versionStr);
+                Matcher matcher = Pattern.compile("Cloudberry Database ([0-9\\.]+)").matcher(versionStr);
                 if (matcher.find()) {
-                    gpVersion = new Version(matcher.group(1));
+                    cbVersion = new Version(matcher.group(1));
                 }
             }
 
@@ -67,49 +64,16 @@ public class GreenplumDataSource extends PostgreDataSource {
                 hasAccessToExttable = PostgreUtils.isMetaObjectExists(session, "pg_exttable", "*");
             }
         } catch (Throwable e) {
-            log.debug("Error reading GP server version", e);
+            log.debug("Error reading Cloudberry server version", e);
         }
-        if (gpVersion == null) {
-            gpVersion = new Version(4, 2, 0);
+        if (cbVersion == null) {
+            cbVersion = new Version(1, 0, 0);
         }
     }
 
     boolean isGreenplumVersionAtLeast(int major, int minor) {
-        if (gpVersion == null) {
-            log.debug("Can't read Greenplum server version");
-            return false;
-        }
         if (gpVersion.getMajor() < major) {
             return false;
         } else return gpVersion.getMajor() != major || gpVersion.getMinor() >= minor;
-    }
-
-    boolean isHasAccessToExttable() {
-        return hasAccessToExttable;
-    }
-
-    boolean isServerSupportFmterrtblColumn(@NotNull JDBCSession session) {
-        if (supportsFmterrtblColumn == null) {
-            if (!isHasAccessToExttable()) {
-                supportsFmterrtblColumn = false;
-            } else {
-                supportsFmterrtblColumn = PostgreUtils.isMetaObjectExists(session, "pg_exttable", "fmterrtbl");
-            }
-        }
-        return supportsFmterrtblColumn;
-    }
-
-    boolean isServerSupportsRelstorageColumn(@NotNull JDBCSession session) {
-        if (supportsRelstorageColumn == null) {
-            supportsRelstorageColumn = PostgreUtils.isMetaObjectExists(session, "pg_class", "relstorage");
-        }
-        return supportsRelstorageColumn;
-    }
-
-    @Association
-    public boolean supportsExternalTables() {
-        // External tables turned into foreign tables from version 7.
-        // Let's check ability to use pg_exttable to show external tables correctly
-        return isHasAccessToExttable();
     }
 }
