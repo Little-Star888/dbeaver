@@ -1423,6 +1423,9 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
             if (library.isDisabled() || library.isOptional() || !library.matchesCurrentPlatform()) {
                 continue;
             }
+            if (library.getType() == DBPDriverLibrary.FileType.license) {
+                continue;
+            }
             if (!isResolvedLibraryPresent(library)) {
                 return true;
             }
