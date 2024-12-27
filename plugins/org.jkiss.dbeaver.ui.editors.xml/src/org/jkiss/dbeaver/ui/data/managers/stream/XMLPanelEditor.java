@@ -54,4 +54,9 @@ public class XMLPanelEditor extends AbstractTextPanelEditor<XMLEditor> {
     protected String getFileExtension() {
         return ".xml";
     }
+
+    @Override
+    public String minify(String value) {
+        return value.replaceAll(">\\s+<", "> <");
+    }
 }
