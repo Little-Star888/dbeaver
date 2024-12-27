@@ -58,7 +58,12 @@ public class JSONPanelEditor extends AbstractTextPanelEditor<JSONTextEditor> {
 
     @Override
     public String minify(String value) {
-        JsonElement jsonElement = JsonParser.parseString(value);
+        JsonElement jsonElement;
+        try {
+            jsonElement = JsonParser.parseString(value);
+        } catch (JsonSyntaxException ex) {
+            return value;
+        }
 
         Gson gson = new GsonBuilder()
             .serializeNulls()
