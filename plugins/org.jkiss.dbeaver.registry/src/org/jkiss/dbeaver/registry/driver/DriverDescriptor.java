@@ -1487,6 +1487,36 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
 
     @Override
     public boolean downloadDriverLibraries(@NotNull DBRProgressMonitor monitor, boolean resetVersions) {
+        final DriverDependencies dependencies = getDriverDependencies(resetVersions);
+        if (dependencies == null) {
+            return true;
+        }
+        UIServiceDrivers serviceDrivers = DBWorkbench.getService(UIServiceDrivers.class);
+        boolean downloadOk = serviceDrivers != null ?
+            serviceDrivers.downloadDriverFiles(monitor, this, dependencies) :
+            DriverUtils.downloadDriverFiles(monitor, this, dependencies);
+        if (!downloadOk) {
+            return false;
+        }
+        if (resetVersions) {
+            resetDriverInstance();
+        }
+        for (DBPDriverDependencies.DependencyNode node : dependencies.getLibraryMap()) {
+            List<DriverFileInfo> info = new ArrayList<>();
+            resolvedFiles.put(node.library, info);
+            collectLibraryFiles(node, info);
+        }
+        providerDescriptor.getRegistry().saveDrivers();
+        return true;
+    }
+
+    @Override
+    public boolean canDownloadDriverLibraries() {
+        return getDriverDependencies(false) == null;
+    }
+
+    @Nullable
+    public DriverDependencies getDriverDependencies(boolean resetVersions) {
         boolean localLibsExists = false;
         final List<DBPDriverLibrary> downloadCandidates = new ArrayList<>();
         for (DBPDriverLibrary library : libraries) {
@@ -1499,11 +1529,21 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
                 continue;
             }
             if (library.isDownloadable()) {
-                boolean allExists;
+                boolean allExists = true;
                 if (resetVersions) {
                     allExists = false;
                 } else {
-                    allExists = isResolvedLibraryPresent(library);
+                    List<DriverFileInfo> files = resolvedFiles.get(library);
+                    if (files == null) {
+                        allExists = false;
+                    } else {
+                        for (DriverFileInfo file : files) {
+                            if (file.file == null || !Files.exists(file.file)) {
+                                allExists = false;
+                                break;
+                            }
+                        }
+                    }
                 }
                 if (!allExists) {
                     downloadCandidates.add(library);
@@ -1513,28 +1553,10 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
             }
         }
 
-        if (!downloadCandidates.isEmpty() || (!localLibsExists && !fileSources.isEmpty())) {
-            final DriverDependencies dependencies = new DriverDependencies(downloadCandidates);
-            UIServiceDrivers serviceDrivers = DBWorkbench.getService(UIServiceDrivers.class);
-            boolean downloadOk = serviceDrivers != null ?
-                serviceDrivers.downloadDriverFiles(monitor, this, dependencies) :
-                DriverUtils.downloadDriverFiles(monitor, this, dependencies);
-            if (!downloadOk) {
-                return false;
-            } else {
-                setModified(true);
-            }
-            if (resetVersions) {
-                resetDriverInstance();
-            }
-            for (DBPDriverDependencies.DependencyNode node : dependencies.getLibraryMap()) {
-                List<DriverFileInfo> info = new ArrayList<>();
-                resolvedFiles.put(node.library, info);
-                collectLibraryFiles(node, info);
-            }
-            providerDescriptor.getRegistry().saveDrivers();
+        if (downloadCandidates.isEmpty() && (localLibsExists || fileSources.isEmpty())) {
+            return null;
         }
-        return true;
+        return new DriverDependencies(downloadCandidates);
     }
 
     private boolean isResolvedLibraryPresent(@NotNull DBPDriverLibrary library) {

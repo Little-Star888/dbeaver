@@ -245,6 +245,12 @@ public interface DBPDriver extends DBPNamedObject
      */
     void validateFilesPresence(@NotNull DBRProgressMonitor monitor);
 
+
+    /**
+     * Indicates whether the driver library files are available for download.
+     */
+    boolean canDownloadDriverLibraries();
+
     /**
      * Downloads driver library files from external resources if it is possible.
      */
