@@ -511,7 +511,7 @@ public abstract class AbstractTextPanelEditor<EDITOR extends BaseTextEditor>
 
     private class SaveMinifyValue extends Action {
         SaveMinifyValue() {
-            super("Minify", Action.AS_CHECK_BOX);
+            super(ResultSetMessages.panel_editor_text_minify_name, Action.AS_CHECK_BOX);
         }
 
         @Override
