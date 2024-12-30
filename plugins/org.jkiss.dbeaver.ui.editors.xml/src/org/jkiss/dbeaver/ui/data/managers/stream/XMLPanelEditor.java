@@ -107,12 +107,9 @@ public class XMLPanelEditor extends AbstractTextPanelEditor<XMLEditor> {
             Node child = childNodes.item(i);
 
             if (child.getNodeType() == Node.TEXT_NODE) {
-                if (child.getNodeValue().trim().isEmpty()) {
+                if (child.getNodeValue().isBlank()) {
                     node.removeChild(child);
                 }
-            } else if (child.getNodeType() == Node.CDATA_SECTION_NODE) {
-                CDATASection cdata = (CDATASection) child;
-                child.setNodeValue(cdata.getNodeValue().trim());
             } else if (child.getNodeType() == Node.ELEMENT_NODE) {
                 removeWhitespaceNodes(child);
             }
