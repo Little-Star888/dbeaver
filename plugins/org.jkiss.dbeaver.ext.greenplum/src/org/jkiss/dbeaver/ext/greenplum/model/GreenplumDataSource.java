@@ -43,7 +43,7 @@ public class GreenplumDataSource extends PostgreDataSource {
     private Version gpVersion;
     private Boolean supportsFmterrtblColumn;
     private Boolean supportsRelstorageColumn;
-    private Boolean hasAccessToExttable;
+    protected Boolean hasAccessToExttable;
 
     public GreenplumDataSource(DBRProgressMonitor monitor, DBPDataSourceContainer container) throws DBException {
         super(monitor, container);
@@ -51,8 +51,6 @@ public class GreenplumDataSource extends PostgreDataSource {
 
     @Override
     public void initialize(@NotNull DBRProgressMonitor monitor) throws DBException {
-        super.initialize(monitor);
-
         // Read server version
         try (JDBCSession session = DBUtils.openMetaSession(monitor, this, "Read Greenplum server special info")) {
             String versionStr = JDBCUtils.queryString(session, "SELECT VERSION()");
@@ -62,10 +60,11 @@ public class GreenplumDataSource extends PostgreDataSource {
                     gpVersion = new Version(matcher.group(1));
                 }
             }
-
+            serverVersion = versionStr;
             if (hasAccessToExttable == null) {
                 hasAccessToExttable = PostgreUtils.isMetaObjectExists(session, "pg_exttable", "*");
             }
+            initializePostgres(session, monitor);
         } catch (Throwable e) {
             log.debug("Error reading GP server version", e);
         }

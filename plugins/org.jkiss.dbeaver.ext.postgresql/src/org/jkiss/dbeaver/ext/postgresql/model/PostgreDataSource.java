@@ -94,10 +94,10 @@ public class PostgreDataSource extends JDBCDataSource implements DBSInstanceCont
     private SettingCache settingCache;
     private String activeDatabaseName;
     private PostgreServerExtension serverExtension;
-    private String serverVersion;
+    protected String serverVersion;
     private volatile boolean hasStatistics;
-    private boolean supportsEnumTable;
-    private boolean supportsReltypeColumn = true;
+    protected boolean supportsEnumTable;
+    protected boolean supportsReltypeColumn = true;
     private volatile boolean isConnectionRefreshing = false;
 
     public PostgreDataSource(DBRProgressMonitor monitor, DBPDataSourceContainer container)
@@ -447,21 +447,24 @@ public class PostgreDataSource extends JDBCDataSource implements DBSInstanceCont
                 serverVersion = "";
             }
 
+            initializePostgres(session, monitor);
+        }
+    }
 
-            if (isServerVersionAtLeast(12, 0)) {
-                try {
-                    supportsEnumTable = PostgreUtils.isMetaObjectExists(session, "pg_enum", "*");
-                } catch (Exception e) {
-                    log.debug("Error reading pg_enum " + e.getMessage());
-                    supportsEnumTable = false;
-                }
-            }
+    protected void initializePostgres(JDBCSession session, DBRProgressMonitor monitor) throws DBException {
+        if (isServerVersionAtLeast(12, 0)) {
             try {
-                supportsReltypeColumn = PostgreUtils.isMetaObjectExists(session, "pg_class", "reltype");
+                supportsEnumTable = PostgreUtils.isMetaObjectExists(session, "pg_enum", "*");
             } catch (Exception e) {
-                log.debug("Error reading pg_class.reltype " + e.getMessage());
-                supportsReltypeColumn = false;
+                log.debug("Error reading pg_enum " + e.getMessage());
+                supportsEnumTable = false;
             }
+        }
+        try {
+            supportsReltypeColumn = PostgreUtils.isMetaObjectExists(session, "pg_class", "reltype");
+        } catch (Exception e) {
+            log.debug("Error reading pg_class.reltype " + e.getMessage());
+            supportsReltypeColumn = false;
         }
 
         // Read databases

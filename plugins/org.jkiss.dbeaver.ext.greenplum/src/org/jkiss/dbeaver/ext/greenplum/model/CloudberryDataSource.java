@@ -19,6 +19,7 @@ package org.jkiss.dbeaver.ext.greenplum.model;
 import org.jkiss.code.NotNull;
 import org.jkiss.dbeaver.DBException;
 import org.jkiss.dbeaver.Log;
+import org.jkiss.dbeaver.ext.postgresql.PostgreUtils;
 import org.jkiss.dbeaver.model.DBPDataSourceContainer;
 import org.jkiss.dbeaver.model.DBUtils;
 import org.jkiss.dbeaver.model.exec.jdbc.JDBCSession;
@@ -41,8 +42,6 @@ public class CloudberryDataSource extends GreenplumDataSource {
 
     @Override
     public void initialize(@NotNull DBRProgressMonitor monitor) throws DBException {
-        super.initialize(monitor);
-
         // Read server version
         try (JDBCSession session = DBUtils.openMetaSession(monitor, this, "Read Cloudberry server special info")) {
             String versionStr = JDBCUtils.queryString(session, "SELECT VERSION()");
@@ -51,6 +50,11 @@ public class CloudberryDataSource extends GreenplumDataSource {
                 if (matcher.find()) {
                     cbVersion = new Version(matcher.group(1));
                 }
+                serverVersion = versionStr;
+                if (hasAccessToExttable == null) {
+                    hasAccessToExttable = PostgreUtils.isMetaObjectExists(session, "pg_exttable", "*");
+                }
+                initializePostgres(session, monitor);
             }
         } catch (Throwable e) {
             log.debug("Error reading Cloudberry server version", e);
