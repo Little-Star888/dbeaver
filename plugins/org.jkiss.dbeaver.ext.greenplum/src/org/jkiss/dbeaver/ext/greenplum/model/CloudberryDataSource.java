@@ -19,11 +19,7 @@ package org.jkiss.dbeaver.ext.greenplum.model;
 import org.jkiss.code.NotNull;
 import org.jkiss.dbeaver.DBException;
 import org.jkiss.dbeaver.Log;
-import org.jkiss.dbeaver.ext.postgresql.PostgreUtils;
 import org.jkiss.dbeaver.model.DBPDataSourceContainer;
-import org.jkiss.dbeaver.model.DBUtils;
-import org.jkiss.dbeaver.model.exec.jdbc.JDBCSession;
-import org.jkiss.dbeaver.model.impl.jdbc.JDBCUtils;
 import org.jkiss.dbeaver.model.runtime.DBRProgressMonitor;
 import org.osgi.framework.Version;
 
@@ -42,23 +38,15 @@ public class CloudberryDataSource extends GreenplumDataSource {
 
     @Override
     public void initialize(@NotNull DBRProgressMonitor monitor) throws DBException {
+        super.initialize(monitor);
         // Read server version
-        try (JDBCSession session = DBUtils.openMetaSession(monitor, this, "Read Cloudberry server special info")) {
-            String versionStr = JDBCUtils.queryString(session, "SELECT VERSION()");
-            if (versionStr != null) {
-                Matcher matcher = Pattern.compile("Cloudberry Database ([0-9\\.]+)").matcher(versionStr);
-                if (matcher.find()) {
-                    cbVersion = new Version(matcher.group(1));
-                }
-                serverVersion = versionStr;
-                if (hasAccessToExttable == null) {
-                    hasAccessToExttable = PostgreUtils.isMetaObjectExists(session, "pg_exttable", "*");
-                }
-                initializePostgres(session, monitor);
+        if (serverVersion != null) {
+            Matcher matcher = Pattern.compile("Cloudberry Database ([0-9\\.]+)").matcher(serverVersion);
+            if (matcher.find()) {
+                cbVersion = new Version(matcher.group(1));
             }
-        } catch (Throwable e) {
-            log.debug("Error reading Cloudberry server version", e);
         }
+
         if (cbVersion == null) {
             cbVersion = new Version(1, 0, 0);
         }
@@ -66,6 +54,6 @@ public class CloudberryDataSource extends GreenplumDataSource {
 
     @Override
     boolean isGreenplumVersionAtLeast(int major, int minor) {
-        return major <= 7 || minor <= 0; // Cloudberry is based on Greenplum 7.0.0
+        return major < 7 || (major == 7 && minor <= 0); // Cloudberry is based on Greenplum 7.0.0
     }
 }

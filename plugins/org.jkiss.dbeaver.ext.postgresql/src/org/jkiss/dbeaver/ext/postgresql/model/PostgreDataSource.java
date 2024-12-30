@@ -447,24 +447,20 @@ public class PostgreDataSource extends JDBCDataSource implements DBSInstanceCont
                 serverVersion = "";
             }
 
-            initializePostgres(session, monitor);
-        }
-    }
-
-    protected void initializePostgres(JDBCSession session, DBRProgressMonitor monitor) throws DBException {
-        if (isServerVersionAtLeast(12, 0)) {
-            try {
-                supportsEnumTable = PostgreUtils.isMetaObjectExists(session, "pg_enum", "*");
-            } catch (Exception e) {
-                log.debug("Error reading pg_enum " + e.getMessage());
-                supportsEnumTable = false;
+            if (isServerVersionAtLeast(12, 0)) {
+                try {
+                    supportsEnumTable = PostgreUtils.isMetaObjectExists(session, "pg_enum", "*");
+                } catch (Exception e) {
+                    log.debug("Error reading pg_enum " + e.getMessage());
+                    supportsEnumTable = false;
+                }
             }
-        }
-        try {
-            supportsReltypeColumn = PostgreUtils.isMetaObjectExists(session, "pg_class", "reltype");
-        } catch (Exception e) {
-            log.debug("Error reading pg_class.reltype " + e.getMessage());
-            supportsReltypeColumn = false;
+            try {
+                supportsReltypeColumn = PostgreUtils.isMetaObjectExists(session, "pg_class", "reltype");
+            } catch (Exception e) {
+                log.debug("Error reading pg_class.reltype " + e.getMessage());
+                supportsReltypeColumn = false;
+            }
         }
 
         // Read databases
