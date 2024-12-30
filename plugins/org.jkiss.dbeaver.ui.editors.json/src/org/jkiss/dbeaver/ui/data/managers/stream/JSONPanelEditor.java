@@ -23,6 +23,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.jkiss.dbeaver.ui.data.IValueController;
 import org.jkiss.dbeaver.ui.data.managers.AbstractTextPanelEditor;
+import org.jkiss.dbeaver.ui.editors.json.JSONFormattingStrategy;
 import org.jkiss.dbeaver.ui.editors.json.JSONTextEditor;
 
 /**
@@ -65,11 +66,6 @@ public class JSONPanelEditor extends AbstractTextPanelEditor<JSONTextEditor> {
             return value;
         }
 
-        Gson gson = new GsonBuilder()
-            .serializeNulls()
-            .disableHtmlEscaping()
-            .setStrictness(Strictness.LENIENT)
-            .create();
-        return gson.toJson(jsonElement);
+        return JSONFormattingStrategy.GSON_UNFORMATTED.toJson(jsonElement);
     }
 }
