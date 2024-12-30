@@ -114,7 +114,7 @@
                         defaultPort="5432"
                         webURL="https://cloudberrydb.org/"
                         propertiesURL="https://jdbc.postgresql.org/documentation/head/connect.html#connection-parameters"
-                        databaseDocumentationSuffixURL="Database-driver-Cloudberry"
+                        databaseDocumentationSuffixURL=""
                         description="%driver.cloudberry.description"
                         categories="sql,analytic">
                     <replace provider="postgresql" driver="postgres-cloudberry-jdbc"/>
