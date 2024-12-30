@@ -23,6 +23,19 @@ import org.eclipse.ui.PartInitException;
 import org.jkiss.dbeaver.ui.data.IValueController;
 import org.jkiss.dbeaver.ui.data.managers.AbstractTextPanelEditor;
 import org.jkiss.dbeaver.ui.editors.xml.XMLEditor;
+import org.jkiss.utils.CommonUtils;
+import org.xml.sax.InputSource;
+
+import java.io.StringReader;
+import java.io.StringWriter;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamResult;
 
 /**
 * XMLPanelEditor
@@ -57,6 +70,31 @@ public class XMLPanelEditor extends AbstractTextPanelEditor<XMLEditor> {
 
     @Override
     public String minify(String value) {
-        return value.replaceAll(">\\s+<", "> <");
+        try {
+            final String cleanedInput = value.replaceAll(">\\s+<", "><").trim();
+
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+
+            transformer.setOutputProperty(OutputKeys.INDENT, "no");
+            if (!value.contains("<?xml")) {
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            }
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            spf.setNamespaceAware(true);
+            spf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            Source src = new SAXSource(spf.newSAXParser().getXMLReader(), new InputSource(new StringReader(cleanedInput)));
+
+            StreamResult result = new StreamResult(new StringWriter());
+            transformer.transform(src, result);
+            String resultString = result.getWriter().toString();
+            if (CommonUtils.isEmpty(resultString)) {
+                return value;
+            }
+
+            return resultString; // Replace all empty lines
+        } catch (Throwable e) {
+            return value;
+        }
     }
 }
