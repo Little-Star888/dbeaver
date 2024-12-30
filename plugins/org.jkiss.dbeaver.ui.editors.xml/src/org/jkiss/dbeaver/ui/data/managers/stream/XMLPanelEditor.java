@@ -24,17 +24,19 @@ import org.jkiss.dbeaver.ui.data.IValueController;
 import org.jkiss.dbeaver.ui.data.managers.AbstractTextPanelEditor;
 import org.jkiss.dbeaver.ui.editors.xml.XMLEditor;
 import org.jkiss.utils.CommonUtils;
-import org.xml.sax.InputSource;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 /**
@@ -71,30 +73,49 @@ public class XMLPanelEditor extends AbstractTextPanelEditor<XMLEditor> {
     @Override
     public String minify(String value) {
         try {
-            final String cleanedInput = value.replaceAll(">\\s+<", "><").trim();
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setIgnoringElementContentWhitespace(true);
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.parse(new org.xml.sax.InputSource(new StringReader(value)));
+
+            removeWhitespaceNodes(document.getDocumentElement());
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
-
             transformer.setOutputProperty(OutputKeys.INDENT, "no");
             if (!value.contains("<?xml")) {
                 transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             }
-            SAXParserFactory spf = SAXParserFactory.newInstance();
-            spf.setNamespaceAware(true);
-            spf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            Source src = new SAXSource(spf.newSAXParser().getXMLReader(), new InputSource(new StringReader(cleanedInput)));
 
-            StreamResult result = new StreamResult(new StringWriter());
-            transformer.transform(src, result);
-            String resultString = result.getWriter().toString();
+            StringWriter writer = new StringWriter();
+            transformer.transform(new DOMSource(document), new StreamResult(writer));
+
+            String resultString = writer.toString();
             if (CommonUtils.isEmpty(resultString)) {
                 return value;
             }
 
-            return resultString; // Replace all empty lines
+            return resultString;
         } catch (Throwable e) {
             return value;
+        }
+    }
+
+    private static void removeWhitespaceNodes(Node node) {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = childNodes.getLength() - 1; i >= 0; i--) {
+            Node child = childNodes.item(i);
+
+            if (child.getNodeType() == Node.TEXT_NODE) {
+                if (child.getNodeValue().trim().isEmpty()) {
+                    node.removeChild(child);
+                }
+            } else if (child.getNodeType() == Node.CDATA_SECTION_NODE) {
+                CDATASection cdata = (CDATASection) child;
+                child.setNodeValue(cdata.getNodeValue().trim());
+            } else if (child.getNodeType() == Node.ELEMENT_NODE) {
+                removeWhitespaceNodes(child);
+            }
         }
     }
 }
