@@ -42,7 +42,7 @@ public class GreenplumDataSource extends PostgreDataSource {
     private Version gpVersion;
     private Boolean supportsFmterrtblColumn;
     private Boolean supportsRelstorageColumn;
-    protected Boolean hasAccessToExttable;
+    private Boolean hasAccessToExttable;
 
     public GreenplumDataSource(DBRProgressMonitor monitor, DBPDataSourceContainer container) throws DBException {
         super(monitor, container);

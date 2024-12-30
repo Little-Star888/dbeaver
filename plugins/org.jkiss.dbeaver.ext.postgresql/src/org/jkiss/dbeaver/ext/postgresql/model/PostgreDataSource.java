@@ -96,8 +96,8 @@ public class PostgreDataSource extends JDBCDataSource implements DBSInstanceCont
     private PostgreServerExtension serverExtension;
     protected String serverVersion;
     private volatile boolean hasStatistics;
-    protected boolean supportsEnumTable;
-    protected boolean supportsReltypeColumn = true;
+    private boolean supportsEnumTable;
+    private boolean supportsReltypeColumn = true;
     private volatile boolean isConnectionRefreshing = false;
 
     public PostgreDataSource(DBRProgressMonitor monitor, DBPDataSourceContainer container)
@@ -446,6 +446,7 @@ public class PostgreDataSource extends JDBCDataSource implements DBSInstanceCont
                 log.debug("Error reading PostgreSQL version: " + e.getMessage());
                 serverVersion = "";
             }
+
 
             if (isServerVersionAtLeast(12, 0)) {
                 try {
