@@ -45,15 +45,11 @@ public class CloudberryDataSource extends GreenplumDataSource {
             if (matcher.find()) {
                 cbVersion = new Version(matcher.group(1));
             }
+            gpVersion = new Version(7, 0, 0);
         }
 
         if (cbVersion == null) {
             cbVersion = new Version(1, 0, 0);
         }
-    }
-
-    @Override
-    boolean isGreenplumVersionAtLeast(int major, int minor) {
-        return major < 7 || (major == 7 && minor <= 0); // Cloudberry is based on Greenplum 7.0.0
     }
 }

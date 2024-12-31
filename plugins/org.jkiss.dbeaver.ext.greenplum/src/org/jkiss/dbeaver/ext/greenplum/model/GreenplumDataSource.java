@@ -39,7 +39,7 @@ public class GreenplumDataSource extends PostgreDataSource {
 
     private static final Log log = Log.getLog(GreenplumDataSource.class);
 
-    private Version gpVersion;
+    protected Version gpVersion;
     private Boolean supportsFmterrtblColumn;
     private Boolean supportsRelstorageColumn;
     private Boolean hasAccessToExttable;

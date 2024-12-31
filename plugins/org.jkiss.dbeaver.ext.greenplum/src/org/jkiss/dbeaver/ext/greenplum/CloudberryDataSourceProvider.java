@@ -25,9 +25,6 @@ import org.jkiss.dbeaver.model.DBPDataSourceContainer;
 import org.jkiss.dbeaver.model.runtime.DBRProgressMonitor;
 
 public class CloudberryDataSourceProvider extends PostgreDataSourceProvider {
-    public CloudberryDataSourceProvider() {
-    }
-
     @NotNull
     @Override
     public DBPDataSource openDataSource(@NotNull DBRProgressMonitor monitor, @NotNull DBPDataSourceContainer container) throws DBException {
