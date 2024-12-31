@@ -241,6 +241,14 @@ public class DriverUtils {
         return true;
     }
 
+    @NotNull
+    public static String getDistributedLibraryPath(@NotNull Path path) {
+        if (DBWorkbench.isDistributed() && path.isAbsolute()) {
+            return DriverDescriptor.getWorkspaceDriversStorageFolder().relativize(path).toString();
+        }
+        return path.toString();
+    }
+
     public static class DriverNameComparator implements Comparator<DBPDriver> {
 
         @Override

@@ -1538,7 +1538,7 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
                         allExists = false;
                     } else {
                         for (DriverFileInfo file : files) {
-                            if (file.file == null || !Files.exists(file.file)) {
+                            if (file.file == null || !Files.exists(getDriverFilePath(file))) {
                                 allExists = false;
                                 break;
                             }
@@ -1566,7 +1566,7 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
                 return false;
             } else {
                 for (DriverFileInfo file : files) {
-                    if (file.file == null || !Files.exists(file.file)) {
+                    if (file.file == null || !Files.exists(getDriverFilePath(file))) {
                         return false;
                     }
                 }
@@ -1576,6 +1576,13 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
             Path localFile = library.getLocalFile();
             return localFile != null && Files.exists(localFile);
         }
+    }
+
+    private Path getDriverFilePath(DriverFileInfo file) {
+        if (DBWorkbench.isDistributed()) {
+            return getWorkspaceDriversStorageFolder().resolve(file.file);
+        }
+        return file.file;
     }
 
     private List<Path> syncDpiDependencies(DBPApplication application) {
@@ -1682,7 +1689,10 @@ public class DriverDescriptor extends AbstractDescriptor implements DBPDriver {
                         }
 
                         monitor.subTask("Load driver file '" + fileInfo.id + "'");
-                        byte[] fileData = fileController.loadFileData(DBFileController.TYPE_DATABASE_DRIVER, fileInfo.getFile().toString());
+                        byte[] fileData = fileController.loadFileData(
+                            DBFileController.TYPE_DATABASE_DRIVER,
+                            DriverUtils.getDistributedLibraryPath(fileInfo.getFile())
+                        );
                         Files.write(localDriverFile, fileData, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
                         fileInfo.setFileCRC(DriverDescriptor.calculateFileCRC(localDriverFile));
                         localFilePaths.add(localDriverFile);

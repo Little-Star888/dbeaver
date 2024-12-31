@@ -186,7 +186,8 @@ public class DriverDescriptorSerializerLegacy extends DriverDescriptorSerializer
                                 }
                                 String normalizedFilePath = file.getFile().toString();
                                 if (isDistributed) {
-                                    normalizedFilePath = normalizedFilePath.replace('\\', '/');
+                                    // we need to relativize path and exclude path variables in config file
+                                    normalizedFilePath = DriverUtils.getDistributedLibraryPath(file.getFile()).replace('\\', '/');
                                 }
                                 xml.addAttribute(
                                     RegistryConstants.ATTR_PATH,
