@@ -19,6 +19,7 @@ package org.jkiss.dbeaver.model.ai.commands;
 import org.jkiss.code.NotNull;
 import org.jkiss.dbeaver.DBException;
 import org.jkiss.dbeaver.Log;
+import org.jkiss.dbeaver.model.DBPDataSource;
 import org.jkiss.dbeaver.model.DBPDataSourceContainer;
 import org.jkiss.dbeaver.model.ai.*;
 import org.jkiss.dbeaver.model.ai.completion.*;
@@ -43,7 +44,8 @@ public class SQLCommandAI implements SQLControlCommandHandler {
     @NotNull
     @Override
     public SQLControlResult handleCommand(@NotNull DBRProgressMonitor monitor, @NotNull SQLControlCommand command, @NotNull SQLScriptContext scriptContext) throws DBException {
-        if (command.getDataSource() == null) {
+        DBPDataSource dataSource = command.getDataSource();
+        if (dataSource == null) {
             throw new DBException("Not connected to database");
         }
         AISettings aiSettings = AISettingsRegistry.getInstance().getSettings();
@@ -60,10 +62,10 @@ public class SQLCommandAI implements SQLControlCommandHandler {
 
         IAIFormatter formatter = AIFormatterRegistry.getInstance().getFormatter(AIConstants.CORE_FORMATTER);
 
-        final DBSLogicalDataSource dataSource = new DBSLogicalDataSource(
+        final DBSLogicalDataSource lDataSource = new DBSLogicalDataSource(
             command.getDataSourceContainer(), "AI logical wrapper", null);
 
-        DBPDataSourceContainer dataSourceContainer = dataSource.getDataSourceContainer();
+        DBPDataSourceContainer dataSourceContainer = lDataSource.getDataSourceContainer();
         DAICompletionSettings completionSettings = new DAICompletionSettings(dataSourceContainer);
         if (!DBWorkbench.getPlatform().getApplication().isHeadlessMode() && !completionSettings.isMetaTransferConfirmed()) {
             if (DBWorkbench.getPlatformUI().confirmAction("Do you confirm AI usage",
@@ -78,13 +80,13 @@ public class SQLCommandAI implements SQLControlCommandHandler {
         DAICompletionScope scope = completionSettings.getScope();
         DAICompletionContext.Builder contextBuilder = new DAICompletionContext.Builder()
             .setScope(scope)
-            .setDataSource(dataSource)
+            .setDataSource(lDataSource)
             .setExecutionContext(scriptContext.getExecutionContext());
         if (scope == DAICompletionScope.CUSTOM) {
             contextBuilder.setCustomEntities(
                 AITextUtils.loadCustomEntities(
                     monitor,
-                    command.getDataSource(),
+                    dataSource,
                     Arrays.stream(completionSettings.getCustomObjectIds()).collect(Collectors.toSet()))
             );
         }
@@ -102,6 +104,7 @@ public class SQLCommandAI implements SQLControlCommandHandler {
 
         DAICompletionResponse response = responses.get(0);
         MessageChunk[] messageChunks = AITextUtils.splitIntoChunks(
+            dataSource.getSQLDialect(),
             CommonUtils.notEmpty(response.getResultCompletion()));
 
         String finalSQL = null;
@@ -122,7 +125,7 @@ public class SQLCommandAI implements SQLControlCommandHandler {
 
         scriptContext.getOutputWriter().println(AIOutputSeverity.PROMPT, prompt + " ==> " + finalSQL + "\n");
         return SQLControlResult.transform(
-            new SQLQuery(command.getDataSource(), finalSQL));
+            new SQLQuery(dataSource, finalSQL));
     }
 
 }
