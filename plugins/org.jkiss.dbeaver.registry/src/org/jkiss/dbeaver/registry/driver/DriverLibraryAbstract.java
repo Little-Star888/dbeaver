@@ -239,9 +239,10 @@ public abstract class DriverLibraryAbstract implements DBPDriverLibrary {
                     DBFileController.TYPE_DATABASE_DRIVER,
                     DriverUtils.getDistributedLibraryPath(localFile),
                     fileData);
-                Files.delete(tempFile);
             } catch (DBException e) {
                 throw new IOException(e.getMessage());
+            } finally {
+                Files.delete(tempFile);
             }
         } else {
             Files.move(tempFile, localFile, StandardCopyOption.REPLACE_EXISTING);
