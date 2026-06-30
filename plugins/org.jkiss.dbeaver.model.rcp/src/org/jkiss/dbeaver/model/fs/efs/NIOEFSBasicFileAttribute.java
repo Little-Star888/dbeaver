@@ -14,17 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jkiss.dbeaver.model.nio;
+package org.jkiss.dbeaver.model.fs.efs;
 
+import org.eclipse.core.filesystem.IFileInfo;
 import org.jkiss.code.NotNull;
-import org.jkiss.code.Nullable;
+import org.jkiss.dbeaver.model.nio.NIOFileBasicAttribute;
 
-public class NIOUtils {
+import java.nio.file.attribute.FileTime;
+
+public class NIOEFSBasicFileAttribute extends NIOFileBasicAttribute {
+
+    private final IFileInfo fileInfo;
+
+    public NIOEFSBasicFileAttribute(@NotNull IFileInfo fileInfo) {
+        this.fileInfo = fileInfo;
+    }
+
+    @Override
     @NotNull
-    public static String resolve(@NotNull String separator, @Nullable String basePath, @NotNull String path) {
-        if (basePath == null) {
-            return path;
-        }
-        return basePath + separator + path;
+    public FileTime lastModifiedTime() {
+        return FileTime.fromMillis(fileInfo.getLastModified());
+    }
+
+    @Override
+    public boolean isDirectory() {
+        return fileInfo.isDirectory();
+    }
+
+    @Override
+    public long size() {
+        return fileInfo.getLength();
     }
 }

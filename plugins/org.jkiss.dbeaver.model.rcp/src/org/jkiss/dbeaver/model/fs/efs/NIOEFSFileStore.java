@@ -14,17 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jkiss.dbeaver.model.nio;
+package org.jkiss.dbeaver.model.fs.efs;
 
 import org.jkiss.code.NotNull;
-import org.jkiss.code.Nullable;
+import org.jkiss.dbeaver.model.nio.NIOFileStore;
 
-public class NIOUtils {
+import java.io.IOException;
+
+public class NIOEFSFileStore extends NIOFileStore {
+
+    private final NIOEFSFileSystem fileSystem;
+
+    public NIOEFSFileStore(@NotNull NIOEFSFileSystem fileSystem) {
+        this.fileSystem = fileSystem;
+    }
+
+    @Override
     @NotNull
-    public static String resolve(@NotNull String separator, @Nullable String basePath, @NotNull String path) {
-        if (basePath == null) {
-            return path;
-        }
-        return basePath + separator + path;
+    public String name() {
+        return fileSystem.toString();
+    }
+
+    @Override
+    @NotNull
+    public String type() {
+        return fileSystem.provider().getScheme();
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        return fileSystem.isReadOnly();
+    }
+
+    @Override
+    public long getTotalSpace() throws IOException {
+        return 0;
     }
 }
